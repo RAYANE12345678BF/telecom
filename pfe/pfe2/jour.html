@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendrier Employé - DjazairRH</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        #calendar {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        .fc-daygrid-day-number {
+            color: #003366;
+        }
+        .fc-day-sat, .fc-day-fri {
+            background-color: #e6f3ff !important;
+        }
+        .fc-day-frie {
+            background-color: #ffebee !important;
+        }
+        .tooltip {
+            position: absolute;
+            background-color: #003366;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Calendrier Employé</h1>
+
+        <!-- Calendrier -->
+        <div id="calendar"></div>
+
+        <!-- Résultat des jours de RC -->
+        <div class="mt-4">
+            <h3>Jours de Repos Compensatoire (RC) :</h3>
+            <p id="rcDaysResult">Aucun jour de RC calculé pour le moment.</p>
+        </div>
+    </div>
+
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/fr.min.js"></script>
+    <script>
+        // Jours fériés (à adapter selon votre pays)
+        const holidays = [
+            '2023-01-01', // Nouvel An
+            '2023-05-01', // Fête du Travail
+            '2023-07-05', // Fête de l'Indépendance
+            '2023-12-25', // Noël
+        ];
+
+        // Jours de travail autorisés (vendredi et samedi)
+        const workingDays = ['fri', 'sat'];
+
+        // Initialisation du calendrier
+        document.addEventListener('DOMContentLoaded', function() {
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'fr',
+                selectable: true,
+                selectAllow: function(selectInfo) {
+                    // Autoriser la sélection uniquement pour vendredi et samedi
+                    const day = selectInfo.start.getDay();
+                    return workingDays.includes(FullCalendar.globalLocales[0].week.days[day].toLowerCase());
+                },
+                select: function(selectInfo) {
+                    const selectedDate = selectInfo.startStr;
+                    const isHoliday = holidays.includes(selectedDate);
+
+                    if (isHoliday) {
+                        alert('Ce jour est un jour férié. Vous ne pouvez pas le sélectionner.');
+                        calendar.unselect();
+                        return;
+                    }
+
+                    // Ajouter un événement pour le jour sélectionné
+                    calendar.addEvent({
+                        title: 'Jour travaillé',
+                        start: selectedDate,
+                        backgroundColor: '#003366',
+                        borderColor: '#003366',
+                    });
+
+                    // Calculer les jours de RC
+                    calculateRCDays();
+                },
+                eventClick: function(info) {
+                    // Supprimer l'événement si l'utilisateur clique dessus
+                    if (confirm('Voulez-vous supprimer ce jour travaillé ?')) {
+                        info.event.remove();
+                        calculateRCDays();
+                    }
+                },
+                dateClick: function(info) {
+                    // Afficher une infobulle avec des informations sur la date cliquée
+                    showTooltip(info.date, info.jsEvent);
+                },
+                dayCellContent: function(cell) {
+                    // Afficher les jours fériés en rouge
+                    const dateStr = cell.date.toISOString().split('T')[0];
+                    if (holidays.includes(dateStr)) {
+                        cell.dayNumberText = { html: `<span style="color: red;">${cell.dayNumberText}</span>` };
+                    }
+                },
+            });
+
+            calendar.render();
+
+            // Fonction pour calculer les jours de RC
+            function calculateRCDays() {
+                const events = calendar.getEvents();
+                let rcDays = 0;
+
+                events.forEach(event => {
+                    const date = event.start;
+                    const day = date.getDay();
+
+                    // Si c'est un vendredi, ajouter 2 jours de RC
+                    if (day === 5) { // 5 = vendredi
+                        rcDays += 2;
+                    }
+                    // Si c'est un samedi, ajouter 1 jour de RC
+                    else if (day === 6) { // 6 = samedi
+                        rcDays += 1;
+                    }
+                });
+
+                // Afficher le résultat
+                document.getElementById('rcDaysResult').textContent = `Jours de RC accumulés : ${rcDays}`;
+            }
+
+            // Fonction pour afficher une infobulle
+            function showTooltip(date, event) {
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.textContent = `Vous avez cliqué sur le ${date.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`;
+
+                // Positionner l'infobulle près du curseur
+                tooltip.style.top = `${event.clientY + 10}px`;
+                tooltip.style.left = `${event.clientX + 10}px`;
+
+                // Ajouter l'infobulle au document
+                document.body.appendChild(tooltip);
+
+                // Supprimer l'infobulle après 3 secondes
+                setTimeout(() => {
+                    tooltip.remove();
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>
