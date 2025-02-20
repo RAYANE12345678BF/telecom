@@ -31,7 +31,7 @@ if( !function_exists('load_db') ){
 
             return require($path);
         }else{
-            throw new RuntimeException('Unable to load database.');
+            throw new RuntimeException('Unable to find database.');
         }
     }
 
