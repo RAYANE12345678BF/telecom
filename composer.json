@@ -1,0 +1,20 @@
+{
+    "name": "rayan/dzgrh",
+    "description": "ALgeri Telecom Project",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Rayan\\Dzgrh\\": "src/"
+        },
+        "files" : ["functions/helpers.php", "functions/auth.php"]
+    },
+    "authors": [
+        {
+            "name": "Karim Aouaouda",
+            "email": "karimaouaouda.officiel@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
