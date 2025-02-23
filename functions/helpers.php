@@ -16,7 +16,7 @@ if( !function_exists('url') ){
     function url( $uri = null )
     {
         if ($uri) {
-            return 'http://' . $_SERVER['HTTP_HOST'] . '/rayane/' . trim($uri, '/');
+            return 'http://' . $_SERVER['HTTP_HOST'] . '/' . trim($uri, '/');
         }
         return 'http://' . $_SERVER['HTTP_HOST'];
     }
@@ -84,8 +84,6 @@ if( !function_exists('get_service_id') ){
     }
 }
 
-
-
 if( !function_exists('send_json_response') ){
     function send_json_response(array $response, int $status_code = 201){
         header('Content-Type: application/json');
@@ -103,3 +101,99 @@ if( ! function_exists('redirect_back') ){
     }
 }
 
+if( !function_exists('get_role')){
+    function get_role(string $role_id): array{
+        $sql = "SELECT * FROM `roles` WHERE id=?";
+        $db = load_db();
+        $result = $db->prepare($sql);
+        $result->execute([$role_id]);
+        return $result->fetch(PDO::FETCH_ASSOC);
+    }
+}
+
+if( !function_exists('get_service')){
+    function get_service(string $service_id): array{
+        $sql = "SELECT * FROM `services` WHERE id=?";
+        $db = load_db();
+        $result = $db->prepare($sql);
+        $result->execute([$service_id]);
+        return $result->fetch(PDO::FETCH_ASSOC);
+    }
+}
+
+if( !function_exists('get_department')){
+    function get_department(string $department_id): array{
+        $sql = "SELECT * FROM `departements` WHERE id=?";
+        $db = load_db();
+        $result = $db->prepare($sql);
+        $result->execute([$department_id]);
+        return $result->fetch(PDO::FETCH_ASSOC);
+    }
+}
+
+if( !function_exists('get_address')){
+    function get_address(string $address_id): array{
+        $sql = "SELECT * FROM `addresses` WHERE id=?";
+        $db = load_db();
+        $result = $db->prepare($sql);
+        $result->execute([$address_id]);
+        return $result->fetch(PDO::FETCH_ASSOC);
+    }
+}
+
+
+if (!function_exists('redirect_if_not_auth')){
+    function redirect_if_not_auth(){
+        if (!session_id()){
+            session_start();
+        }
+
+        if( empty($_SESSION['user_id']) || empty($_SESSION['user']) ){
+            session_destroy();
+            redirect(url('auth/login.php'));
+        }
+    }
+}
+
+if( !function_exists('fetch_user_information') ){
+    function fetch_user_information(string $user_id): array{
+        $db = load_db();
+        $sql = "SELECT * FROM `employees` WHERE id=?";
+        $result = $db->prepare($sql);
+        $result->execute([$user_id]);
+        $user = $result->fetch(PDO::FETCH_ASSOC);
+
+
+        $user['role'] = get_role($user['role_id']);
+        $user['service'] = get_service($user['service_id']);
+        $user['department'] = get_department($user['departement_id']);
+        $user['address'] = get_address($user['address_id'] ?? 1);
+
+        return $user;
+
+    }
+}
+
+if( !function_exists('join_address') ){
+    function join_address(array $address): string{
+        $address_str = "%s, %s, %s";
+
+        return sprintf($address_str, $address['address_line'], $address['wilaya'], $address['cite']);
+    }
+}
+
+if( !function_exists('demand') ){
+    function demand(string $user_id, $duree, $description, $date_debut, $date_fin, $info)
+    {
+        $db = load_db();
+
+        $sql = "INSERT INTO `demands` (`employee_id`, `duree`, `description`, `date_debut`, `date_fin`, `info`, `date_depose`) 
+        VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
+
+        $result = $db->prepare($sql);
+
+        $result->execute([$user_id, $duree, $description, $date_debut, $date_fin, $info]);
+
+        return $db->lastInsertId();
+    }
+}

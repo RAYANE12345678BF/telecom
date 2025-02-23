@@ -16,7 +16,9 @@ if (! function_exists('login')){
             ];
         }
 
-        $sql = "SELECT * FROM `employees``` WHERE email_professionnel = ? AND password = ?";
+        $sql = "SELECT * FROM `employees` WHERE email_professionnel = ? AND password = ?";
+
+        $stmt = $db->prepare($sql);
 
         $stmt->execute([$email, $password]);
 
@@ -85,9 +87,9 @@ if( !function_exists('save_user') ){
 
         $_SESSION['user'] = $user;
         $_SESSION['user_id'] = $user['id'];
+        return $_SESSION['user'];
     }
 }
-
 
 if( !function_exists('get_user') ){
     function get_user($id){
@@ -101,6 +103,28 @@ if( !function_exists('get_user') ){
             return $user;
         }
         return null;
+    }
+}
+
+if( !function_exists('get_all_users') ){
+    function get_all_users(): array
+    {
+        $db = load_db();
+
+        $sql = "SELECT * FROM employees";
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+        if( $stmt->rowCount() > 0 ){
+            $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach( $users as $user ){
+                unset($user['password']);
+            }
+
+            return $users;
+        }
+
+        return [];
     }
 }
 

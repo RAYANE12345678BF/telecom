@@ -20,12 +20,14 @@ if(empty($action)) {
     throw new Exception("Invalid action");
 }
 
+
 switch ($action) {
     case 'logout':
         session_destroy();
         break;
 
     case 'register':
+
         $nom = filter_input(INPUT_POST, 'nom');
         $prenom = filter_input(INPUT_POST, 'prenom');
         $email = filter_input(INPUT_POST, 'email');
@@ -55,6 +57,7 @@ switch ($action) {
         $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
         $password = filter_input(INPUT_POST, 'password');
 
+
         if(empty($email) || empty($password)) {
             $_SESSION['error'] = 'you forgot password or email is empty';
             redirect_back();
@@ -72,7 +75,8 @@ switch ($action) {
             redirect_back();
         }
         save_user($user);
-        redirect('dashboard.php');
+        redirect(url('dashboard/index.php'));
+        exit();
         break;
 
         default:
