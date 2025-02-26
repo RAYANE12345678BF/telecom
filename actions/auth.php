@@ -8,12 +8,6 @@ if( ! session_id() ){
     session_start();
 }
 
-if( isset($_SESSION['user_id']) ){
-    // the user is logged in
-    redirect('dashboard.php');
-}
-
-
 $action = filter_input(INPUT_POST, 'action');
 
 if(empty($action)) {
