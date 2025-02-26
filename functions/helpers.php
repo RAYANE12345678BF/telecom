@@ -187,12 +187,12 @@ if( !function_exists('demand') ){
     {
         $db = load_db();
 
-        $sql = "INSERT INTO `demands` (`employee_id`, `duree`, `description`, `date_debut`, `date_fin`, `info`, `date_depose`) 
-        VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
+        $sql = "INSERT INTO `demands` (`employee_id`, `duree`, `description`, `date_debut`, `date_fin`, `info`, `status`, `date_depose`) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
 
         $result = $db->prepare($sql);
 
-        $result->execute([$user_id, $duree, $description, $date_debut, $date_fin, $info]);
+        $result->execute([$user_id, $duree, $description, $date_debut, $date_fin, $info, 'waiting']);
 
         return $db->lastInsertId();
     }
