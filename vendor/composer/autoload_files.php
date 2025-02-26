@@ -8,4 +8,5 @@ $baseDir = dirname($vendorDir);
 return array(
     '386138eebdd4c73c063521f3faa14038' => $baseDir . '/functions/helpers.php',
     'cb0c732d6d3aaf9c20321b6035eb8bbf' => $baseDir . '/functions/auth.php',
+    'ce9a225342f040b52bfc3d63c3dd58d5' => $baseDir . '/functions/user.php',
 );

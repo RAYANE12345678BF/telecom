@@ -128,3 +128,14 @@ if( !function_exists('get_all_users') ){
     }
 }
 
+if( ! function_exists('redirect_if_auth') ){
+    function redirect_if_auth(){
+        if( !session_id() ){
+            session_start();
+        }
+
+        if( isset($_SESSION['user_id']) && isset($_SESSION['user']) ){
+            redirect(url('dashboard/'));
+        }
+    }
+}

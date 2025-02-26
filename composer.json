@@ -7,7 +7,7 @@
         "psr-4": {
             "Rayan\\Dzgrh\\": "src/"
         },
-        "files" : ["functions/helpers.php", "functions/auth.php"]
+        "files" : ["functions/helpers.php", "functions/auth.php", "functions/user.php"]
     },
     "authors": [
         {

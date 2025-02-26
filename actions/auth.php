@@ -41,6 +41,7 @@ switch ($action) {
         $service_id = get_service_id($service);
         $role_id = get_role_id($role);
 
+
         $user = register($prenom, $nom, $email, $password, $department_id, $service_id, $role_id);
 
         if( isset($user['error']) ){
@@ -49,7 +50,7 @@ switch ($action) {
         }else{
             $user = get_user($user['user_id']);
             save_user($user);
-            send_json_response($user);
+            redirect(url('dashboard/index.php'));
         }
 
         break;
