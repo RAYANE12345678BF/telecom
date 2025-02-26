@@ -83,6 +83,6 @@
         <div class="user-avatar">
             <i class="fas fa-sign-in-alt"></i>
         </div>
-        <button style="border : none">Se déconnecter</button>
+        <button type="submit" style="border : none">Se déconnecter</button>
     </form>
 </div>
