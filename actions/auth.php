@@ -23,6 +23,8 @@ if(empty($action)) {
 
 switch ($action) {
     case 'logout':
+        unset($_SESSION['user_id']);
+        unset($_SESSION['user']);
         session_destroy();
         redirect(url('auth/login.php'));
         break;
