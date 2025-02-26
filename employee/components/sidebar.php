@@ -78,10 +78,11 @@
             </a>
         </div>
     </div>
-    <div class="user-section">
+    <form action="<?= url('actions/auth.php') ?>" method="post" class="user-section">
+        <input type="hidden" value="logout" name="action" />
         <div class="user-avatar">
             <i class="fas fa-sign-in-alt"></i>
         </div>
-        <span>Se déconnecter</span>
-    </div>
+        <button>Se déconnecter</button>
+    </form>
 </div>

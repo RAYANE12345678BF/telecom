@@ -24,6 +24,7 @@ if(empty($action)) {
 switch ($action) {
     case 'logout':
         session_destroy();
+        redirect(url('auth/login.php'));
         break;
 
     case 'register':
