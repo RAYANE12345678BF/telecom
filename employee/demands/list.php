@@ -504,7 +504,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                     <i class="fas fa-home"></i>
                     <span class="menu-text">Accueil</span>
                 </a>
-                <a href="<?= url('admin/profile.php') ?>" class="menu-item">
+                <a href="<?= url('employee/profile.php') ?>" class="menu-item">
                     <i class="fas fa-user-circle"></i>
                     <span class="menu-text">Mon Profil</span>
                 </a>
@@ -570,12 +570,13 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                 </a>
             </div>
         </div>
-        <div class="user-section">
+        <form action="<?= url('actions/auth.php') ?>" method="post" class="user-section">
+            <input type="hidden" value="logout" name="action" />
             <div class="user-avatar">
                 <i class="fas fa-sign-in-alt"></i>
             </div>
-            <span>Se déconnecter</span>
-        </div>
+            <button type="submit" style="border : none">Se déconnecter</button>
+        </form>
     </div>
 
     <!-- Top Navbar -->
