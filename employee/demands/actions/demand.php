@@ -19,7 +19,7 @@ switch( $demand_type ){
         $start_date = $_POST['start_date'] ?? null;
         $end_date = $_POST['end_date'] ?? null;
         $info = $_POST['info'] ?? null;
-        $status = 'waiting'
+        $status = 'waiting';
 
         $demand_id = demand( $_SESSION['user_id'], $duree, $description, $start_date, $end_date, $info );
         $_SESSION['status'] = 'sucessfully demand send';
