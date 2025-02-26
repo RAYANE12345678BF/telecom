@@ -712,7 +712,7 @@ $user = fetch_user_information($_SESSION['user_id']);
                 <i class="fas fa-home"></i>
                 <span>Accueil</span>
             </a>
-            <a href="profile_employe.html" class="menu-item">
+            <a href="<?= url('admin/profile.php') ?>" class="menu-item">
                 <i class="fas fa-user-circle"></i>
                 <span>Mon Profil</span>
             </a>

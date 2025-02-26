@@ -804,7 +804,7 @@ $user_demands = get_users_demands();
                     <i class="fas fa-home"></i>
                     <span>Accueil</span>
                 </a>
-                <a href="profile_admin1.html" class="menu-item">
+                <a href="<?= url('admin/profile.php') ?>" class="menu-item">
                     <i class="fas fa-user-circle"></i>
                     <span>Mon Profil</span>
                 </a>
