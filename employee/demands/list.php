@@ -557,13 +557,9 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                             <span class="menu-text">Demande Sortie</span>
                         </a>
                     </div>
-                    <a href="etat_demande_admin1.html" class="menu-item active">
+                    <a href="#" class="menu-item active">
                         <i class="fas fa-tasks"></i>
                         <span class="menu-text">État de demande</span>
-                    </a>
-                    <a href="<?= url('admin/demands/consulte.php') ?>" class="menu-item">
-                        <i class="fas fa-eye"></i>
-                        <span class="menu-text">Consulter Demande</span>
                     </a>
                 </div>
                 
