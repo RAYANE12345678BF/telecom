@@ -11,7 +11,9 @@ redirect_if_not_auth();
 
 $user = $_SESSION['user'];
 
-$notifications = get_notifications($_SESSION['user_id']);
+//$notifications = get_notifications($_SESSION['user_id']);
+
+$user_requests = fetch_creation_demands();
 
 $redPin = count(array_filter($notifications, function($v, $i){
     return $v['read_state'] == 0;
@@ -810,15 +812,15 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             <!-- start a notification with two actions (accept/reject) -->
             
 
-            <?php foreach($notifications as $notification): ?>
-                <a href="<?= $notification['url'] ?>" class="flex flex-col space-y-2 items-center justify-between p-2 <?= $notification['read_state'] == 0 ? 'bg-gray-50' : 'bg-gray-100' ?> hover:bg-gray-200 duration-300 ease-in-out rounded-lg">
+            <?php foreach($user_requests as $notification): ?>
+                <a href="<?= url('admin/employees_requests') ?>" class="flex flex-col space-y-2 items-center justify-between p-2 <?= $notification['read_state'] == 0 ? 'bg-gray-50' : 'bg-gray-100' ?> hover:bg-gray-200 duration-300 ease-in-out rounded-lg">
                 <div class="flex items-center space-x-2">
                     <div class="flex items-center justify-center w-10 h-10 bg-gray-300 rounded-full">
                         <i class="fas fa-user"></i>
                     </div>
                     <div>
-                        <p class="text-sm font-semibold"><?= $notification['title'] ?></p>
-                        <p class="text-xs text-gray-500"><?= $notification['description'] ?></p>
+                        <p class="text-sm font-semibold">demand de creation : <?= $notification['nom']  ?></p>
+                        <p class="text-xs text-gray-500"><?= $notification['prenom'] ?> ask for creation d'un compte</p>
                     </div>
                 </div>
                 <div class="flex items-center space-x-2">
@@ -1208,7 +1210,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                 });
         }
 
-        let m = setInterval(pollNotifications, poll_interval);
+        //let m = setInterval(pollNotifications, poll_interval);
     </script>
 
     <?php if (isset($_SESSION['status'])): ?>

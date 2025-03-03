@@ -1,6 +1,7 @@
 <?php 
 
 
+
 if( ! function_exists('get_user_demands') ){
     function get_user_demands(string $user_id){
         $db = load_db();
