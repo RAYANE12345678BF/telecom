@@ -28,6 +28,13 @@ if (! function_exists('login')){
             ];
         }
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if( $user['compte_vailid'] != 1 ){
+            return [
+                'error' => 'Account is not activated'
+            ];
+        }
+        
         unset($user['password']);
 
         return $user;

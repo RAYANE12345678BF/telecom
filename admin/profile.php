@@ -813,7 +813,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             
 
             <?php foreach($user_requests as $notification): ?>
-                <a href="<?= url('admin/employees_requests') ?>" class="flex flex-col space-y-2 items-center justify-between p-2 <?= $notification['read_state'] == 0 ? 'bg-gray-50' : 'bg-gray-100' ?> hover:bg-gray-200 duration-300 ease-in-out rounded-lg">
+                <a href="<?= url('admin/employees_requests.php') ?>" class="flex flex-col space-y-2 items-center justify-between p-2 <?= true ? 'bg-gray-50' : 'bg-gray-100' ?> hover:bg-gray-200 duration-300 ease-in-out rounded-lg">
                 <div class="flex items-center space-x-2">
                     <div class="flex items-center justify-center w-10 h-10 bg-gray-300 rounded-full">
                         <i class="fas fa-user"></i>
