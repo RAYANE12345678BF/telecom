@@ -603,6 +603,13 @@ redirect_if_auth();
     <?php unset($_SESSION['error']);
     endif; ?>
 
+<?php if (isset($_SESSION['info'])): ?>
+        <script>
+            alert("<?php echo $_SESSION['info'] ?>")
+        </script>
+    <?php unset($_SESSION['info']);
+    endif; ?>
+
 </body>
 
 </html>

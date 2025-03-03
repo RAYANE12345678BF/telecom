@@ -15,9 +15,9 @@ $user = $_SESSION['user'];
 
 $user_requests = fetch_creation_demands();
 
-$redPin = count(array_filter($notifications, function($v, $i){
+/* $redPin = count(array_filter($notifications, function($v, $i){
     return $v['read_state'] == 0;
-}, ARRAY_FILTER_USE_BOTH)) > 0;
+}, ARRAY_FILTER_USE_BOTH)) > 0; */
 
 $user = fetch_user_information($_SESSION['user_id']);
 
