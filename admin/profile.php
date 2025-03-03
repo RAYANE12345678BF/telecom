@@ -1,23 +1,31 @@
-<?php 
+<?php
 include __DIR__ . '/../vendor/autoload.php';
 
-if( ! session_id() ){
+if (! session_id()) {
+    
     session_start();
+
 }
 
 redirect_if_not_auth();
 
 $user = $_SESSION['user'];
 
+$notifications = get_notifications($_SESSION['user_id']);
+
+$redPin = count(array_filter($notifications, function($v, $i){
+    return $v['read_state'] == 0;
+}, ARRAY_FILTER_USE_BOTH)) > 0;
+
 $user = fetch_user_information($_SESSION['user_id']);
 
 $user_demands = get_user_demands($_SESSION['user_id']);
-
 
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,6 +33,10 @@ $user_demands = get_user_demands($_SESSION['user_id']);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs-notify@latest/dist/notifications.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     <style>
         :root {
             --primary-color: #003366;
@@ -139,7 +151,8 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             font-weight: 500;
         }
 
-        .sidebar a:hover, .sidebar .active {
+        .sidebar a:hover,
+        .sidebar .active {
             background: var(--hover-color);
             transform: translateX(5px);
             color: var(--primary-color);
@@ -508,7 +521,8 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             font-weight: 500;
         }
 
-        .field-value input, .field-value select {
+        .field-value input,
+        .field-value select {
             width: 100%;
             padding: 8px;
             border: 1px solid #ddd;
@@ -518,7 +532,8 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             background-color: white;
         }
 
-        .field-value input:focus, .field-value select:focus {
+        .field-value input:focus,
+        .field-value select:focus {
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 2px rgba(0, 51, 102, 0.1);
@@ -529,7 +544,8 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                 width: 80px;
             }
 
-            .logo-text, .menu-text {
+            .logo-text,
+            .menu-text {
                 display: none;
             }
 
@@ -556,7 +572,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                 grid-template-columns: 1fr;
             }
         }
-          
+
         /* Styles pour le menu déroulant de messagerie */
         .messenger-dropdown {
             display: none;
@@ -666,11 +682,18 @@ $user_demands = get_user_demands($_SESSION['user_id']);
         }
     </style>
 </head>
-<body>
+
+<body class="relative">
+    <div id="bottomLeft" class="fixed bottom-4 left-4 max-w-xs space-y-2"></div>
+
     <!-- Navigation Sidebar -->
-    <div class="sidebar">
+    <div x-data class="sidebar">
         <div class="sidebar-header">
-            <div class="logo">
+            <div @click="setTimeout(() => $notify('Nihil distinctio suscipit iste impedit magnam eius iure culpa mollitia tenetur', {
+      wrapperId: 'bottomLeft',
+      templateId: 'alertStandard',
+      autoRemove: 3000
+    }), 2000)" class="logo">
                 <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
                 <span class="logo-text">DjazairRH</span>
             </div>
@@ -686,7 +709,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                     <i class="fas fa-user-circle"></i>
                     <span class="menu-text">Mon Profil</span>
                 </a>
-                
+
                 <div class="nav-title">Demandes</div>
                 <div class="request-section">
                     <a href="#" class="menu-item" id="faireDemandeBtn">
@@ -744,7 +767,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                         <span class="menu-text">Consulter Demande</span>
                     </a>
                 </div>
-                
+
                 <div class="nav-title">Autres</div>
                 <a href="support_admin1.html" class="menu-item">
                     <i class="fas fa-question-circle"></i>
@@ -762,44 +785,70 @@ $user_demands = get_user_demands($_SESSION['user_id']);
     </div>
 
     <!-- Top Navbar -->
-<nav class="navbar">
-    <div class="nav-icons">
-        <div class="icon-wrapper" onclick="toggleNotifications()">
-            <i class="fa-solid fa-bell"></i>
-            <!-- Badge pour les notifications non lues -->
-            <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
-        </div>
-        <div class="icon-wrapper" onclick="toggleMessenger()">
-            <i class="fa-brands fa-facebook-messenger"></i>
-        </div>
-    </div>
-</nav>
+    <nav class="navbar">
+        <div class="nav-icons">
+            <div class="icon-wrapper relative" onclick="toggleNotifications()">
+                <i class="fa-solid fa-bell"></i>
+                <span id="notify-red" class="w-1.5 h-1.5 bg-red-500 rounded-full top-1/4 right-1/4 absolute <?= $redPin ? 'block' : 'hidden' ?>">
 
-<!-- Menu déroulant des notifications -->
-<div class="notification-dropdown" id="notificationDropdown">
-    <div class="no-notifications">
+                </span>
+                <!-- Badge pour les notifications non lues -->
+                <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+            </div>
+            <div class="icon-wrapper" onclick="toggleMessenger()">
+                <i class="fa-brands fa-facebook-messenger"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Menu déroulant des notifications -->
+    <div class="notification-dropdown" id="notificationDropdown">
+        <!-- <div class="no-notifications">
         Aucune notification pour le moment.
-    </div>
-</div>
+    </div> -->
+        <div class="w-full flex flex-col space-y-1" id="notifications-container">
+            <!-- start a notification with two actions (accept/reject) -->
+            
 
-<!-- Menu déroulant de messagerie -->
-<div class="messenger-dropdown" id="messengerDropdown">
-    <div class="messenger-header">
-        Messagerie
-    </div>
-    <div class="messenger-body">
-        <ul class="contact-list" id="contactList">
-            <!-- Aucun contact pour l'instant -->
-        </ul>
-        <div class="no-messages" id="noMessages">
-            <i class="fas fa-comment-slash"></i>
-            <p>Aucun message pour le moment.</p>
+            <?php foreach($notifications as $notification): ?>
+                <a href="<?= $notification['url'] ?>" class="flex flex-col space-y-2 items-center justify-between p-2 <?= $notification['read_state'] == 0 ? 'bg-gray-50' : 'bg-gray-100' ?> hover:bg-gray-200 duration-300 ease-in-out rounded-lg">
+                <div class="flex items-center space-x-2">
+                    <div class="flex items-center justify-center w-10 h-10 bg-gray-300 rounded-full">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold"><?= $notification['title'] ?></p>
+                        <p class="text-xs text-gray-500"><?= $notification['description'] ?></p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button class="px-3 py-1 text-xs text-white bg-green-500 rounded-lg" onclick="pollNotifications()">Accepter</button>
+                    <button class="px-3 py-1 text-xs text-white bg-red-500 rounded-lg">Rejeter</button>
+                </div>
+            </a>
+            <?php endforeach; ?>
+            <!-- end a notification with two actions (accept/reject) -->
         </div>
     </div>
-    <div class="messenger-footer">
-        <input type="text" placeholder="Entrez un nom">
-    </div>
+
+    <!-- Menu déroulant de messagerie -->
+    <div class="messenger-dropdown" id="messengerDropdown">
+        <div class="messenger-header">
+            Messagerie
         </div>
+        <div class="messenger-body">
+            <ul class="contact-list" id="contactList">
+                <!-- Aucun contact pour l'instant -->
+            </ul>
+            <div class="no-messages" id="noMessages">
+                <i class="fas fa-comment-slash"></i>
+                <p>Aucun message pour le moment.</p>
+            </div>
+        </div>
+        <div class="messenger-footer">
+            <input type="text" placeholder="Entrez un nom">
+        </div>
+    </div>
     </nav>
 
 
@@ -820,7 +869,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                     <div class="profile-info">
                         <div class="info-item">
                             <i class="fas fa-envelope"></i>
-                            <input value="<?= $user['email_professionnel'] ?>"  type="email" placeholder="Email professionnel">
+                            <input value="<?= $user['email_professionnel'] ?>" type="email" placeholder="Email professionnel">
                         </div>
                         <div class="info-item">
                             <i class="fas fa-phone"></i>
@@ -1020,7 +1069,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             e.preventDefault();
             let submenu = document.querySelector(".submenu");
             let icon = this.querySelector(".fa-chevron-right");
-            
+
             if (submenu.style.display === "flex") {
                 submenu.style.display = "none";
                 icon.style.transform = "rotate(0deg)";
@@ -1034,7 +1083,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             e.preventDefault();
             let subSubmenu = document.querySelector(".sub-submenu");
             let icon = this.querySelector(".fa-chevron-right");
-            
+
             if (subSubmenu.style.display === "flex") {
                 subSubmenu.style.display = "none";
                 icon.style.transform = "rotate(0deg)";
@@ -1048,7 +1097,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             e.preventDefault();
             let subSubSubmenu = document.querySelector(".sub-sub-submenu");
             let icon = this.querySelector(".fa-chevron-right");
-            
+
             if (subSubSubmenu.style.display === "flex") {
                 subSubSubmenu.style.display = "none";
                 icon.style.transform = "rotate(0deg)";
@@ -1061,22 +1110,26 @@ $user_demands = get_user_demands($_SESSION['user_id']);
         function validateName(value) {
             // Validation logic here
         }
+
         function validateDates(depart, retour) {
             // Validation logic here
         }
+
         function showError(elementId, show) {
             // Show error logic here
         }
+
         function handleSubmit(event) {
             event.preventDefault();
             // Form submission logic here
         }
+
         function handlePrint() {
             // Print logic here
         }
         document.getElementById('printButton').addEventListener('click', function() {
-        window.print();
-    });
+            window.print();
+        });
 
         // Fonction pour afficher/masquer les notifications
         function toggleNotifications() {
@@ -1117,15 +1170,58 @@ $user_demands = get_user_demands($_SESSION['user_id']);
         });
     </script>
 
-<?php if( isset($_SESSION['status']) ): ?>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    Swal.fire({
-        title: "demand deposé!",
-        text: "le demand deposé avec succes!",
-        icon: "success"
-    });
-</script>
-<?php unset($_SESSION['status']);endif; ?>
+
+    <script>
+        const notifyContainer = document.querySelector('#notifications-container');
+        const poll_interval = 2000; // 10 seconds
+        function pollNotifications(){
+            fetch('<?= url('actions/notifications.php') ?>')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    if(data.filter(notification => notification.read_state == 0).length){
+                        document.getElementById('notify-red').style.display = 'block';
+                    }
+                    if(data.length == notifyContainer.children.length) return;
+                    notifyContainer.innerHTML = '';
+                    data.forEach(notification => {
+                        const notificationItem = document.createElement('a');
+                        notificationItem.href = notification.url;
+                        notificationItem.classList.add("flex","flex-col","space-y-2","items-center","justify-between","p-2","bg-gray-100","hover:bg-gray-200","duration-300","ease-in-out","rounded-lg");
+                        notificationItem.innerHTML = `
+                            <div class="flex items-center space-x-2">
+                                <div class="flex items-center justify-center w-10 h-10 bg-gray-300 rounded-full">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold">${notification.title}</p>
+                                    <p class="text-xs text-gray-500">${notification.description}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button class="px-3 py-1 text-xs text-white bg-green-500 rounded-lg">Accepter</button>
+                                <button class="px-3 py-1 text-xs text-white bg-red-500 rounded-lg">Rejeter</button>
+                            </div>
+                        `;
+                        notifyContainer.appendChild(notificationItem);
+                    });
+                });
+        }
+
+        let m = setInterval(pollNotifications, poll_interval);
+    </script>
+
+    <?php if (isset($_SESSION['status'])): ?>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            Swal.fire({
+                title: "demand deposé!",
+                text: "le demand deposé avec succes!",
+                icon: "success"
+            });
+        </script>
+    <?php unset($_SESSION['status']);
+    endif; ?>
 </body>
+
 </html>

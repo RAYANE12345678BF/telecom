@@ -45,9 +45,9 @@ switch ($action) {
             $_SESSION['error'] = $user['error'];
             redirect_back();
         }else{
-            $user = get_user($user['user_id']);
-            save_user($user);
-            redirect(url('dashboard/index.php'));
+            //push_user_creation_notification();
+            $_SESSION['info'] = "wait for grh to activate your account";
+            redirect_back();
         }
 
         break;

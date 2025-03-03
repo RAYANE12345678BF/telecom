@@ -2,19 +2,19 @@
 
 namespace Rayan\Dzgrh\DB;
 
+use Rayan\Dzgrh\DB;
+
 class Model
 {
     protected array $fillable = [];
 
-    protected static string $table;
+    public static function create(array $attributes) : static
+    {
+        DB::table(static::getTable())
+    }
 
-    protected static string $primaryKey = 'id';
-
-    public static function find($id){
-        $builder = new QueryBuilder();
-
-        $builder->table(static::$table)
-            ->select(static::$table . '.*')
-            ->where(static::$primaryKey, '=', $id);
+    public static function getTable() : string
+    {
+        return static::$table ?? 
     }
 }

@@ -2,18 +2,20 @@
 
 include __DIR__ . '/../vendor/autoload.php';
 
-if( !session_id() ){
+if (!session_id()) {
     session_start();
 }
 
 
 redirect_if_auth();
+
 ?>
 
 
 
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -163,11 +165,25 @@ redirect_if_auth();
             }
         }
 
-        .form-group:nth-child(1) { animation-delay: 0.1s; }
-        .form-group:nth-child(2) { animation-delay: 0.2s; }
-        .form-group:nth-child(3) { animation-delay: 0.3s; }
-        .form-group:nth-child(4) { animation-delay: 0.4s; }
-        .form-group:nth-child(5) { animation-delay: 0.5s; }
+        .form-group:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .form-group:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .form-group:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .form-group:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .form-group:nth-child(5) {
+            animation-delay: 0.5s;
+        }
 
         .input-field {
             width: 100%;
@@ -198,7 +214,7 @@ redirect_if_auth();
             pointer-events: none;
         }
 
-        .input-field:focus + i {
+        .input-field:focus+i {
             color: var(--secondary-color);
         }
 
@@ -317,7 +333,8 @@ redirect_if_auth();
                 max-width: 600px;
             }
 
-            .left-side, .right-side {
+            .left-side,
+            .right-side {
                 padding: 20px;
             }
 
@@ -347,220 +364,245 @@ redirect_if_auth();
         }
     </style>
 </head>
+
 <body>
-<div class="wrapper">
-    <div class="left-side" style="display: flex; flex-direction: column; justify-content: flex-start;">
-        <div class="welcome-text" style="flex: 1; padding-right: 20px;">
-            <h2 style="color: var(--primary-color); font-weight: 700; text-align: left;">Bienvenue!</h2>
-            <p style="font-size: 1.1em; color: var(--text-primary); line-height: 1.5; text-align: left;">
-                Créez votre compte pour accéder à toutes les fonctionnalités de notre application. Remplissez le formulaire à droite pour commencer.
-            </p>
-            <img src="algtl.png" alt="Description of image" style="width: 100%; height: auto; margin-top: 20px;">
-        </div>
-    </div>
-    <div class="right-side">
-        <div class="form-container">
-            <div class="form-header" style="display: flex; justify-content: center; align-items: center;">
-                <img src="logo_djazairRH.jpg" alt="Logo" class="logo" style="width: 100px; height: auto; margin-bottom: 20px;">
+    <div class="wrapper">
+        <div class="left-side" style="display: flex; flex-direction: column; justify-content: flex-start;">
+            <div class="welcome-text" style="flex: 1; padding-right: 20px;">
+                <h2 style="color: var(--primary-color); font-weight: 700; text-align: left;">Bienvenue!</h2>
+                <p style="font-size: 1.1em; color: var(--text-primary); line-height: 1.5; text-align: left;">
+                    Créez votre compte pour accéder à toutes les fonctionnalités de notre application. Remplissez le formulaire à droite pour commencer.
+                </p>
+                <img src="algtl.png" alt="Description of image" style="width: 100%; height: auto; margin-top: 20px;">
             </div>
-            <form onsubmit="return validateForm()" action="<?php echo url('actions/auth.php') ?>" method="post">
-                <input type="hidden" value="register" name="action">
-                <div class="form-group">
-                    <i class="fas fa-user"></i>
-                    <input name="nom" type="text" class="input-field" id="nom" placeholder="Nom" required>
+        </div>
+        <div class="right-side">
+            <div class="form-container">
+                <div class="form-header" style="display: flex; justify-content: center; align-items: center;">
+                    <img src="logo_djazairRH.jpg" alt="Logo" class="logo" style="width: 100px; height: auto; margin-bottom: 20px;">
                 </div>
-                <div class="form-group">
-                    <i class="fas fa-user"></i>
-                    <input name="prenom" type="text" class="input-field" id="prenom" placeholder="Prénom" required>
-                </div>
-                <div class="form-group">
-                    <i class="fas fa-envelope"></i>
-                    <input name="email" type="email" class="input-field" id="email" placeholder="Email professionnel" required>
-                </div>
-                <div class="form-group">
-                    <i class="fas fa-lock"></i>
-                    <input name="password" type="password" class="input-field" id="password" placeholder="Mot de passe" required>
-                </div>
-                <div class="form-group">
-                    <i class="fas fa-lock"></i>
-                    <input name="password_confirmation" type="password" class="input-field" id="confirmPassword" placeholder="Confirmer le mot de passe" required>
-                </div>
-                <div class="form-group">
-                    <label for="departement">Département</label>
-                    <select name="department" id="departement" class="input-field" onchange="populateServices()" required>
-                        <option value="">Sélectionnez un département</option>
-                        <option value="direction_op">Direction Opérationnelle</option>
-                        <option value="sous_direction_tech">Sous-Direction Technique</option>
-                        <option value="sous_direction_com">Sous-Direction Commerciale</option>
-                        <option value="sous_direction_fonctions">Sous-Direction Fonctions</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="service">Service</label>
-                    <select name="service" id="service" class="input-field" required>
-                        <option value="">Sélectionnez un service</option>
-                    </select>
-                </div>
-                <div class="role-section">
-                    <div class="role-title"><i class="fas fa-briefcase"></i> Position dans l'entreprise</div>
+                <form onsubmit="return validateForm()" action="<?php echo url('actions/auth.php') ?>" method="post">
+                    <input type="hidden" value="register" name="action">
                     <div class="form-group">
-                        <select name="role" class="input-field" id="role" required>
-                            <option value="">Sélectionnez votre rôle</option>
-                            <option value="employe">Employé</option>
-                            <option value="chef_service">Chef de Service</option>
-                            <option value="chef_departement">Chef de Département</option>
-                            <option value="sous_directeur">Sous-Directeur</option>
-                            <option value="directeur">Directeur</option>
+                        <i class="fas fa-user"></i>
+                        <input name="nom" type="text" class="input-field" id="nom" placeholder="Nom" required>
+                    </div>
+                    <div class="form-group">
+                        <i class="fas fa-user"></i>
+                        <input name="prenom" type="text" class="input-field" id="prenom" placeholder="Prénom" required>
+                    </div>
+                    <div class="form-group">
+                        <i class="fas fa-envelope"></i>
+                        <input name="email" type="email" class="input-field" id="email" placeholder="Email professionnel" required>
+                    </div>
+                    <div class="form-group">
+                        <i class="fas fa-lock"></i>
+                        <input name="password" type="password" class="input-field" id="password" placeholder="Mot de passe" required>
+                    </div>
+                    <div class="form-group">
+                        <i class="fas fa-lock"></i>
+                        <input name="password_confirmation" type="password" class="input-field" id="confirmPassword" placeholder="Confirmer le mot de passe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="departement">Département</label>
+                        <select name="department" id="departement" class="input-field" onchange="populateServices()" required>
+                            <option value="">Sélectionnez un département</option>
+                            <option value="direction_op">Direction Opérationnelle</option>
+                            <option value="sous_direction_tech">Sous-Direction Technique</option>
+                            <option value="sous_direction_com">Sous-Direction Commerciale</option>
+                            <option value="sous_direction_fonctions">Sous-Direction Fonctions</option>
                         </select>
                     </div>
-                    <div class="role-info">
-                        <i class="fas fa-info-circle"></i>
-                        Votre compte devra être validé par la DRH avant activation
+                    <div class="form-group">
+                        <label for="service">Service</label>
+                        <select name="service" id="service" class="input-field" required>
+                            <option value="">Sélectionnez un service</option>
+                        </select>
                     </div>
-                </div>
-                <button type="submit" class="btn">
-                    <i class="fas fa-user-plus"></i> S'inscrire
-                </button>
-                <p style="text-align: center; margin-top: 10px;">
-                    <a href="<?php echo url('actions/auth.php') ?>" target="_blank" style="color: var(--secondary-color);">J'ai déjà un compte</a>
-                </p>
-            </form>
+                    <div class="role-section">
+                        <div class="role-title"><i class="fas fa-briefcase"></i> Position dans l'entreprise</div>
+                        <div class="form-group">
+                            <select name="role" class="input-field" id="role" required>
+                                <option value="">Sélectionnez votre rôle</option>
+                                <option value="employe">Employé</option>
+                                <option value="chef_service">Chef de Service</option>
+                                <option value="chef_departement">Chef de Département</option>
+                                <option value="sous_directeur">Sous-Directeur</option>
+                            </select>
+                        </div>
+                        <div class="role-info">
+                            <i class="fas fa-info-circle"></i>
+                            Votre compte devra être validé par la DRH avant activation
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">
+                        <i class="fas fa-user-plus"></i> S'inscrire
+                    </button>
+                    <p style="text-align: center; margin-top: 10px;">
+                        <a href="<?php echo url('actions/auth.php') ?>" target="_blank" style="color: var(--secondary-color);">J'ai déjà un compte</a>
+                    </p>
+                </form>
+            </div>
         </div>
     </div>
-</div>
-</div>
-<script>
-    function validateForm() {
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-        const email = document.getElementById('email').value;
-        const role = document.getElementById('role').value;
-        const departement = document.getElementById('departement').value;
-        const service = document.getElementById('service').value;
-
-        if (password !== confirmPassword) {
-            alert("Les mots de passe ne correspondent pas!");
-            return false;
+    </div>
+    <script>
+        function validateName(name) {
+            const regex = /^[A-Za-z]+(?:\s[A-Za-z]+)*$/;
+            return regex.test(name);
         }
 
-        if (!email.includes('@')) {
-            alert("Veuillez entrer une adresse email valide!");
-            return false;
+        function validateEmail(email) {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return regex.test(email);
         }
 
-        if (!role) {
-            alert("Veuillez sélectionner votre rôle dans l'entreprise!");
-            return false;
+        function validateForm() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const email = document.getElementById('email').value;
+            const role = document.getElementById('role').value;
+            const departement = document.getElementById('departement').value;
+            const service = document.getElementById('service').value;
+            const nom = document.getElementById('nom').value
+            const prenom = document.getElementById('prenom').value
+
+            if (password !== confirmPassword) {
+                alert("Les mots de passe ne correspondent pas!");
+                return false;
+            }
+
+            if (!validateName(nom)) {
+                alert("Veuillez entrer un nom valide!");
+                return false
+            }
+
+            if (!validateName(prenom)) {
+                alert("Veuillez entrer un prénom valide!");
+                return false
+            }
+
+            if (! validateEmail(email)) {
+                alert("Veuillez entrer une adresse email valide!");
+                return false;
+            }
+
+            if (!role) {
+                alert("Veuillez sélectionner votre rôle dans l'entreprise!");
+                return false;
+            }
+
+            if (!departement) {
+                alert("Veuillez sélectionner votre département!");
+                return false;
+            }
+
+            if (!service) {
+                alert("Veuillez entrer votre service!");
+                return false;
+            }
+
+            const userData = {
+                nom: document.getElementById('nom').value,
+                prenom: document.getElementById('prenom').value,
+                email: email,
+                role: role,
+                departement: departement,
+                service: service,
+                status: 'pending',
+                permissions: getRolePermissions(role)
+            };
+
+            console.log('Données utilisateur:', userData);
+            alert('Inscription réussie! Votre compte est en attente de validation par la DRH.');
+            return true
         }
 
-        if (!departement) {
-            alert("Veuillez sélectionner votre département!");
-            return false;
+        function getRolePermissions(role) {
+            const basePermissions = {
+                faire_demandes: true,
+                consulter_demandes_perso: true,
+                recevoir_notifications: true,
+                voir_pointage_perso: true,
+                messagerie_interne: true
+            };
+
+            const adminPermissions = {
+                ...basePermissions,
+                consulter_demandes_service: true,
+                valider_demandes: true,
+                voir_pointage_service: true
+            };
+
+            const directeurPermissions = {
+                ...adminPermissions,
+                voir_toutes_demandes: true,
+                voir_tout_pointage: true
+            };
+
+            const drhPermissions = {
+                ...directeurPermissions,
+                gerer_comptes: true,
+                valider_inscriptions: true,
+                modifier_employes: true,
+                attribuer_roles: true
+            };
+
+            switch (role) {
+                case 'employe':
+                    return basePermissions;
+                case 'chef_service':
+                case 'chef_departement':
+                case 'sous_directeur':
+                    return adminPermissions;
+                case 'directeur':
+                    return directeurPermissions;
+                case 'drh':
+                    return drhPermissions;
+                default:
+                    return basePermissions;
+            }
         }
 
-        if (!service) {
-            alert("Veuillez entrer votre service!");
-            return false;
+        function populateServices() {
+            const departement = document.getElementById('departement').value;
+            const serviceSelect = document.getElementById('service');
+            serviceSelect.innerHTML = '<option value="">Sélectionnez un service</option>';
+
+            let services;
+            switch (departement) {
+                case 'direction_op':
+                    services = ["Service Sûreté", "Chargé de la communication", "Écoles Régionales Télécommunications", "Établissements Communaux des Systèmes d’Information"];
+                    break;
+                case 'sous_direction_tech':
+                    services = ["Département Planification et Suivi", "Département Réseau d’Accès", "Département Réseau de Transport"];
+                    break;
+                case 'sous_direction_com':
+                    services = ["Département Planification et Suivi", "Département Vente Grand Public", "Département Corporate", "Département Support Commercial"];
+                    break;
+                case 'sous_direction_fonctions':
+                    services = ["Département Achats et Logistique", "Département Finance et Comptabilité", "Département RH", "Département Patrimoine et Moyens", "Service Juridique", "Service Support SI"];
+                    break;
+                default:
+                    services = [];
+            }
+
+            services.forEach(service => {
+                const option = document.createElement('option');
+                option.value = service;
+                option.textContent = service;
+                serviceSelect.appendChild(option);
+            });
         }
+    </script>
 
-        const userData = {
-            nom: document.getElementById('nom').value,
-            prenom: document.getElementById('prenom').value,
-            email: email,
-            role: role,
-            departement: departement,
-            service: service,
-            status: 'pending',
-            permissions: getRolePermissions(role)
-        };
+    <?php if (isset($_SESSION['error'])): ?>
+        <script>
+            alert("<?php echo $_SESSION['error'] ?>")
+        </script>
+    <?php unset($_SESSION['error']);
+    endif; ?>
 
-        console.log('Données utilisateur:', userData);
-        alert('Inscription réussie! Votre compte est en attente de validation par la DRH.');
-        return true
-    }
-
-    function getRolePermissions(role) {
-        const basePermissions = {
-            faire_demandes: true,
-            consulter_demandes_perso: true,
-            recevoir_notifications: true,
-            voir_pointage_perso: true,
-            messagerie_interne: true
-        };
-
-        const adminPermissions = {
-            ...basePermissions,
-            consulter_demandes_service: true,
-            valider_demandes: true,
-            voir_pointage_service: true
-        };
-
-        const directeurPermissions = {
-            ...adminPermissions,
-            voir_toutes_demandes: true,
-            voir_tout_pointage: true
-        };
-
-        const drhPermissions = {
-            ...directeurPermissions,
-            gerer_comptes: true,
-            valider_inscriptions: true,
-            modifier_employes: true,
-            attribuer_roles: true
-        };
-
-        switch (role) {
-            case 'employe':
-                return basePermissions;
-            case 'chef_service':
-            case 'chef_departement':
-            case 'sous_directeur':
-                return adminPermissions;
-            case 'directeur':
-                return directeurPermissions;
-            case 'drh':
-                return drhPermissions;
-            default:
-                return basePermissions;
-        }
-    }
-
-    function populateServices() {
-        const departement = document.getElementById('departement').value;
-        const serviceSelect = document.getElementById('service');
-        serviceSelect.innerHTML = '<option value="">Sélectionnez un service</option>';
-
-        let services;
-        switch (departement) {
-            case 'direction_op':
-                services = ["Service Sûreté", "Chargé de la communication", "Écoles Régionales Télécommunications", "Établissements Communaux des Systèmes d’Information"];
-                break;
-            case 'sous_direction_tech':
-                services = ["Département Planification et Suivi", "Département Réseau d’Accès", "Département Réseau de Transport"];
-                break;
-            case 'sous_direction_com':
-                services = ["Département Planification et Suivi", "Département Vente Grand Public", "Département Corporate", "Département Support Commercial"];
-                break;
-            case 'sous_direction_fonctions':
-                services = ["Département Achats et Logistique", "Département Finance et Comptabilité", "Département RH", "Département Patrimoine et Moyens", "Service Juridique", "Service Support SI"];
-                break;
-            default:
-                services = [];
-        }
-
-        services.forEach(service => {
-            const option = document.createElement('option');
-            option.value = service;
-            option.textContent = service;
-            serviceSelect.appendChild(option);
-        });
-    }
-</script>
-
-<?php if( isset($_SESSION['error']) ): ?>
-<script>
-    alert("<?php echo $_SESSION['error'] ?>")
-</script>
-<?php unset($_SESSION['error']);endif; ?>
 </body>
+
 </html>
