@@ -45,8 +45,9 @@ switch ($action) {
             $_SESSION['error'] = $user['error'];
             redirect_back();
         }else{
-            //push_user_creation_notification();
-            $_SESSION['info'] = "wait for grh to activate your account";
+            $grh_id = get_grh_id();
+            push_user_creation_notification($grh_id);
+            $_SESSION['info'] = "a notification has sent to the grh, and he will review ur account soon";
             redirect_back();
         }
 

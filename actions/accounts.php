@@ -3,7 +3,7 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 
-$type = $_POST['actions'] ?? 'activate';
+$type = $_POST['action'] ?? 'activate';
 $id = $_POST['user_id'] ?? '';
 
 if( empty($id) ){

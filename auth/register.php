@@ -439,7 +439,7 @@ redirect_if_auth();
                         <i class="fas fa-user-plus"></i> S'inscrire
                     </button>
                     <p style="text-align: center; margin-top: 10px;">
-                        <a href="<?php echo url('actions/auth.php') ?>" target="_blank" style="color: var(--secondary-color);">J'ai déjà un compte</a>
+                        <a href="<?php echo url('auth/login.php') ?>" target="_blank" style="color: var(--secondary-color);">J'ai déjà un compte</a>
                     </p>
                 </form>
             </div>

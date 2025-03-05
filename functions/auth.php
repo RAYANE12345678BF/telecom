@@ -29,7 +29,7 @@ if (! function_exists('login')){
         }
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if( $user['compte_vailid'] != 1 ){
+        if( $user['compte_valid'] != 1 ){
             return [
                 'error' => 'Account is not activated'
             ];

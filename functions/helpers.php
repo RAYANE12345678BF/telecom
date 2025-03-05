@@ -197,3 +197,17 @@ if( !function_exists('demand') ){
         return $db->lastInsertId();
     }
 }
+
+if( !function_exists('read_notification') ){
+    function read_notification($id){
+        $db = load_db();
+
+        $sql = "UPDATE `notifications` SET `read_state` = ? WHERE `id` = ?";
+
+        $result = $db->prepare($sql);
+
+        $result->execute(['1', $id]);
+
+        return $db->lastInsertId();
+    }
+}
