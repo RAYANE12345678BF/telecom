@@ -1,4 +1,29 @@
- <!DOCTYPE html>
+<?php
+
+include __DIR__ . '/../../../vendor/autoload.php';
+
+if (! session_id()) {
+    session_start();
+}
+
+redirect_if_not_auth();
+
+$user = $_SESSION['user'];
+
+$notifications = get_notifications($_SESSION['user_id']);
+
+$user_requests = fetch_creation_demands();
+
+$redPin = count(array_filter($notifications, function ($v, $i) {
+        return $v['read_state'] == 0;
+    }, ARRAY_FILTER_USE_BOTH)) > 0;
+
+$user = fetch_user_information($_SESSION['user_id']);
+
+$user_demands = get_user_demands($_SESSION['user_id']);
+
+?>
+<!DOCTYPE html>
  <html lang="fr">
 
  <head>
@@ -8,6 +33,11 @@
      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+     <script src="https://cdn.tailwindcss.com"></script>
+     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
+     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
      <style>
          :root {
              --primary-color: #003366;
@@ -415,7 +445,7 @@
              min-height: 100vh;
          }
 
-         .container {
+         .container-f {
              max-width: 48rem;
              margin: 0 auto;
              padding: 3rem 1rem;
@@ -740,7 +770,7 @@
                      <i class="fas fa-home"></i>
                      <span>Accueil</span>
                  </a>
-                 <a href="profile_admin1.html" class="menu-item">
+                 <a href="<?= url('admin/profile.php') ?>" class="menu-item">
                      <i class="fas fa-user-circle"></i>
                      <span>Mon Profil</span>
                  </a>
@@ -776,19 +806,19 @@
                                  </a>
                              </div>
                          </div>
-                         <a href="formation_admin1.html" class="menu-item">
+                         <a href="<?= url('admin/demands/formation') ?>" class="menu-item">
                              <i class="fas fa-graduation-cap"></i>
                              <span class="menu-text">Demande Formation</span>
                          </a>
-                         <a href="mission_admin1.html" class="menu-item">
+                         <a href="<?= url('admin/demands/mission') ?>" class="menu-item">
                              <i class="fas fa-plane"></i>
                              <span class="menu-text">Demande Ordre Mission</span>
                          </a>
-                         <a href="déplacement_admin1.html" class="menu-item">
+                         <a href="<?= url('admin/demands/deplacement') ?>" class="menu-item">
                              <i class="fas fa-car"></i>
                              <span class="menu-text">Demande Déplacement</span>
                          </a>
-                         <a href="sortie_admin1.html" class="menu-item">
+                         <a href="<?= url('admin/demands/leave') ?>" class="menu-item">
                              <i class="fas fa-door-open"></i>
                              <span class="menu-text">Demande Sortie</span>
                          </a>
@@ -859,12 +889,16 @@
      </nav>
 
      <div class="content">
-         <div class="container">
+         <div class="container-f">
              <div class="form-card">
                  <div class="header">
                      <h1 class="title"> Demande congé matarnité </h1>
                  </div>
-                 <form id="formConvocation" onsubmit="handleSubmit(event)">
+                 <form
+                         method="post"
+                         enctype="multipart/form-data"
+                         id="formConvocation" onsubmit="handleSubmit(event)"
+                         action="<?= url('admin/demands/actions/demand.php') ?>">
                      <div class="section">
                          <h3 class="section-title">Informations Personnelles</h3>
                          <div class="form-group">
@@ -893,17 +927,17 @@
                          <h3 class="section-title">Détails de congé</h3>
                          <div class="form-group">
                              <label class="form-label" for="durée">Durée</label>
-                             <input type="text" id="durée" class="form-input" value="3 mois" readonly>
+                             <input name="duree" type="text" id="durée" class="form-input" value="30" readonly>
                          </div>
 
                          <div class="form-group-row">
                              <div class="form-group">
                                  <label class="form-label" for="date-debut">Date début</label>
-                                 <input type="date" id="date-debut" class="form-input" required>
+                                 <input name="start_date" type="date" id="date-debut" class="form-input" required>
                              </div>
                              <div class="form-group">
                                  <label class="form-label" for="date-fin">Date de fin</label>
-                                 <input type="date" id="date-fin" class="form-input" required>
+                                 <input name="end_date" type="date" id="date-fin" class="form-input" required>
                              </div>
                          </div>
 
@@ -913,9 +947,8 @@
                          <h4 class="section-subtitle small-text"> ajoutez les papiers de la maternité ici s'il vous plait </h4>
                          <div class="form-group">
                              <label for="file-upload">Ou téléchargez un fichier (PDF ou image) :</label>
-                             <input type="file" id="file-upload" class="form-input" accept=".pdf, .jpg, .jpeg, .png">
+                             <input name="info" type="file" id="file-upload" class="form-input" accept=".pdf, .jpg, .jpeg, .png">
                          </div>
-
                      </div>
                      <div class="buttons-container" style="display: flex; justify-content: flex-end; gap: 10px;">
                          <button type="button" id="printButton" class="button button-secondary">
@@ -1157,6 +1190,17 @@
              }
          });
      </script>
+
+     <?php if (isset($_SESSION['error'])): ?>
+         <script>
+             Swal.fire({
+                 title: "demand failed!",
+                 text: "<?= $_SESSION['error'] ?>",
+                 icon: "error"
+             });
+         </script>
+         <?php unset($_SESSION['error']);
+     endif; ?>
  </body>
 
  </html>

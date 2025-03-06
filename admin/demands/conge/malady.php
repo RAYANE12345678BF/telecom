@@ -858,7 +858,6 @@
              <input type="text" placeholder="Entrez un nom">
          </div>
      </div>
-     </nav>
 
 
 
@@ -929,7 +928,6 @@
                              <span id="submitText">Soumettre</span>
                          </button>
                      </div>
-
 
                  </form>
              </div>

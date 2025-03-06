@@ -10,11 +10,11 @@ class Model
 
     public static function create(array $attributes) : static
     {
-        DB::table(static::getTable())
+        DB::table(static::getTable());
     }
 
     public static function getTable() : string
     {
-        return static::$table ?? 
+        return static::$table;
     }
 }

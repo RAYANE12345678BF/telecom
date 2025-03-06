@@ -1237,6 +1237,17 @@ $user_demands = get_user_demands($_SESSION['user_id']);
         </script>
     <?php unset($_SESSION['status']);
     endif; ?>
+
+    <?php if (isset($_SESSION['error'])): ?>
+        <script>
+            Swal.fire({
+                title: "demand failed!",
+                text: "<?= $_SESSION['error'] ?>",
+                icon: "error"
+            });
+        </script>
+        <?php unset($_SESSION['error']);
+    endif; ?>
 </body>
 
 </html>

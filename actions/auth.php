@@ -36,7 +36,7 @@ switch ($action) {
 
         $department_id = get_department_id($department);
         $service_id = get_service_id($service);
-        $role_id = get_role_id($role);
+        $role_id = $role;
 
 
         $user = register($prenom, $nom, $email, $password, $department_id, $service_id, $role_id);

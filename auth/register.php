@@ -9,6 +9,8 @@ if (!session_id()) {
 
 redirect_if_auth();
 
+$roles = get_roles();
+
 ?>
 
 
@@ -424,10 +426,11 @@ redirect_if_auth();
                         <div class="form-group">
                             <select name="role" class="input-field" id="role" required>
                                 <option value="">Sélectionnez votre rôle</option>
-                                <option value="employe">Employé</option>
-                                <option value="chef_service">Chef de Service</option>
-                                <option value="chef_departement">Chef de Département</option>
-                                <option value="sous_directeur">Sous-Directeur</option>
+                                <?php foreach($roles as $role): ?>
+
+                                    <option value="<?= $role['id'] ?>"><?= $role['nom'] ?></option>
+
+                                <?php endforeach ?>
                             </select>
                         </div>
                         <div class="role-info">

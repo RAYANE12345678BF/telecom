@@ -217,3 +217,17 @@ if( !function_exists('component') ){
         require_once __DIR__ . '/../components/' . trim($path, '/');
     }
 }
+
+if( !function_exists('get_roles') ){
+    function get_roles(){
+        $db = load_db();
+
+        $sql = "SELECT * FROM `roles`";
+
+        $stmt = $db->prepare($sql);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
