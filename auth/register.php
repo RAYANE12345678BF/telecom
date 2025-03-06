@@ -9,7 +9,9 @@ if (!session_id()) {
 
 redirect_if_auth();
 
-$roles = get_roles();
+$roles = array_filter(get_roles(), function($role) {
+    return in_array($role['nom'], ['GRH', 'Directeur']);
+});
 
 ?>
 
