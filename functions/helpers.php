@@ -137,7 +137,7 @@ if( !function_exists('get_address')){
         $db = load_db();
         $result = $db->prepare($sql);
         $result->execute([$address_id]);
-        return $result->fetch(PDO::FETCH_ASSOC);
+        return $result->fetch(PDO::FETCH_ASSOC) ?? [];
     }
 }
 
