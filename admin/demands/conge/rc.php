@@ -1,3 +1,6 @@
+<?php
+require_once __DIR__ . "/../../../vendor/autoload.php";
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -874,7 +877,12 @@
                 <div class="header">
                     <h1 class="title"> Demande congé RC </h1>
                 </div>
-                <form id="formConvocation" onsubmit="handleSubmit(event)">
+                <form
+                        method="post"
+                        enctype="multipart/form-data"
+                        id="formConvocation"
+                        action="<?= url('admin/demands/actions/demand.php') ?>">
+                    <input type="hidden" name="demand_type" value="conge_rc" />
                     <div class="section">
                         <h3 class="section-title">Informations Personnelles</h3>
                         <div class="form-group">
@@ -903,16 +911,16 @@
                         <h3 class="section-title">Détails de congé</h3>
                         <div class="form-group">
                             <label class="form-label" for="durée">durée</label>
-                            <input type="text" id="durée" class="form-input" required>
+                            <input name="duree" type="text" id="durée" class="form-input" required>
                         </div>
                         <div class="form-group-row">
                             <div class="form-group">
                                 <label class="form-label" for="date-debut">Date début</label>
-                                <input type="date" id="date-debut" class="form-input" required>
+                                <input name="start_date" type="date" id="date-debut" class="form-input" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="date-fin">Date de fin</label>
-                                <input type="date" id="date-fin" class="form-input" required>
+                                <input name="end_date" type="date" id="date-fin" class="form-input" required>
                             </div>
                         </div>
 

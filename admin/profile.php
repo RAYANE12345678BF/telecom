@@ -722,7 +722,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
         <div class="sidebar-content">
             <div class="menu-items">
                 <div class="nav-title">Principal</div>
-                <a href="accueil.html" class="menu-item">
+                <a href="<?= url('/') ?>" class="menu-item">
                     <i class="fas fa-home"></i>
                     <span class="menu-text">Accueil</span>
                 </a>
@@ -915,7 +915,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                     <div class="content-card">
                         <div class="card-header">
                             <h2 class="card-title">Informations Personnelles</h2>
-                            <button class="edit-button">
+                            <button onclick="" class="edit-button">
                                 <i class="fas fa-edit"></i>
                                 Modifier
                             </button>

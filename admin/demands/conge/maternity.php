@@ -897,8 +897,9 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                  <form
                          method="post"
                          enctype="multipart/form-data"
-                         id="formConvocation" onsubmit="handleSubmit(event)"
+                         id="formConvocation"
                          action="<?= url('admin/demands/actions/demand.php') ?>">
+                     <input type="hidden" name="demand_type" value="conge_maternity" />
                      <div class="section">
                          <h3 class="section-title">Informations Personnelles</h3>
                          <div class="form-group">
@@ -1042,8 +1043,9 @@ $user_demands = get_user_demands($_SESSION['user_id']);
          }
 
          function handleSubmit(event) {
-             event.preventDefault();
+             //event.preventDefault();
              // Form submission logic here
+             return true
          }
 
          function handlePrint() {

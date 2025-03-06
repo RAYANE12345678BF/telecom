@@ -1,3 +1,6 @@
+<?php
+require_once __DIR__ . "/../../../vendor/autoload.php";
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -863,7 +866,12 @@
                 <div class="header">
                     <h1 class="title">Demande de Formation</h1>
                 </div>
-                <form id="formConvocation" onsubmit="handleSubmit(event)">
+                <form
+                        method="post"
+                        enctype="multipart/form-data"
+                        id="formConvocation"
+                        action="<?= url('admin/demands/actions/demand.php') ?>">
+                    <input type="hidden" name="demand_type" value="formation" />
                     <div class="section">
                         <h3 class="section-title">Informations Personnelles</h3>
                         <div class="form-group">
@@ -885,40 +893,40 @@
 
                         <div class="form-group">
                             <label class="form-label" for="Grade et Fonction">Grade et Fonction</label>
-                            <input type="text" id="Grade et Fonction" class="form-input" required>
+                            <input name="grade" type="text" id="Grade et Fonction" class="form-input" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="Service et structure">Service et Structure d'attache</label>
-                            <input type="text" id="Service et structure" class="form-input" required>
+                            <input name="service" type="text" id="Service et structure" class="form-input" required>
                         </div>
                     </div>
                     <div class="section">
                         <h3 class="section-title">Détails de la Formation</h3>
                         <div class="form-group">
                             <label class="form-label" for="formation">Intitulé de la Formation</label>
-                            <input type="text" id="formation" class="form-input" required>
+                            <input name="intitule" type="text" id="formation" class="form-input" required>
                         </div>
                         <div class="form-group-row">
                             <div class="form-group">
                                 <label class="form-label" for="date-depart">Date de Départ</label>
-                                <input type="date" id="date-depart" class="form-input" required>
+                                <input name="start_date" type="date" id="date-depart" class="form-input" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="date-retour">Date de Retour</label>
-                                <input type="date" id="date-retour" class="form-input" required>
+                                <input name="end_date" type="date" id="date-retour" class="form-input" required>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label" for="lieu-formation">Lieu de Formation</label>
-                            <input type="text" id="lieu-formation" class="form-input" required>
+                            <input name="place" type="text" id="lieu-formation" class="form-input" required>
                         </div>
                     </div>
                     <div class="section">
                         <h3 class="section-title">Informations Complémentaires</h3>
                         <h4 class="section-subtitle small-text">En Remplacement de</h4>
                         <div class="form-group">
-                            <textarea id="info-complementaire" class="form-input" rows="4" placeholder="Entrez vos informations complémentaires ici..."></textarea>
+                            <textarea name="description" id="info-complementaire" class="form-input" rows="4" placeholder="Entrez vos informations complémentaires ici..."></textarea>
                         </div>
                     </div>
                     <div class="buttons-container" style="display: flex; justify-content: flex-end; gap: 10px;">

@@ -639,13 +639,30 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                 </tr>
             </thead>
             <tbody>
+
                 <?php foreach($user_demands as $demand): ?>
+                    <?php $demand['info'] = json_decode($demand['info'], true); ?>
                 <tr>
                     <td>#<?= $demand['id'] ?></td>
                     <td><?= $demand['type'] ?? 'congé annual' ?></td>
                     <td><?= $demand['date_depose'] ?></td>
                     <td><?= $demand['status'] ?></td>
-                    <td><?= $demand['info'] ?></td>
+                    <td>
+                        <?php if(in_array($demand['type'], ['conge_maternity', 'conge_malady'])): ?>
+                            <?php $content = explode('/', $demand['info']['content']); ?>
+                            <a
+                               download="<?= end($content) ?>"
+                               href="<?= url('storage/' . $demand['info']['content']) ?>"
+                            >
+                                download pdf
+                            </a>
+                        <?php elseif(in_array($demand['type'], ['formation'])): ?>
+                        <?php $data = $demand['info']['content'] ?>
+                            <?= sprintf("%s, %s, %s", $data['grade'], $data['place'], $data['intitule']) ?>
+                        <?php else: ?>
+                            <?= $demand['info']['content'] ?>
+                        <?php endif; ?>
+                    </td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>

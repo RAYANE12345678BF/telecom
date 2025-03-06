@@ -183,16 +183,16 @@ if( !function_exists('join_address') ){
 }
 
 if( !function_exists('demand') ){
-    function demand(string $user_id, $duree, $description, $date_debut, $date_fin, $info)
+    function demand(string $user_id, $duree, $description, $date_debut, $date_fin, $info, $demand_type)
     {
         $db = load_db();
 
-        $sql = "INSERT INTO `demands` (`employee_id`, `duree`, `description`, `date_debut`, `date_fin`, `info`, `status`, `date_depose`) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
+        $sql = "INSERT INTO `demands` (`employee_id`, `type`, `duree`, `description`, `date_debut`, `date_fin`, `info`, `status`, `date_depose`) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
 
         $result = $db->prepare($sql);
 
-        $result->execute([$user_id, $duree, $description, $date_debut, $date_fin, $info, 'waiting']);
+        $result->execute([$user_id, $demand_type, $duree, $description, $date_debut, $date_fin, $info, 'waiting']);
 
         return $db->lastInsertId();
     }
@@ -230,4 +230,39 @@ if( !function_exists('get_roles') ){
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+}
+
+if( !function_exists('uploadPdf') ){
+    function uploadPdf($inputName, $path) {
+        if (!isset($_FILES[$inputName]) || $_FILES[$inputName]['error'] !== UPLOAD_ERR_OK) {
+            return false; // No file uploaded or an error occurred
+        }
+
+        $uploadDir = __DIR__ . '/../storage/' . rtrim($path, '/');
+
+        $fileTmpPath = $_FILES[$inputName]['tmp_name'];
+        $fileOriginalName = $_FILES[$inputName]['name'];
+        $fileExtension = strtolower(pathinfo($fileOriginalName, PATHINFO_EXTENSION));
+
+        if ($fileExtension !== 'pdf') {
+            return false; // Ensure the file is a PDF
+        }
+
+        // Generate a unique filename
+        $uniqueFileName = uniqid('pdf_', true) . '.pdf';
+        $destinationPath = rtrim($uploadDir, '/') . '/' . $uniqueFileName;
+
+        // Ensure the upload directory exists
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        // Move the uploaded file to the specified directory
+        if (move_uploaded_file($fileTmpPath, $destinationPath)) {
+            return rtrim($path, '/') . '/' . $uniqueFileName;
+        }
+
+        return false; // Return false on failure
+    }
+
 }
