@@ -783,7 +783,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
       wrapperId: 'bottomLeft',
       templateId: 'alertStandard',
       autoRemove: 3000
-        }), 2000)" class="logo">
+    }), 2000)" class="logo">
                 <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
                 <span class="logo-text">DjazairRH</span>
             </div>
@@ -791,7 +791,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
         <div class="sidebar-content">
             <div class="menu-items">
                 <div class="nav-title">Principal</div>
-                <a href="accueil.html" class="menu-item">
+                <a href="<?= url('/') ?>" class="menu-item">
                     <i class="fas fa-home"></i>
                     <span class="menu-text">Accueil</span>
                 </a>
@@ -817,7 +817,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                                     <i class="fas fa-sun"></i>
                                     <span class="menu-text">Congé Annuel</span>
                                 </a>
-                                <a href="<?= url("admin/demands/conge/malady.php") ?>" class="menu-item">
+                                <a href="<?= url('admin/demands/conge/malady.php') ?>" class="menu-item">
                                     <i class="fas fa-hospital"></i>
                                     <span class="menu-text">Congé Maladie</span>
                                 </a>
@@ -831,15 +831,15 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                                 </a>
                             </div>
                         </div>
-                        <a href="formation_admin1.html" class="menu-item">
+                        <a href="<?= url('admin/demands/formation') ?>" class="menu-item">
                             <i class="fas fa-graduation-cap"></i>
                             <span class="menu-text">Demande Formation</span>
                         </a>
-                        <a href="mission_admin1.html" class="menu-item">
+                        <a href="<?= url('admin/demands/mission') ?>" class="menu-item">
                             <i class="fas fa-plane"></i>
                             <span class="menu-text">Demande Ordre Mission</span>
                         </a>
-                        <a href="déplacement_admin1.html" class="menu-item">
+                        <a href="<?= url('admin/demands/deplacement') ?>" class="menu-item">
                             <i class="fas fa-car"></i>
                             <span class="menu-text">Demande Déplacement</span>
                         </a>
