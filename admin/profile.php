@@ -726,7 +726,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                     <i class="fas fa-home"></i>
                     <span class="menu-text">Accueil</span>
                 </a>
-                <a href="profile_admin1.html" class="menu-item active">
+                <a href="<?= url('admin/profile.php') ?>" class="menu-item active">
                     <i class="fas fa-user-circle"></i>
                     <span class="menu-text">Mon Profil</span>
                 </a>
@@ -748,29 +748,29 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                                     <i class="fas fa-sun"></i>
                                     <span class="menu-text">Congé Annuel</span>
                                 </a>
-                                <a href="maladie_admin1.html" class="menu-item">
+                                <a href="<?= url('admin/demands/conge/malady.php') ?>" class="menu-item">
                                     <i class="fas fa-hospital"></i>
                                     <span class="menu-text">Congé Maladie</span>
                                 </a>
-                                <a href="maternite_admin1.html" class="menu-item">
+                                <a href="<?= url('admin/demands/conge/maternity.php') ?>" class="menu-item">
                                     <i class="fas fa-baby"></i>
                                     <span class="menu-text">Congé Maternité</span>
                                 </a>
-                                <a href="rc_admin1.html" class="menu-item">
+                                <a href="<?= url('admin/demands/conge/rc.php') ?>" class="menu-item">
                                     <i class="fas fa-clock"></i>
                                     <span class="menu-text">Congé RC</span>
                                 </a>
                             </div>
                         </div>
-                        <a href="formation_admin1.html" class="menu-item">
+                        <a href="<?= url('admin/demands/formation') ?>" class="menu-item">
                             <i class="fas fa-graduation-cap"></i>
                             <span class="menu-text">Demande Formation</span>
                         </a>
-                        <a href="mission_admin1.html" class="menu-item">
+                        <a href="<?= url('admin/demands/mission') ?>" class="menu-item">
                             <i class="fas fa-plane"></i>
                             <span class="menu-text">Demande Ordre Mission</span>
                         </a>
-                        <a href="déplacement_admin1.html" class="menu-item">
+                        <a href="<?= url('admin/demands/deplacement') ?>" class="menu-item">
                             <i class="fas fa-car"></i>
                             <span class="menu-text">Demande Déplacement</span>
                         </a>
@@ -827,7 +827,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
     <div class="notification-dropdown" id="notificationDropdown">
         <!-- <div class="no-notifications">
         Aucune notification pour le moment.
-    </div> -->
+        </div> -->
         <div class="w-full flex flex-col space-y-1" id="notifications-container">
             <!-- start a notification with two actions (accept/reject) -->
             <template x-if="notifications.length > 0">

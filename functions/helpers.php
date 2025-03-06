@@ -211,3 +211,9 @@ if( !function_exists('read_notification') ){
         return $db->lastInsertId();
     }
 }
+
+if( !function_exists('component') ){
+    function component(string $path){
+        require_once __DIR__ . '/../components/' . trim($path, '/');
+    }
+}
