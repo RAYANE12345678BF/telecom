@@ -744,10 +744,18 @@ $user = fetch_user_information($_SESSION['user_id']);
                             <span class="menu-text">Demande Sortie</span>
                         </a>
                     </div>
+                    <?php if (($l = isProfileComplete($user)) !== true): ?>
+                    <a href="#" onclick="alert('please fill all information')"  class="menu-item">
+                        <i class="fas fa-tasks"></i>
+                        <span class="menu-text">État de demande</span>
+                    </a>
+                    <?php else: ?>
                     <a href="<?= url('employee/demands/list.php') ?>" class="menu-item">
                         <i class="fas fa-tasks"></i>
                         <span class="menu-text">État de demande</span>
                     </a>
+                    <?php endif ?>
+                    
                 </div>
 
                 <div class="nav-title">Autres</div>
@@ -878,11 +886,11 @@ $user = fetch_user_information($_SESSION['user_id']);
                                 <div class="field-label">État Civil</div>
                                 <div class="field-value">
                                     <select name="etat_cevil">
-                                        <option value="">Sélectionner</option>
-                                        <option value="celibataire">Célibataire</option>
-                                        <option value="marie">Marié(e)</option>
-                                        <option value="divorce">Divorcé(e)</option>
-                                        <option value="veuf">Veuf/Veuve</option>
+                                        <option value="" <?= empty($user['etat_civil']) ? "selected" : "" ?>>Sélectionner</option>
+                                        <option value="celibataire" <?= $user['etat_civil'] == 'celibataire' ? "selected" : "" ?>>Célibataire</option>
+                                        <option value="marie" <?= $user['etat_civil'] == 'marie' ? "selected" : "" ?>>Marié(e)</option>
+                                        <option value="divorce" <?= $user['etat_civil'] == 'divorce' ? "selected" : "" ?>>Divorcé(e)</option>
+                                        <option value="veuf" <?= $user['etat_civil'] == 'veuf' ? "selected" : "" ?>>Veuf/Veuve</option>
                                     </select>
                                 </div>
                             </div>
@@ -986,15 +994,18 @@ $user = fetch_user_information($_SESSION['user_id']);
             });
         }
 
-        warnInfo()
+        <?php if (($l = isProfileComplete($user)) !== true): ?>
+            warnInfo()
+        <?php endif; ?>
     </script>
 
     <script>
         // Navigation menu toggle functions
         document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
             e.preventDefault();
-            <?php if( ($l = isProfileComplete($user)) !== true ): ?>
+            <?php if (($l = isProfileComplete($user)) !== true): ?>
                 warnInfo("please fill the <?= $l ?>")
+                return
             <?php endif; ?>
             const submenu = document.getElementById('demandeSubmenu');
             submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
@@ -1153,20 +1164,20 @@ $user = fetch_user_information($_SESSION['user_id']);
 
 
             keys.forEach(e => {
-                try{
+                try {
                     data.append(e, (document.querySelector(`input[name=${e}]`) || document.querySelector(`select[name=${e}]`)).value)
-                }catch(err){
+                } catch (err) {
                     console.log(e, err)
                 }
             })
             fetch('<?= url('actions/account.php') ?>', {
-                method : "post",
-                body : data
+                method: "post",
+                body: data
             })
         }
     </script>
 
-    
+
 
     <?php if (isset($_SESSION['status'])): ?>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
