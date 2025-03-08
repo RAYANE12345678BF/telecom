@@ -167,3 +167,57 @@ if( !function_exists('get_grh_id') ){
         return $stmt->fetch(PDO::FETCH_ASSOC)['id'];
     }
 }
+
+if( !function_exists('fetch_user_information') ){
+    function fetch_user_information(string $user_id): array{
+        $db = load_db();
+        $sql = "SELECT * FROM `employees` WHERE id=?";
+        $result = $db->prepare($sql);
+        $result->execute([$user_id]);
+        $user = $result->fetch(PDO::FETCH_ASSOC);
+
+
+        $user['role'] = get_role($user['role_id']);
+        $user['service'] = get_service($user['service_id']);
+        $user['department'] = get_department($user['departement_id']);
+        $user['address'] = !empty($user['address_id']) ? get_address($user['user_id']) : [];
+
+        return $user;
+
+    }
+}
+
+if( !function_exists('isProfileComplete') ){
+    function isProfileComplete(array $user){
+        $data = ['phone', 'birth_day', 'birth_place', 'etat_cevil'];
+
+        foreach($data as $k){
+            if( empty($user[$k]) ){
+                return $k;
+            }
+        }
+
+        return true;
+    }
+}
+
+if( !function_exists('update_user') ){
+    function update_user($user_id, array $data){
+        $db = load_db();
+        $cols = array_keys($data);
+        $values = array_values($data);
+        $parts = [];
+
+        for($i = 0; $i < count($cols); $i++){
+            $parts[] = sprintf("%s=?", $cols[$i]);
+        }
+
+        $sql = sprintf("UPDATE `employees` SET %s WHERE `id`=?", implode(',', $parts));
+
+        $stmt = $db->prepare($sql);
+
+        $stmt->execute(array_merge($values, [$user_id]));
+
+       return true;
+    }
+}

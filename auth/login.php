@@ -5,6 +5,8 @@ if( !session_id() ){
     session_start();
 }
 
+redirect_if_auth();
+
 ?>
 
 <!DOCTYPE html>

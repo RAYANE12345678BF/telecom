@@ -155,27 +155,11 @@ if (!function_exists('redirect_if_not_auth')){
     }
 }
 
-if( !function_exists('fetch_user_information') ){
-    function fetch_user_information(string $user_id): array{
-        $db = load_db();
-        $sql = "SELECT * FROM `employees` WHERE id=?";
-        $result = $db->prepare($sql);
-        $result->execute([$user_id]);
-        $user = $result->fetch(PDO::FETCH_ASSOC);
-
-
-        $user['role'] = get_role($user['role_id']);
-        $user['service'] = get_service($user['service_id']);
-        $user['department'] = get_department($user['departement_id']);
-        $user['address'] = get_address($user['address_id'] ?? 1);
-
-        return $user;
-
-    }
-}
-
 if( !function_exists('join_address') ){
     function join_address(array $address): string{
+        if(empty($address)){
+            return "";
+        }
         $address_str = "%s, %s, %s";
 
         return sprintf($address_str, $address['address_line'], $address['wilaya'], $address['cite']);
