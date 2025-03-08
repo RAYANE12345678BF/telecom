@@ -189,7 +189,7 @@ if( !function_exists('fetch_user_information') ){
 
 if( !function_exists('isProfileComplete') ){
     function isProfileComplete(array $user){
-        $data = ['phone', 'birth_day', 'birth_place', 'etat_cevil'];
+        $data = ['phone', 'birth_day', 'birth_place', 'etat_civil'];
 
         foreach($data as $k){
             if( empty($user[$k]) ){

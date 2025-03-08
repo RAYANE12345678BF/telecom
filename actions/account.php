@@ -19,7 +19,7 @@ switch($action){
     $phone = $_POST['phone'] ?? null;
     $birth_day = $_POST['birth_day'] ?? null;
     $birth_place = $_POST['birth_place'] ?? null;
-    $etat_ceiil = $_POST['etat_cevil'] ?? null;
+    $etat_civil = $_POST['etat_cevil'] ?? null;
     $nom = $_POST['nom'] ?? null;
     $prenom = $_POST['prenom'] ?? null;
 
