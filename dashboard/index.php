@@ -20,7 +20,7 @@ switch( $role['nom'] ){
         redirect(url('admin/profile.php'));
         break;
     case 'Chef de Service':
-        redirect(url('admin/profile.php'));
+        redirect(url('employee/profile.php'));
         break;
     case 'Chef de Département':
         redirect(url('admin/profile.php'));
