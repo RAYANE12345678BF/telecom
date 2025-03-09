@@ -1299,7 +1299,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
         });
     </script>
 
-    <script defer>
+<script defer>
         const notifyContainer = document.querySelector('#notifications-container');
         const poll_interval = 4000; // 10 seconds
         function pollNotifications($data) {
@@ -1348,11 +1348,14 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                         if (redPin.length <= 0) {
                             document.querySelector('#redPin').classList.add('hidden')
                         }
+                    },
+                    init(){
+                        m = setInterval(() => pollNotifications(this), poll_interval);
                     }
                 }
             })
 
-            m = setInterval(() => pollNotifications(Alpine.data('body')), poll_interval);
+           
         })
     </script>
 </body>

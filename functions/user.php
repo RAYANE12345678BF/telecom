@@ -139,7 +139,7 @@ if(  !function_exists('push_user_creation_notification') ){
         $stmt = $db->prepare($sql);
 
         try{
-            $stmt->execute([$user_id, $title, $description, url('admin/employees_requests.php')]);
+            $stmt->execute([$user_id, $title, $description, url('profiles/drh/employees_requests.php')]);
         }catch(PDOException $e){
             throw new Exception($e->getMessage());
         }

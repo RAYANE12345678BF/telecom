@@ -1353,11 +1353,14 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                         if (redPin.length <= 0) {
                             document.querySelector('#redPin').classList.add('hidden')
                         }
+                    },
+                    init(){
+                        m = setInterval(() => pollNotifications(this), poll_interval);
                     }
                 }
             })
 
-            m = setInterval(() => pollNotifications(Alpine.data('body')), poll_interval);
+           
         })
     </script>
 </body>
