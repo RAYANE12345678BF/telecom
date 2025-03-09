@@ -1,4 +1,3 @@
-
 <?php
 
 include __DIR__ . '/../../../../vendor/autoload.php';
@@ -14,6 +13,7 @@ $user = fetch_user_information($_SESSION['user_id']);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -128,7 +128,8 @@ $user = fetch_user_information($_SESSION['user_id']);
             font-weight: 500;
         }
 
-        .sidebar a:hover, .sidebar .active {
+        .sidebar a:hover,
+        .sidebar .active {
             background: var(--hover-color);
             transform: translateX(5px);
             color: var(--primary-color);
@@ -149,7 +150,9 @@ $user = fetch_user_information($_SESSION['user_id']);
             color: var(--secondary-color);
         }
 
-        .submenu, .sub-submenu, .sub-sub-submenu {
+        .submenu,
+        .sub-submenu,
+        .sub-sub-submenu {
             display: none;
             flex-direction: column;
             padding-left: 20px;
@@ -168,7 +171,9 @@ $user = fetch_user_information($_SESSION['user_id']);
             border-radius: 1px;
         }
 
-        .submenu a, .sub-submenu a, .sub-sub-submenu a {
+        .submenu a,
+        .sub-submenu a,
+        .sub-sub-submenu a {
             font-size: 0.95em;
             padding: 12px 16px;
             opacity: 0.9;
@@ -243,11 +248,15 @@ $user = fetch_user_information($_SESSION['user_id']);
             transition: var(--transition);
             position: relative;
         }
+
         .small-text {
-    font-size: 14px; /* Réduit la taille de la police */
-    font-weight: normal; /* Évite qu'il soit en gras */
-    color: #555; /* Optionnel : une couleur plus douce */
-}
+            font-size: 14px;
+            /* Réduit la taille de la police */
+            font-weight: normal;
+            /* Évite qu'il soit en gras */
+            color: #555;
+            /* Optionnel : une couleur plus douce */
+        }
 
         .icon-wrapper:hover {
             transform: translateY(-2px) scale(1.05);
@@ -330,10 +339,12 @@ $user = fetch_user_information($_SESSION['user_id']);
                 transform: scale(1);
                 box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.4);
             }
+
             70% {
                 transform: scale(1.1);
                 box-shadow: 0 0 0 10px rgba(255, 51, 102, 0);
             }
+
             100% {
                 transform: scale(1);
                 box-shadow: 0 0 0 0 rgba(255, 51, 102, 0);
@@ -355,13 +366,16 @@ $user = fetch_user_information($_SESSION['user_id']);
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        .submenu.show, .sub-submenu.show, .sub-sub-submenu.show {
+        .submenu.show,
+        .sub-submenu.show,
+        .sub-sub-submenu.show {
             animation: slideDown 0.3s ease forwards;
         }
 
@@ -399,7 +413,9 @@ $user = fetch_user_information($_SESSION['user_id']);
         }
 
         /* Remove search-related styles */
-        .nav-left, .nav-right, .nav-search {
+        .nav-left,
+        .nav-right,
+        .nav-search {
             display: none;
         }
 
@@ -435,19 +451,30 @@ $user = fetch_user_information($_SESSION['user_id']);
         }
 
         .title {
-    text-align: center; /* Centrer le texte */
-    color: #124170; /* Bleu foncé */
-    font-size: 28px; /* Agrandir le texte */
-    font-weight: bold; /* Texte en gras */
-    text-transform: uppercase; /* Majuscules */
-    letter-spacing: 1px; /* Espacement entre lettres */
-    margin-bottom: 20px; /* Espacement sous le titre */
-    padding-bottom: 5px; /* Espacement sous le titre */
-    display: block; /* Empêcher toute ligne latérale */
-    width: fit-content; /* Ajuster la largeur au texte */
-    margin-left: auto;  
-    margin-right: auto; /* Centrer le bloc */
-}
+            text-align: center;
+            /* Centrer le texte */
+            color: #124170;
+            /* Bleu foncé */
+            font-size: 28px;
+            /* Agrandir le texte */
+            font-weight: bold;
+            /* Texte en gras */
+            text-transform: uppercase;
+            /* Majuscules */
+            letter-spacing: 1px;
+            /* Espacement entre lettres */
+            margin-bottom: 20px;
+            /* Espacement sous le titre */
+            padding-bottom: 5px;
+            /* Espacement sous le titre */
+            display: block;
+            /* Empêcher toute ligne latérale */
+            width: fit-content;
+            /* Ajuster la largeur au texte */
+            margin-left: auto;
+            margin-right: auto;
+            /* Centrer le bloc */
+        }
 
 
 
@@ -467,22 +494,28 @@ $user = fetch_user_information($_SESSION['user_id']);
         .form-group {
             margin-bottom: 1rem;
         }
+
         .form-group-row {
-    display: flex;
-    gap: 20px; /* Espacement entre les champs */
-}
+            display: flex;
+            gap: 20px;
+            /* Espacement entre les champs */
+        }
 
-.form-group-row .form-group {
-    flex: 1; /* Permet aux champs de prendre un espace égal */
-}
-.form-group-row {
-    display: flex;
-    gap: 20px; /* Espacement entre les champs */
-}
+        .form-group-row .form-group {
+            flex: 1;
+            /* Permet aux champs de prendre un espace égal */
+        }
 
-.form-group-row .form-group {
-    flex: 1; /* Permet aux champs de prendre un espace égal */
-}
+        .form-group-row {
+            display: flex;
+            gap: 20px;
+            /* Espacement entre les champs */
+        }
+
+        .form-group-row .form-group {
+            flex: 1;
+            /* Permet aux champs de prendre un espace égal */
+        }
 
         .form-label {
             display: block;
@@ -518,64 +551,69 @@ $user = fetch_user_information($_SESSION['user_id']);
             border-radius: 0.375rem;
             animation: fadeIn 0.3s ease-out;
         }
+
         .buttons-container {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px; /* Espacement entre les boutons */
-}
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            /* Espacement entre les boutons */
+        }
 
-.button-primary {
-    background-color: white; /* Fond blanc */
-    color: #003366; /* Texte bleu foncé */
-    font-size: 16px;
-    font-weight: bold;
-    padding: 12px 20px;
-    border: 2px solid #003366;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px; /* Espacement entre l'icône et le texte */
-}
+        .button-primary {
+            background-color: white;
+            /* Fond blanc */
+            color: #003366;
+            /* Texte bleu foncé */
+            font-size: 16px;
+            font-weight: bold;
+            padding: 12px 20px;
+            border: 2px solid #003366;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            /* Espacement entre l'icône et le texte */
+        }
 
-.button-primary:hover {
-    background-color: #003366;
-    color: white;
-    transform: scale(1.05);
-}
+        .button-primary:hover {
+            background-color: #003366;
+            color: white;
+            transform: scale(1.05);
+        }
 
-.button-primary:active {
-    background-color: #002244;
-    color: white;
-    transform: scale(0.98);
-}
+        .button-primary:active {
+            background-color: #002244;
+            color: white;
+            transform: scale(0.98);
+        }
 
-.button-secondary {
-    background-color: white;
-    color: #444;
-    font-size: 16px;
-    font-weight: bold;
-    padding: 12px 20px;
-    border: 2px solid #444;
-    border-radius: 5px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: background 0.3s ease, transform 0.2s ease;
-}
+        .button-secondary {
+            background-color: white;
+            color: #444;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 12px 20px;
+            border: 2px solid #444;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
 
-.button-secondary:hover {
-    background-color: #444;
-    color: white;
-    transform: scale(1.05);
-}
+        .button-secondary:hover {
+            background-color: #444;
+            color: white;
+            transform: scale(1.05);
+        }
 
-.button-secondary:active {
-    background-color: #222;
-    transform: scale(0.98);
-}
+        .button-secondary:active {
+            background-color: #222;
+            transform: scale(0.98);
+        }
 
 
         @keyframes fadeIn {
@@ -583,13 +621,15 @@ $user = fetch_user_information($_SESSION['user_id']);
                 opacity: 0;
                 transform: translateY(-0.5rem);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-                /* Styles pour le menu déroulant de messagerie */
-                .messenger-dropdown {
+
+        /* Styles pour le menu déroulant de messagerie */
+        .messenger-dropdown {
             display: none;
             position: absolute;
             top: 60px;
@@ -697,8 +737,9 @@ $user = fetch_user_information($_SESSION['user_id']);
         }
     </style>
 </head>
+
 <body>
-<div class="sidebar">
+    <div class="sidebar">
         <div class="sidebar-header">
             <div class="logo">
                 <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
@@ -809,14 +850,14 @@ $user = fetch_user_information($_SESSION['user_id']);
             </div>
         </div>
     </nav>
-    
+
     <!-- Menu déroulant des notifications -->
     <div class="notification-dropdown" id="notificationDropdown">
         <div class="no-notifications">
             Aucune notification pour le moment.
         </div>
     </div>
-    
+
     <!-- Menu déroulant de messagerie -->
     <div class="messenger-dropdown" id="messengerDropdown">
         <div class="messenger-header">
@@ -834,9 +875,9 @@ $user = fetch_user_information($_SESSION['user_id']);
         <div class="messenger-footer">
             <input type="text" placeholder="Entrez un nom">
         </div>
-            </div>
-        </nav>
-    
+    </div>
+    </nav>
+
     <div class="content">
         <div class="container">
             <div class="form-card">
@@ -908,7 +949,21 @@ $user = fetch_user_information($_SESSION['user_id']);
                             <span id="submitText">Soumettre</span>
                         </button>
                     </div>
+                    <script>
+                        const start_date = document.querySelector("input[name=leave_date]")
+                        const end_date = document.querySelector("input[name=come_date]")
+                        start_date.min = new Date().toISOString().split("T")[0];
+                        end_date.min = new Date().toISOString().split("T")[0];
 
+
+                        start_date.onchange = () => {
+                            if (start_date.value.trim() != "") {
+                                let date = new Date(start_date.value);
+                                date.setDate(date.getDate() + 1)
+                                end_date.min = date.toISOString().split("T")[0]
+                            }
+                        }
+                    </script>
 
                 </form>
             </div>
@@ -940,7 +995,7 @@ $user = fetch_user_information($_SESSION['user_id']);
             e.preventDefault();
             let submenu = document.querySelector(".submenu");
             let icon = this.querySelector(".fa-chevron-right");
-            
+
             if (submenu.style.display === "flex") {
                 submenu.style.display = "none";
                 icon.style.transform = "rotate(0deg)";
@@ -954,7 +1009,7 @@ $user = fetch_user_information($_SESSION['user_id']);
             e.preventDefault();
             let subSubmenu = document.querySelector(".sub-submenu");
             let icon = this.querySelector(".fa-chevron-right");
-            
+
             if (subSubmenu.style.display === "flex") {
                 subSubmenu.style.display = "none";
                 icon.style.transform = "rotate(0deg)";
@@ -968,7 +1023,7 @@ $user = fetch_user_information($_SESSION['user_id']);
             e.preventDefault();
             let subSubSubmenu = document.querySelector(".sub-sub-submenu");
             let icon = this.querySelector(".fa-chevron-right");
-            
+
             if (subSubSubmenu.style.display === "flex") {
                 subSubSubmenu.style.display = "none";
                 icon.style.transform = "rotate(0deg)";
@@ -978,29 +1033,35 @@ $user = fetch_user_information($_SESSION['user_id']);
             }
         });
         document.getElementById('logoutButton').addEventListener('click', function() {
-    window.location.href = 'loginAT1.html';
-});
+            window.location.href = 'loginAT1.html';
+        });
+
         function validateName(value) {
             // Validation logic here
         }
+
         function validateDates(depart, retour) {
             // Validation logic here
         }
+
         function showError(elementId, show) {
             // Show error logic here
         }
+
         function handleSubmit(event) {
             event.preventDefault();
             // Form submission logic here
         }
+
         function handlePrint() {
             // Print logic here
         }
         document.getElementById('printButton').addEventListener('click', function() {
-        window.print();
-    });bar_navigation.html
-     // Navigation menu toggle functions
-     document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
+            window.print();
+        });
+        bar_navigation.html
+        // Navigation menu toggle functions
+        document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
             e.preventDefault();
             const submenu = document.getElementById('demandeSubmenu');
             submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
@@ -1035,7 +1096,7 @@ $user = fetch_user_information($_SESSION['user_id']);
             e.preventDefault();
             let submenu = document.querySelector(".submenu");
             let icon = this.querySelector(".fa-chevron-right");
-            
+
             if (submenu.style.display === "flex") {
                 submenu.style.display = "none";
                 icon.style.transform = "rotate(0deg)";
@@ -1049,7 +1110,7 @@ $user = fetch_user_information($_SESSION['user_id']);
             e.preventDefault();
             let subSubmenu = document.querySelector(".sub-submenu");
             let icon = this.querySelector(".fa-chevron-right");
-            
+
             if (subSubmenu.style.display === "flex") {
                 subSubmenu.style.display = "none";
                 icon.style.transform = "rotate(0deg)";
@@ -1063,7 +1124,7 @@ $user = fetch_user_information($_SESSION['user_id']);
             e.preventDefault();
             let subSubSubmenu = document.querySelector(".sub-sub-submenu");
             let icon = this.querySelector(".fa-chevron-right");
-            
+
             if (subSubSubmenu.style.display === "flex") {
                 subSubSubmenu.style.display = "none";
                 icon.style.transform = "rotate(0deg)";
@@ -1076,22 +1137,26 @@ $user = fetch_user_information($_SESSION['user_id']);
         function validateName(value) {
             // Validation logic here
         }
+
         function validateDates(depart, retour) {
             // Validation logic here
         }
+
         function showError(elementId, show) {
             // Show error logic here
         }
+
         function handleSubmit(event) {
             event.preventDefault();
             // Form submission logic here
         }
+
         function handlePrint() {
             // Print logic here
         }
         document.getElementById('printButton').addEventListener('click', function() {
-        window.print();
-    });
+            window.print();
+        });
 
         // Fonction pour afficher/masquer les notifications
         function toggleNotifications() {
@@ -1131,20 +1196,7 @@ $user = fetch_user_information($_SESSION['user_id']);
             }
         });
     </script>
-    <script>
-        const start_date = document.querySelector("input[name=leave_date]")
-        const end_date = document.querySelector("input[name=come_date]")
-        start_date.min = new Date().toISOString().split("T")[0];
-        end_date.min = new Date().toISOString().split("T")[0];
 
-    
-        start_date.onchange = () => {
-            if (start_date.value.trim() != "") {
-                let date = new Date(start_date.value);
-                date.setDate(date.getDate() + 1)
-                end_date.min = date.toISOString().split("T")[0]
-            }
-        }
-    </script>
 </body>
+
 </html>

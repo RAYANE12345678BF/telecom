@@ -815,10 +815,11 @@ $user_demands = get_user_demands($_SESSION['user_id']);
     <!-- Top Navbar -->
     <nav class="navbar">
         <div class="nav-icons">
-            <div class="icon-wrapper" onclick="toggleNotifications()">
+            <div class="icon-wrapper relative" onclick="toggleNotifications()">
                 <i class="fa-solid fa-bell"></i>
                 <!-- Badge pour les notifications non lues -->
                 <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                <span id="redPin" class="w-1 h-1 rounded-full bg-red-500 top-3 right-3 absolute <?= !$redPin ? 'hidden' : '' ?>"></span>
             </div>
             <div class="icon-wrapper" onclick="toggleMessenger()">
                 <i class="fa-brands fa-facebook-messenger"></i>
@@ -831,7 +832,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
         <!-- <div class="no-notifications">
         Aucune notification pour le moment.
         </div> -->
-        <div class="w-full flex flex-col space-y-1" id="notifications-container">
+        <div class="w-full flex flex-col-reverse space-y-1" id="notifications-container">
             <!-- start a notification with two actions (accept/reject) -->
             <template x-if="notifications.length > 0">
                 <template x-for="notification in notifications">
@@ -1305,8 +1306,21 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             fetch('<?= url('actions/notifications.php') ?>')
                 .then(response => response.json())
                 .then(data => {
+                    let redPin = data.filter(value => {
+                        return +value.read_state === 0
+                    })
+
+                    console.log('pin', redPin)
+
+                    if (redPin.length > 0) {
+                        document.querySelector('#redPin').classList.remove('hidden')
+                    }
                     console.log(data)
                     $data.notifications = data
+
+
+
+
 
                 });
         }
@@ -1324,6 +1338,15 @@ $user_demands = get_user_demands($_SESSION['user_id']);
 
                                 return v
                             })
+                        }
+
+                        let redPin = data.notifications.filter(value => {
+                            return +value.read_state === 0
+                        })
+
+
+                        if (redPin.length <= 0) {
+                            document.querySelector('#redPin').classList.add('hidden')
                         }
                     }
                 }
