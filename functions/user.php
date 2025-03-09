@@ -1,9 +1,10 @@
-<?php 
+<?php
 
 
 
-if( ! function_exists('get_user_demands') ){
-    function get_user_demands(string $user_id){
+if (! function_exists('get_user_demands')) {
+    function get_user_demands(string $user_id)
+    {
         $db = load_db();
 
         $sql = "SELECT * FROM `demands` WHERE `employee_id` = ?";
@@ -11,13 +12,13 @@ if( ! function_exists('get_user_demands') ){
         $stmt = $db->prepare($sql);
 
 
-        try{
+        try {
             $stmt->execute([$user_id]);
-        }catch(PDOException $e){
+        } catch (PDOException $e) {
             die($e->getMessage());
         }
 
-        if( $stmt->rowCount() < 1 ){
+        if ($stmt->rowCount() < 1) {
             return [];
         }
 
@@ -25,21 +26,22 @@ if( ! function_exists('get_user_demands') ){
     }
 }
 
-if( ! function_exists('get_users_demands') ){
-    function get_users_demands(){
+if (! function_exists('get_users_demands')) {
+    function get_users_demands($status = 'waiting')
+    {
         $db = load_db();
 
         $sql = "SELECT * FROM `demands` WHERE `status`=?";
 
         $stmt = $db->prepare($sql);
 
-        try{
-            $stmt->execute(['waiting']);
-        }catch(PDOException $e){
+        try {
+            $stmt->execute([$status]);
+        } catch (PDOException $e) {
             die($e->getMessage());
         }
 
-        if( $stmt->rowCount() < 1 ){
+        if ($stmt->rowCount() < 1) {
             return [];
         }
 
@@ -47,41 +49,41 @@ if( ! function_exists('get_users_demands') ){
     }
 }
 
-if( ! function_exists('change_status') ) {
-    function change_status($demand_id, $status){
+if (! function_exists('change_status')) {
+    function change_status($demand_id, $status)
+    {
         $db = load_db();
 
         $sql = "UPDATE `demands` SET `status`=? WHERE `id` = ?";
 
         $stmt = $db->prepare($sql);
 
-        try{
+        try {
 
             $stmt->execute([$status, $demand_id]);
-
-        }catch(PDOException $err){
+        } catch (PDOException $err) {
 
             die($err->getMessage());
-            
         }
     }
 }
 
-if(! function_exists(('get_notifications'))){
-    function get_notifications($user_id){
+if (! function_exists(('get_notifications'))) {
+    function get_notifications($user_id)
+    {
         $db = load_db();
 
         $sql = "SELECT * FROM `notifications` WHERE `employee_id` = ?";
 
         $stmt = $db->prepare($sql);
 
-        try{
+        try {
             $stmt->execute([$user_id]);
-        }catch(PDOException $e){
+        } catch (PDOException $e) {
             die($e->getMessage());
         }
 
-        if( $stmt->rowCount() < 1 ){
+        if ($stmt->rowCount() < 1) {
             return [];
         }
 
@@ -90,21 +92,22 @@ if(! function_exists(('get_notifications'))){
 }
 
 
-if( !function_exists('fetch_creation_demands') ){
-    function fetch_creation_demands($compte_valid='waiting'){
+if (!function_exists('fetch_creation_demands')) {
+    function fetch_creation_demands($compte_valid = 'waiting')
+    {
         $db = load_db();
 
         $sql = "SELECT * FROM `employees` WHERE `compte_valid` = ?";
 
         $stmt = $db->prepare($sql);
 
-        try{
+        try {
             $stmt->execute([$compte_valid]);
-        }catch(PDOException $e){
+        } catch (PDOException $e) {
             die($e->getMessage());
         }
 
-        if( $stmt->rowCount() < 1 ){
+        if ($stmt->rowCount() < 1) {
             return [];
         }
 
@@ -113,8 +116,9 @@ if( !function_exists('fetch_creation_demands') ){
 }
 
 
-if(!function_exists('handleAccount')){
-    function handleAccount($type, $id){
+if (!function_exists('handleAccount')) {
+    function handleAccount($type, $id)
+    {
         $t = $type == 'activate' ? 1 : 0;
 
         $db = load_db();
@@ -127,8 +131,9 @@ if(!function_exists('handleAccount')){
     }
 }
 
-if(  !function_exists('push_user_creation_notification') ){
-    function push_user_creation_notification($user_id){
+if (!function_exists('push_user_creation_notification')) {
+    function push_user_creation_notification($user_id)
+    {
         $db = load_db();
 
         $title = 'creation demand';
@@ -138,29 +143,30 @@ if(  !function_exists('push_user_creation_notification') ){
 
         $stmt = $db->prepare($sql);
 
-        try{
+        try {
             $stmt->execute([$user_id, $title, $description, url('profiles/drh/employees_requests.php')]);
-        }catch(PDOException $e){
+        } catch (PDOException $e) {
             throw new Exception($e->getMessage());
         }
     }
 }
 
-if( !function_exists('get_grh_id') ){
-    function get_grh_id(){
+if (!function_exists('get_grh_id')) {
+    function get_grh_id()
+    {
         $db = load_db();
 
         $sql = "SELECT `employees`.`id` FROM `employees` JOIN `roles` ON `employees`.`role_id` = `roles`.`id` WHERE `roles`.`nom` = ?";
 
         $stmt = $db->prepare($sql);
 
-        try{
+        try {
             $stmt->execute(['GRH']);
-        }catch(PDOException $e){
+        } catch (PDOException $e) {
             die($e->getMessage());
         }
 
-        if( $stmt->rowCount() < 1 ){
+        if ($stmt->rowCount() < 1) {
             return null;
         }
 
@@ -168,8 +174,9 @@ if( !function_exists('get_grh_id') ){
     }
 }
 
-if( !function_exists('fetch_user_information') ){
-    function fetch_user_information(string $user_id): array{
+if (!function_exists('fetch_user_information')) {
+    function fetch_user_information(string $user_id): array
+    {
         $db = load_db();
         $sql = "SELECT * FROM `employees` WHERE id=?";
         $result = $db->prepare($sql);
@@ -184,16 +191,16 @@ if( !function_exists('fetch_user_information') ){
         $user['address'] = !empty($user['address_id']) ? get_address($user['user_id']) : [];
 
         return $user;
-
     }
 }
 
-if( !function_exists('isProfileComplete') ){
-    function isProfileComplete(array $user){
+if (!function_exists('isProfileComplete')) {
+    function isProfileComplete(array $user)
+    {
         $data = ['phone', 'birth_day', 'birth_place', 'etat_civil'];
 
-        foreach($data as $k){
-            if( empty($user[$k]) ){
+        foreach ($data as $k) {
+            if (empty($user[$k])) {
                 return $k;
             }
         }
@@ -202,14 +209,15 @@ if( !function_exists('isProfileComplete') ){
     }
 }
 
-if( !function_exists('update_user') ){
-    function update_user($user_id, array $data){
+if (!function_exists('update_user')) {
+    function update_user($user_id, array $data)
+    {
         $db = load_db();
         $cols = array_keys($data);
         $values = array_values($data);
         $parts = [];
 
-        for($i = 0; $i < count($cols); $i++){
+        for ($i = 0; $i < count($cols); $i++) {
             $parts[] = sprintf("%s=?", $cols[$i]);
         }
 
@@ -219,6 +227,74 @@ if( !function_exists('update_user') ){
 
         $stmt->execute(array_merge($values, [$user_id]));
 
-       return true;
+        return true;
+    }
+}
+
+if (!function_exists('get_user_password')) {
+    // Simulated function to fetch user password (replace with actual DB query)
+    function get_user_password($user_id)
+    {
+        $db = load_db();
+
+        $sql = "SELECT `password` FROM `employees` WHERE `id`=? ";
+
+        $stmt = $db->prepare($sql);
+
+        $stmt->execute([$user_id]);
+        // Fetch the password hash from database (Example hash for 'oldpassword123')
+        return $stmt->fetch(PDO::FETCH_ASSOC)['password'];
+    }
+}
+
+
+if( !function_exists('change_password') ){
+    function change_password($user_id, $actual_password, $new_password, $confirm_password) {
+        // Fetch the stored hashed password for the user (simulate fetching from DB)
+        $stored_hashed_password = get_user_password($user_id); // You should replace this function with actual DB retrieval
+        
+        // Verify the actual password
+        if (!password_verify($actual_password, $stored_hashed_password)) {
+            send_json_response(["success" => false, "message" => "Incorrect current password"]);
+            return;
+        }
+    
+        // Validate new password length
+        if (strlen($new_password) < 8) {
+            send_json_response(["success" => false, "message" => "New password must be at least 8 characters long"]);
+            return;
+        }
+    
+        // Check if new password matches confirmation
+        if ($new_password !== $confirm_password) {
+            send_json_response(["success" => false, "message" => "New password and confirmation do not match"]);
+            return;
+        }
+    
+        // Hash the new password before storing
+        $hashed_new_password = password_hash($new_password, PASSWORD_BCRYPT);
+    
+        // Update the password using your predefined update function
+        if (update_user($user_id, ['password' => $hashed_new_password])) {
+            send_json_response(["success" => true, "message" => "Password updated successfully"]);
+        } else {
+            send_json_response(["success" => false, "message" => "Failed to update password"]);
+        }
+    }
+}
+
+if(! function_exists('update_profile_picture')){
+    function update_profile_picture($user_id, $file){
+        $db = load_db();
+        $sql = "UPDATE `employees` SET `profile_photo` = ? WHERE `id` = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->execute([$file, $user_id]);
+    }
+}
+
+if( !function_exists('profile_photo_url') ){
+    function profile_photo_url($user_id){
+        $user = fetch_user_information($user_id);
+        return url('uploads/'.$user['profile_photo']);
     }
 }

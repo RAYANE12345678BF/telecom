@@ -61,4 +61,22 @@ switch($action){
         }
     
         break;
+
+    case 'save_password':
+        $actual_password = $_POST['actual_passwword'] ?? null;
+        $new_password = $_POST['password'] ?? null;
+        $password_confirmation = $_POST['password_confirmation'] ?? null;
+        $user_id = $_SESSION['user_id'];
+
+        if( !$actual_password || !$new_password || !$password_confirmation ){
+            send_json_response([
+                'success' => false,
+                'message' => 'please fill all the required fields'
+            ]);
+        }
+
+
+        change_password($user_id, $actual_password, $new_password, $password_confirmation);
+
+        break;
 }

@@ -1,25 +1,29 @@
-<?php 
-include __DIR__ . '/../../../vendor/autoload.php';
+<?php
 
-if( ! session_id() ){
+require_once __DIR__ . '/../../../vendor/autoload.php';
+
+if (!session_id()) {
     session_start();
 }
 
 redirect_if_not_auth();
 
-$user = $_SESSION['user'];
-
 $user = fetch_user_information($_SESSION['user_id']);
 
-$user_demands = get_all_demands_with_lifecycle()['demands'];
+if (empty($_GET['demand_id'])) {
+    throw new Exception('bad call to this page');
+}
+
+$demand = fetch_demand($_GET['demand_id']);
 
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DjazairRH - Profil Employé</title>
+    <title>DjazairRH - Navigation</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -33,8 +37,7 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
             --hover-color: #f0f4f8;
             --border-radius: 12px;
             --nav-height: 70px;
-            --transition: all 0.3s ease;
-            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
@@ -49,13 +52,11 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
 
         body {
             display: flex;
-            min-height: 100vh;
-            background: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
         }
 
-        /* Navigation Styles */
         .sidebar {
             width: 280px;
             background: white;
@@ -106,6 +107,11 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
         }
 
+        .logo img:hover {
+            transform: scale(1.05) rotate(-3deg);
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
+        }
+
         .logo-text {
             font-size: 26px;
             font-weight: 700;
@@ -113,15 +119,6 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: -0.5px;
-        }
-
-        .nav-title {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #64748b;
-            margin: 20px 0 10px;
-            padding-left: 18px;
         }
 
         .sidebar a {
@@ -137,7 +134,8 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
             font-weight: 500;
         }
 
-        .sidebar a:hover, .sidebar .active {
+        .sidebar a:hover,
+        .sidebar .active {
             background: var(--hover-color);
             transform: translateX(5px);
             color: var(--primary-color);
@@ -153,7 +151,14 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
             transition: var(--transition);
         }
 
-        .submenu {
+        .sidebar a:hover i {
+            transform: scale(1.1);
+            color: var(--secondary-color);
+        }
+
+        .submenu,
+        .sub-submenu,
+        .sub-sub-submenu {
             display: none;
             flex-direction: column;
             padding-left: 20px;
@@ -172,7 +177,9 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
             border-radius: 1px;
         }
 
-        .submenu a {
+        .submenu a,
+        .sub-submenu a,
+        .sub-sub-submenu a {
             font-size: 0.95em;
             padding: 12px 16px;
             opacity: 0.9;
@@ -198,39 +205,68 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
             box-shadow: var(--shadow-md);
         }
 
-        /* Navbar Styles */
-        .navbar {
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: calc(100% - 280px);
-            height: var(--nav-height);
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: var(--border-radius);
             background: white;
             display: flex;
             align-items: center;
-            justify-content: flex-end;
-            padding: 0 30px;
+            justify-content: center;
+            font-size: 1.2em;
+            color: var(--primary-color);
+            transition: var(--transition);
+            border: 2px solid var(--hover-color);
             box-shadow: var(--shadow-sm);
-            z-index: 900;
+        }
+
+        .navbar {
+            width: calc(100% - 280px);
+            height: var(--nav-height);
+            background: white;
+            box-shadow: var(--shadow-lg);
+            padding: 0 24px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 280px;
+            right: 0;
+            z-index: 999;
         }
 
         .nav-icons {
             display: flex;
-            gap: 20px;
+            align-items: center;
+            gap: 16px;
         }
 
         .icon-wrapper {
             width: 40px;
             height: 40px;
+            border-radius: var(--border-radius);
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
             cursor: pointer;
+            background: var(--hover-color);
             transition: var(--transition);
+            position: relative;
+        }
+
+        .small-text {
+            font-size: 14px;
+            /* Réduit la taille de la police */
+            font-weight: normal;
+            /* Évite qu'il soit en gras */
+            color: #555;
+            /* Optionnel : une couleur plus douce */
         }
 
         .icon-wrapper:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: var(--shadow-md);
             background: var(--hover-color);
         }
 
@@ -303,345 +339,303 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
             font-size: 14px;
             padding: 20px;
         }
-        /* Main Content Styles */
-        .main-content {
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.4);
+            }
+
+            70% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 10px rgba(255, 51, 102, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 51, 102, 0);
+            }
+        }
+
+        .content {
+            margin-top: var(--nav-height);
             margin-left: 280px;
-            padding: 90px 30px 30px;
-            width: calc(100% - 280px);
-        }
-
-        /* Profile Styles */
-        :root {
-            --primary-color: #003366;
-            --secondary-color: #0066cc;
-            --accent-color: #e6f3ff;
-            --success-color: #10b981;
-            --text-color: #2c3e50;
-            --bg-color: #f8f9fa;
-            --border-radius: 12px;
-            --transition: all 0.3s ease;
-            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        .profile-grid {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 30px;
-        }
-
-        /* Profile Sidebar */
-        .profile-sidebar {
-            background: white;
-            border-radius: var(--border-radius);
             padding: 30px;
-            box-shadow: var(--shadow);
-            height: fit-content;
+            flex-grow: 1;
+            background: var(--bg-color);
+            min-height: calc(100vh - var(--nav-height));
         }
 
-        .profile-photo {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            background: var(--accent-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 50px;
-            color: var(--primary-color);
-            position: relative;
+        /* Smooth slide animation for submenus */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .edit-photo {
-            position: absolute;
-            bottom: 5px;
-            right: 5px;
-            background: var(--primary-color);
-            color: white;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
+        .submenu.show,
+        .sub-submenu.show,
+        .sub-sub-submenu.show {
+            animation: slideDown 0.3s ease forwards;
         }
 
-        .edit-photo:hover {
-            transform: scale(1.1);
-        }
-
-        .profile-name {
-            text-align: center;
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-
-        .profile-title {
-            text-align: center;
-            color:#64748b;
-            margin-bottom: 20px;
-        }
-
-        .profile-info {
-            margin-top: 20px;
-        }
-
-        .info-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            color: var(--text-color);
-        }
-
-        .info-item i {
-            width: 20px;
-            margin-right: 10px;
-            color: var(--primary-color);
-        }
-
-        .info-item input {
-            flex: 1;
-            padding: 6px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            background-color: white;
-        }
-
-        .info-item input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(0, 51, 102, 0.1);
-        }
-
-        /* Main Content */
-        .profile-content {
-            display: grid;
-            gap: 25px;
-        }
-
-        .content-card {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 25px;
-            box-shadow: var(--shadow);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--accent-color);
-        }
-
-        .card-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-
-        .edit-button {
-            background: var(--accent-color);
-            color: var(--primary-color);
-            border: none;
-            padding: 8px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .edit-button:hover {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-
-        .info-field {
-            margin-bottom: 15px;
-        }
-
-        .field-label {
-            font-size: 14px;
-            color: #64748b;
-            margin-bottom: 5px;
-        }
-
-        .field-value {
-            font-size: 16px;
-            color: var(--text-color);
-            font-weight: 500;
-        }
-
-        .field-value input, .field-value select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            margin-top: 5px;
-            background-color: white;
-        }
-
-        .field-value input:focus, .field-value select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(0, 51, 102, 0.1);
-        }
-
+        /* Responsive Design */
         @media (max-width: 1024px) {
             .sidebar {
                 width: 80px;
             }
 
-            .logo-text, .menu-text {
-                display: none;
+            .sidebar-header {
+                padding: 0 16px;
             }
 
-            .main-content {
-                margin-left: 80px;
-                width: calc(100% - 80px);
+            .sidebar-content {
+                padding: 16px;
             }
 
             .navbar {
+                left: 80px;
                 width: calc(100% - 80px);
             }
 
-            .profile-grid {
-                grid-template-columns: 1fr;
+            .content {
+                margin-left: 80px;
             }
         }
 
-        @media (max-width: 768px) {
-            .profile-grid {
-                grid-template-columns: 1fr;
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #1a1a1a;
+                --text-color: #e0e0e0;
+                --hover-color: #2a2a2a;
             }
-
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
         }
 
-        /* Consulter Demandes Styles */
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #184e86;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            border: 1px solid #dee2e6;
-            padding: 10px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #194e86; /* Bleu foncé pour l'en-tête */
-            color: white;
-        }
-
-        tr:nth-child(even) {
-            background-color: #e9f5ff; /* Bleu clair pour les lignes paires */
-        }
-
-        tr:nth-child(odd) {
-            background-color: #d1e9ff; /* Bleu un peu plus foncé pour les lignes impaires */
-        }
-
-        .btn-validate {
-            background-color: #15528f; /* Bleu clair pour le bouton Valider */
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        .btn-validate:hover {
-            background-color: #3399ff; /* Bleu un peu plus foncé au survol */
-        }
-
-        .btn-refuse {
-            background-color: #dc3545; /* Rouge pour le bouton Refuser */
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        .btn-refuse:hover {
-            background-color: #c82333; /* Rouge plus foncé au survol */
-        }
-
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-content {
+        /* Remove search-related styles */
+        .nav-left,
+        .nav-right,
+        .nav-search {
             display: none;
-            position: absolute;
+        }
+
+        /* Base styles */
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: rgb(249, 250, 251);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 48rem;
+            margin: 0 auto;
+            padding: 3rem 1rem;
+        }
+
+        .form-card {
             background-color: white;
-            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-            z-index: 1;
-            border-radius: 5px;
-            padding: 10px;
+            padding: 2rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
         }
 
-        .dropdown-content button {
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .title {
+            text-align: center;
+            /* Centrer le texte */
+            color: #124170;
+            /* Bleu foncé */
+            font-size: 28px;
+            /* Agrandir le texte */
+            font-weight: bold;
+            /* Texte en gras */
+            text-transform: uppercase;
+            /* Majuscules */
+            letter-spacing: 1px;
+            /* Espacement entre lettres */
+            margin-bottom: 20px;
+            /* Espacement sous le titre */
+            padding-bottom: 5px;
+            /* Espacement sous le titre */
             display: block;
-            width: 100%;
-            padding: 5px 10px;
-            text-align: left;
-            border: none;
-            background-color: transparent;
-            cursor: pointer;
+            /* Empêcher toute ligne latérale */
+            width: fit-content;
+            /* Ajuster la largeur au texte */
+            margin-left: auto;
+            margin-right: auto;
+            /* Centrer le bloc */
         }
 
-        .dropdown-content button:hover {
-            background-color: #f1f1f1;
+
+
+        .section {
+            margin-bottom: 2rem;
         }
-         /* Styles pour le menu déroulant de messagerie */
-         .messenger-dropdown {
+
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: #5c75ac;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group-row {
+            display: flex;
+            gap: 20px;
+            /* Espacement entre les champs */
+        }
+
+        .form-group-row .form-group {
+            flex: 1;
+            /* Permet aux champs de prendre un espace égal */
+        }
+
+        .form-group-row {
+            display: flex;
+            gap: 20px;
+            /* Espacement entre les champs */
+        }
+
+        .form-group-row .form-group {
+            flex: 1;
+            /* Permet aux champs de prendre un espace égal */
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.25rem;
+        }
+
+        .form-input {
+            width: 50%;
+            padding: 0.5rem 0.75rem;
+            padding-left: 2.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            transition: border-color 0.15s ease-in-out;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .success-message {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            background-color: #ecfdf5;
+            color: #047857;
+            border-radius: 0.375rem;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .buttons-container {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            /* Espacement entre les boutons */
+        }
+
+        .button-primary {
+            background-color: white;
+            /* Fond blanc */
+            color: #003366;
+            /* Texte bleu foncé */
+            font-size: 16px;
+            font-weight: bold;
+            padding: 12px 20px;
+            border: 2px solid #003366;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            /* Espacement entre l'icône et le texte */
+        }
+
+        .button-primary:hover {
+            background-color: #003366;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .button-primary:active {
+            background-color: #002244;
+            color: white;
+            transform: scale(0.98);
+        }
+
+        .button-secondary {
+            background-color: white;
+            color: #444;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 12px 20px;
+            border: 2px solid #444;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .button-secondary:hover {
+            background-color: #444;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .button-secondary:active {
+            background-color: #222;
+            transform: scale(0.98);
+        }
+
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-0.5rem);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Styles pour le menu déroulant de messagerie */
+        .messenger-dropdown {
             display: none;
             position: absolute;
             top: 60px;
@@ -726,6 +720,7 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
             border-color: var(--primary-color);
             box-shadow: 0 0 0 2px rgba(0, 51, 102, 0.1);
         }
+
         /* Styles pour le message "Aucun message" */
         .no-messages {
             text-align: center;
@@ -747,48 +742,14 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
             margin: 0;
         }
     </style>
-
-<script>
-        function accept(id){
-            let data = new FormData
-            data.append('demand_id', id)
-            data.append('action', 'change_status')
-            data.append('status', 'accepted')
-
-            fetch('<?= url('actions/demand.php') ?>', {
-                method : 'POST',
-                body : data
-            }).then(res => res.json())
-            .then(js => {
-                window.location.reload()
-            }).catch(err => {
-                alert(err)
-            })
-        }
-
-        function reject(id){
-            let data = new FormData
-            data.append('demand_id', id)
-            data.append('action', 'change_status')
-            data.append('status', 'rejected')
-            fetch('<?= url('actions/demand.php') ?>', {
-                method : 'POST',
-                body : data
-            }).then(res => res.json())
-            .then(js => {
-                window.location.reload()
-            }).catch(err=> {
-                alert(err)
-            })
-        }
-    </script>
 </head>
+
 <body>
     <!-- Navigation Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
             <div class="logo">
-                <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
+                <img src="logo_djazairRH.jpg" alt="DjazairRH   Logo">
                 <span class="logo-text">DjazairRH</span>
             </div>
         </div>
@@ -799,11 +760,10 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
                     <i class="fas fa-home"></i>
                     <span class="menu-text">Accueil</span>
                 </a>
-                <a href="<?= url('profiles/directeur/profile.php') ?>" class="menu-item active">
+                <a href="<?= url('profiles') ?>" class="menu-item active">
                     <i class="fas fa-user-circle"></i>
                     <span class="menu-text">Mon Profil</span>
                 </a>
-
                 <div class="nav-title">Demandes</div>
                 <div class="request-section">
                     <a href="#" class="menu-item" id="faireDemandeBtn">
@@ -817,58 +777,62 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
                                 <span class="menu-text">Demande Congé</span>
                             </a>
                             <div class="submenu" id="congeSubmenu" style="display: none;">
-                                <a href="<?= url('profiles/directeur/demands/conge/annual.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/drh/demands/conge/annual.php') ?>" class="menu-item">
                                     <i class="fas fa-sun"></i>
                                     <span class="menu-text">Congé Annuel</span>
                                 </a>
-                                <a href="<?= url('profiles/directeur/demands/conge/malady.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/drh/demands/conge/malady.php') ?>" class="menu-item">
                                     <i class="fas fa-hospital"></i>
                                     <span class="menu-text">Congé Maladie</span>
                                 </a>
-                                <a href="<?= url('profiles/directeur/demands/conge/maternity.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/drh/demands/conge/maternity.php') ?>" class="menu-item">
                                     <i class="fas fa-baby"></i>
                                     <span class="menu-text">Congé Maternité</span>
                                 </a>
-                                <a href="<?= url('profiles/directeur/demands/conge/rc.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/drh/demands/conge/rc.php') ?>" class="menu-item">
                                     <i class="fas fa-clock"></i>
                                     <span class="menu-text">Congé RC</span>
                                 </a>
                             </div>
                         </div>
-                        <a href="<?= url('profiles/directeur/demands/formation') ?>" class="menu-item">
+                        <a href="<?= url('profiles/drh/demands/formation') ?>" class="menu-item">
                             <i class="fas fa-graduation-cap"></i>
                             <span class="menu-text">Demande Formation</span>
                         </a>
-                        <a href="<?= url('profiles/directeur/demands/mission') ?>" class="menu-item">
+                        <a href="<?= url('profiles/drh/demands/mission') ?>" class="menu-item">
                             <i class="fas fa-plane"></i>
                             <span class="menu-text">Demande Ordre Mission</span>
                         </a>
-                        <a href="<?= url('profiles/directeur/demands/deplacement') ?>" class="menu-item">
+                        <a href="<?= url('profiles/drh/demands/deplacement') ?>" class="menu-item">
                             <i class="fas fa-car"></i>
                             <span class="menu-text">Demande Déplacement</span>
                         </a>
-                        <a href="<?= url('profiles/directeur/demands/leave') ?>" class="menu-item">
+                        <a href="<?= url('profiles/drh/demands/leave') ?>" class="menu-item">
                             <i class="fas fa-door-open"></i>
                             <span class="menu-text">Demande Sortie</span>
                         </a>
                     </div>
-                    <a href="<?= url('profiles/directeur/demands/list.php') ?>" class="menu-item">
+                    <a href="<?= url('profiles/drh/demands/list.php') ?>" class="menu-item">
                         <i class="fas fa-tasks"></i>
                         <span class="menu-text">État de demande</span>
                     </a>
-                    <a href="<?= url('profiles/directeur/demands/consulte.php') ?>" class="menu-item">
+                    <a href="<?= url('profiles/drh/demands/consulte.php') ?>" class="menu-item">
                         <i class="fas fa-eye"></i>
                         <span class="menu-text">Consulter Demande</span>
+                    </a>
+                    <a href="<?= url('profiles/drh/pointage') ?>" class="menu-item">
+                        <i class="fas fa-clock"></i>
+                        <span class="menu-text">Voir Pointage</span>
                     </a>
                 </div>
 
                 <div class="nav-title">Autres</div>
-                <a href="<?= url('profiles/directeur/support') ?>" class="menu-item">
+                <a href="<?= url('profiles/drh/support') ?>" class="menu-item">
                     <i class="fas fa-question-circle"></i>
                     <span class="menu-text">Support</span>
                 </a>
                 <!-- Nouveau bouton "Calendrier RC d'Employé" -->
-                <a href="<?= url('profiles/directeur/calendrier') ?>" class="menu-item">
+                <a href="<?= url('profiles/drh/calendrier') ?>" class="menu-item">
                     <i class="fas fa-calendar"></i>
                     <span class="menu-text">Calendrier RC d'Employé</span>
                 </a>
@@ -883,7 +847,6 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
         </form>
     </div>
 
-  
     <!-- Top Navbar -->
     <nav class="navbar">
         <div class="nav-icons">
@@ -897,14 +860,14 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
             </div>
         </div>
     </nav>
-    
+
     <!-- Menu déroulant des notifications -->
     <div class="notification-dropdown" id="notificationDropdown">
         <div class="no-notifications">
             Aucune notification pour le moment.
         </div>
     </div>
-    
+
     <!-- Menu déroulant de messagerie -->
     <div class="messenger-dropdown" id="messengerDropdown">
         <div class="messenger-header">
@@ -922,57 +885,152 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
         <div class="messenger-footer">
             <input type="text" placeholder="Entrez un nom">
         </div>
-            </div>
-        </nav>
-    
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <h1>Consulter les Demandes</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Type de Demande</th>
-                    <th>Date de Demande</th>
-                    <th>Statut</th>
-                    <th>
-                        decisions
-                    </th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-
-                <?php foreach($user_demands as $demand): ?>
-                <tr>
-                    <td>#<?= $demand['id'] ?></td>
-                    <td><?= $demand['type'] ?? 'congé annual' ?></td>
-                    <td><?= $demand['date_depose'] ?></td>
-                    <td><?= $demand['status'] ?></td>
-                    <td>
-                        <ul>
-                            <?php foreach($demand['lifecycle'] as $step): $superior = fetch_user_information($step['superior_id']); ?>
-                                <li>
-                                    <?= sprintf("%s (%s) :", $superior['nom'], $superior['role']['nom']) ?>  <?= $step['decision'] ?>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </td>
-                    <td>
-                    <button onclick="accept('<?= $demand['id'] ?>')" style="border-radius:10px;padding : 5px 10px;border:1px solid white;background:green;color:white">accept</button>
-                    <button onclick="reject('<?= $demand['id'] ?>')" style="border-radius:10px;padding : 5px 10px;border:1px solid white;background:red;color:white">reject</button>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-
-            </tbody>
-        </table>
     </div>
+    </nav>
 
+
+    <div class="content">
+        <div class="container">
+            <div class="form-card">
+                <div class="header">
+                    <h1 class="title"> Compte rendue de déplacement </h1>
+                </div>
+                <form id="formConvocation" action="<?= url('actions/compte_rendu.php') ?>" method="post">
+                    <input type="hidden" name="demand_id" value="<?= $_GET['demand_id'] ?>">
+                    <div class="section">
+                        <h3 class="section-title">Nature et description des travaux effectués</h3>
+                        <div class="form-group">
+                            <label class="form-label" for="Nature">Nature</label>
+                            <input value="<?= $demand['compte_rendu']['info']['nature'] ?? '' ?>" name="nature" type="text" id="Nature" class="form-input" required style="width: 90%; height: 40px;">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="Description">Description</label>
+                            <textarea name="description" id="Description" class="form-input" required style="width: 90%; height: 100px;"><?= $demand['compte_rendu']['info']['description'] ?? '' ?></textarea>
+                        </div>
+
+
+                        <h3 class="section-title">Raisons et justifications d'un deuxiéme déplacement</h3>
+
+                        <div class="form-group">
+                            <label class="form-label" for="Raisons">Raisons</label>
+                            <input value="<?= $demand['compte_rendu']['info']['raisons'] ?? '' ?>" name="raisons" type="text" id="Raisons" class="form-input" required style="width: 90%; height: 40px;">
+                        </div>
+                        <div class=" form-group">
+                            <label class="form-label" for="justifications_d'un_deuxiéme_déplacement">justifications d'un deuxiéme déplacement</label>
+                            <textarea name="justify" id="justifications d'un deuxiéme déplacement" class="form-input" required style="width: 90%; height: 100px;"><?= $demand['compte_rendu']['info']['justify'] ?? '' ?></textarea>
+                        </div>
+                    </div>
+
+
+                    <div class="buttons-container" style="display: flex; justify-content: flex-end; gap: 10px;">
+                        <button type="button" id="printButton" class="button button-secondary">
+                            <i class="fas fa-print"></i> Imprimer
+                        </button>
+
+                        <button type="submit" id="submitButton" class="button button-primary">
+                            <span id="submitText">Soumettre</span>
+                        </button>
+                    </div>
+
+
+                </form>
+            </div>
+        </div>
+    </div>
     <script>
-         // Navigation menu toggle functions
-        
+        document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const submenu = document.getElementById('demandeSubmenu');
+            if (submenu.style.display === 'none') {
+                submenu.style.display = 'block';
+            } else {
+                submenu.style.display = 'none';
+            }
+        });
+
+        document.getElementById('congeBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const submenu = document.getElementById('congeSubmenu');
+            if (submenu.style.display === 'none') {
+                submenu.style.display = 'block';
+            } else {
+                submenu.style.display = 'none';
+            }
+        });
+
+        document.querySelector(".menu-toggle").addEventListener("click", function(e) {
+            e.preventDefault();
+            let submenu = document.querySelector(".submenu");
+            let icon = this.querySelector(".fa-chevron-right");
+
+            if (submenu.style.display === "flex") {
+                submenu.style.display = "none";
+                icon.style.transform = "rotate(0deg)";
+            } else {
+                submenu.style.display = "flex";
+                icon.style.transform = "rotate(90deg)";
+            }
+        });
+
+        document.querySelector(".sub-menu-toggle").addEventListener("click", function(e) {
+            e.preventDefault();
+            let subSubmenu = document.querySelector(".sub-submenu");
+            let icon = this.querySelector(".fa-chevron-right");
+
+            if (subSubmenu.style.display === "flex") {
+                subSubmenu.style.display = "none";
+                icon.style.transform = "rotate(0deg)";
+            } else {
+                subSubmenu.style.display = "flex";
+                icon.style.transform = "rotate(90deg)";
+            }
+        });
+
+        document.querySelector(".conges-toggle").addEventListener("click", function(e) {
+            e.preventDefault();
+            let subSubSubmenu = document.querySelector(".sub-sub-submenu");
+            let icon = this.querySelector(".fa-chevron-right");
+
+            if (subSubSubmenu.style.display === "flex") {
+                subSubSubmenu.style.display = "none";
+                icon.style.transform = "rotate(0deg)";
+            } else {
+                subSubSubmenu.style.display = "flex";
+                icon.style.transform = "rotate(90deg)";
+            }
+        });
+
+        function validateName(value) {
+            // Validation logic here
+        }
+
+        function validateDates(depart, retour) {
+            // Validation logic here
+        }
+
+        function showError(elementId, show) {
+            // Show error logic here
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            // Form submission logic here
+        }
+
+        function handlePrint() {
+            // Print logic here
+        }
+        document.getElementById('printButton').addEventListener('click', function() {
+            window.print();
+        });
+        bar_navigation.html
+        // Navigation menu toggle functions
+        document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const submenu = document.getElementById('demandeSubmenu');
+            submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+        });
 
         document.getElementById('congeBtn').addEventListener('click', function(e) {
             e.preventDefault();
@@ -988,9 +1046,7 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
                 submenu.style.display = 'none';
             }
         });
-        document.getElementById('logoutButton').addEventListener('click', function() {
-    window.location.href = 'loginAT1.html';
-});
+
         document.getElementById('congeBtn').addEventListener('click', function(e) {
             e.preventDefault();
             const submenu = document.getElementById('congeSubmenu');
@@ -1005,7 +1061,7 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
             e.preventDefault();
             let submenu = document.querySelector(".submenu");
             let icon = this.querySelector(".fa-chevron-right");
-            
+
             if (submenu.style.display === "flex") {
                 submenu.style.display = "none";
                 icon.style.transform = "rotate(0deg)";
@@ -1019,7 +1075,7 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
             e.preventDefault();
             let subSubmenu = document.querySelector(".sub-submenu");
             let icon = this.querySelector(".fa-chevron-right");
-            
+
             if (subSubmenu.style.display === "flex") {
                 subSubmenu.style.display = "none";
                 icon.style.transform = "rotate(0deg)";
@@ -1028,12 +1084,14 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
                 icon.style.transform = "rotate(90deg)";
             }
         });
-
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            window.location.href = 'loginAT1.html';
+        });
         document.querySelector(".conges-toggle").addEventListener("click", function(e) {
             e.preventDefault();
             let subSubSubmenu = document.querySelector(".sub-sub-submenu");
             let icon = this.querySelector(".fa-chevron-right");
-            
+
             if (subSubSubmenu.style.display === "flex") {
                 subSubSubmenu.style.display = "none";
                 icon.style.transform = "rotate(0deg)";
@@ -1046,22 +1104,26 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
         function validateName(value) {
             // Validation logic here
         }
+
         function validateDates(depart, retour) {
             // Validation logic here
         }
+
         function showError(elementId, show) {
             // Show error logic here
         }
+
         function handleSubmit(event) {
             event.preventDefault();
             // Form submission logic here
         }
+
         function handlePrint() {
             // Print logic here
         }
         document.getElementById('printButton').addEventListener('click', function() {
-        window.print();
-    });
+            window.print();
+        });
 
         // Fonction pour afficher/masquer les notifications
         function toggleNotifications() {
@@ -1100,32 +1162,13 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
                 messengerDropdown.classList.remove('show');
             }
         });
-        
-
-        // Consulter Demandes functions
-        function toggleDropdown(requestId) {
-            const dropdown = document.getElementById(`dropdown-${requestId}`);
-            dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-        }
-
-        function acceptRequest(requestId) {
-            const statusCell = document.querySelector(`#request-${requestId} .status`);
-            statusCell.textContent = "Accepté";
-            statusCell.style.color = "#28a745"; // Vert pour indiquer l'acceptation
-            closeDropdown(requestId);
-        }
-
-        function refuseRequest(requestId) {
-            const statusCell = document.querySelector(`#request-${requestId} .status`);
-            statusCell.textContent = "Refusé";
-            statusCell.style.color = "#dc3545"; // Rouge pour indiquer le refus
-            closeDropdown(requestId);
-        }
-
-        function closeDropdown(requestId) {
-            const dropdown = document.getElementById(`dropdown-${requestId}`);
-            dropdown.style.display = "none";
-        }
     </script>
+
+    <?php if(isset($_SESSION['status'])): ?>
+        <script>
+            alert("<?= $_SESSION['status'] ?>")
+        </script>
+    <?php endif;unset($_SESSION['status']) ?>
 </body>
+
 </html>

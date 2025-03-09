@@ -10,9 +10,12 @@ redirect_if_not_auth();
 
 $user = fetch_user_information($_SESSION['user_id']);
 
+$work_days = fetch_work_days($_SESSION['user_id']);
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -135,7 +138,8 @@ $user = fetch_user_information($_SESSION['user_id']);
             font-weight: 500;
         }
 
-        .sidebar a:hover, .sidebar .active {
+        .sidebar a:hover,
+        .sidebar .active {
             background: var(--hover-color);
             transform: translateX(5px);
             color: var(--primary-color);
@@ -408,7 +412,8 @@ $user = fetch_user_information($_SESSION['user_id']);
             color: #003366;
         }
 
-        .fc-day-sat, .fc-day-fri {
+        .fc-day-sat,
+        .fc-day-fri {
             background-color: #e6f3ff !important;
         }
 
@@ -421,7 +426,8 @@ $user = fetch_user_information($_SESSION['user_id']);
                 width: 80px;
             }
 
-            .logo-text, .menu-text {
+            .logo-text,
+            .menu-text {
                 display: none;
             }
 
@@ -446,6 +452,7 @@ $user = fetch_user_information($_SESSION['user_id']);
         }
     </style>
 </head>
+
 <body>
     <!-- Navigation Sidebar -->
     <div class="sidebar">
@@ -601,9 +608,30 @@ $user = fetch_user_information($_SESSION['user_id']);
         </div>
     </div>
 
-   
+
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/fr.min.js"></script>
+    <script>
+        async function insertDateToDatabse(dateStr) {
+            let data = new FormData
+            data.append('date', dateStr)
+            data.append('action', 'add_work_day')
+            return await fetch("<?= url('actions/rc.php') ?>", {
+                method: 'POST',
+                body: data
+            })
+        }
+
+        async function removeDateFromDatabase(dateStr) {
+            let data = new FormData
+            data.append('date', dateStr)
+            data.append('action', 'remove_work_day')
+            return await fetch("<?= url('actions/rc.php') ?>", {
+                method: 'POST',
+                body: data
+            })
+        }
+    </script>
     <script>
         const holidays = [
             '2024-01-01',
@@ -614,7 +642,9 @@ $user = fetch_user_information($_SESSION['user_id']);
 
         document.addEventListener('DOMContentLoaded', function() {
             const today = new Date();
-            today.setHours(0, 0, 0, 0); 
+            today.setHours(0, 0, 0, 0);
+
+            console.log(window.FullCalender, window.calender)
 
             const calendarEl = document.getElementById('calendar');
             const calendar = new FullCalendar.Calendar(calendarEl, {
@@ -639,40 +669,83 @@ $user = fetch_user_information($_SESSION['user_id']);
                     const day = selectedDate.getDay();
                     let message = '';
 
+                    //insertToDatabase(dateStr)
+
                     if (holidays.includes(dateStr)) {
                         message = `⚠ Vous avez travaillé un jour férié (${dateStr}).`;
-                    } else if (day === 5) { 
+                    } else if (day === 5) {
                         message = `✔ Vous avez travaillé un vendredi (${dateStr}).`;
-                    } else if (day === 6) { 
+                    } else if (day === 6) {
                         message = `✔ Vous avez travaillé un samedi (${dateStr}).`;
                     }
 
-                    calendar.addEvent({
-                        title: 'Jour travaillé',
-                        start: dateStr,
-                        backgroundColor: holidays.includes(dateStr) ? '#FF5733' : '#003366',
-                        borderColor: holidays.includes(dateStr) ? '#FF5733' : '#003366',
-                    });
+                    let dates = calendar.getEvents().map(e => e.startStr)
 
-                    if (message) {
-                        alert(message);
+                    if (dates.includes(dateStr)) {
+                        alert("Vous avez déjà travaillé ce jour.")
+                        return
                     }
+
+                    insertDateToDatabse(dateStr)
+                        .then(res => res.json())
+                        .then(json => {
+                            if (json.success) {
+                                if (message) {
+                                    alert(message);
+                                }
+
+                                calendar.addEvent({
+                                    title: 'Jour travaillé',
+                                    start: dateStr,
+                                    backgroundColor: holidays.includes(dateStr) ? '#FF5733' : '#003366',
+                                    borderColor: holidays.includes(dateStr) ? '#FF5733' : '#003366',
+                                });
+                            } else {
+                                alert('some error occured please retry')
+                            }
+                        })
 
                     calculateRCDays();
                 },
                 eventClick: function(info) {
                     if (confirm('Voulez-vous supprimer ce jour travaillé ?')) {
-                        info.event.remove();
+                        if( info.event.title.includes('(B)') ){
+                            alert('you can not remove  date you benefited from')
+                            return
+                        }
+                        removeDateFromDatabase(info.event.startStr)
+                            .then(res => res.json())
+                            .then(json => {
+                                if (json.success) {
+                                    info.event.remove();
+                                } else {
+                                    alert('some error occured when trying to remove this day')
+                                }
+                            })
                         calculateRCDays();
                     }
                 },
                 dayCellDidMount: function(info) {
                     const dateStr = info.date.toISOString().split('T')[0];
                     if (holidays.includes(dateStr)) {
-                        info.el.classList.add('holiday'); 
+                        info.el.classList.add('holiday');
                     }
                 }
             });
+
+            var work_days = JSON.parse(`<?= json_encode($work_days['data']) ?>`);
+
+            console.info('work', work_days)
+
+            work_days.forEach(day => {
+                calendar.addEvent({
+                    benefited : day.benefited,
+                    title: `Jour travaillé ${day.benefited ? '(B)' : ''}`,
+                    start: day.date,
+                    backgroundColor: holidays.includes(day.date) ? '#FF5733' : '#003366',
+                    borderColor: holidays.includes(day.date) ? '#FF5733' : '#003366',
+                });
+            })
 
             calendar.render();
 
@@ -684,9 +757,9 @@ $user = fetch_user_information($_SESSION['user_id']);
                     const date = event.start;
                     const day = date.getDay();
 
-                    if (day === 5) { 
+                    if (day === 5) {
                         rcDays += 2;
-                    } else if (day === 6) { 
+                    } else if (day === 6) {
                         rcDays += 1;
                     }
                 });
@@ -708,8 +781,8 @@ $user = fetch_user_information($_SESSION['user_id']);
             submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
         });
         document.getElementById('logoutButton').addEventListener('click', function() {
-    window.location.href = 'loginAT1.html';
-});
+            window.location.href = 'loginAT1.html';
+        });
         document.querySelectorAll('.menu-item').forEach(item => {
             item.addEventListener('click', function(e) {
                 if (this !== document.getElementById('faireDemandeBtn') && this !== document.getElementById('congeBtn')) {
@@ -720,8 +793,8 @@ $user = fetch_user_information($_SESSION['user_id']);
             });
         });
         document.getElementById('logoutButton').addEventListener('click', function() {
-    window.location.href = 'loginAT1.html';
-});
+            window.location.href = 'loginAT1.html';
+        });
         // Fonction pour afficher/masquer les notifications
         function toggleNotifications() {
             const dropdown = document.getElementById('notificationDropdown');
@@ -786,4 +859,5 @@ $user = fetch_user_information($_SESSION['user_id']);
         }
     </script>
 </body>
+
 </html>

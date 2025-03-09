@@ -9,7 +9,7 @@ if (!session_id()) {
 $action = $_POST['action'] ?? null;
 
 if ($action == 'change_status') {
-    change_status($_POST['demand_id'], $_POST['status']);
+    set_decision($_POST['demand_id'], $_SESSION['user_id'], $_POST['status']);
     send_json_response([
         'status' => 'ok',
         'message' => 'updated successfully'
@@ -44,6 +44,9 @@ switch ($demand_type) {
 
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
         $_SESSION['status'] = 'sucessfully demand send';
+        
+        add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
+        
         redirect(url('profiles'));
         break;
 
@@ -58,6 +61,9 @@ switch ($demand_type) {
         }
 
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
+        
+        add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
+        
         $_SESSION['status'] = 'sucessfully demand send';
         redirect(url('profiles'));
         break;
@@ -72,6 +78,7 @@ switch ($demand_type) {
         }
 
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
+        add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'sucessfully demand send';
         redirect(url('profiles'));
         break;
@@ -80,7 +87,15 @@ switch ($demand_type) {
         $description = $_POST['description'] ?? null;
         $info['content'] = "no details";
 
+        $response = deduct_leave_days($_SESSION['user_id'], $duree);
+
+        if( !$response['success'] ){
+            $_SESSION['error'] = $response['message'];
+            redirect_back();
+        }
+
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
+        add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'sucessfully demand send';
         redirect(url('profiles'));
         break;
@@ -96,6 +111,7 @@ switch ($demand_type) {
         $info['type'] = 'keys';
 
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
+        add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'sucessfully demand send';
         redirect(url('profiles'));
         break;
@@ -114,6 +130,7 @@ switch ($demand_type) {
         $info['type'] = 'keys';
 
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
+        add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'sucessfully demand send';
         redirect(url('profiles'));
         break;
@@ -131,6 +148,7 @@ switch ($demand_type) {
         $info['type'] = 'keys';
 
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
+        add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'sucessfully demand send';
         redirect(url('profiles'));
         break;
@@ -148,6 +166,7 @@ switch ($demand_type) {
         $info['type'] = 'keys';
 
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
+        add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'sucessfully demand send';
         redirect(url('profiles'));
         break;
@@ -157,6 +176,7 @@ switch ($demand_type) {
         $type = $_POST['type'] ?? null;
 
         $demand_id = insert_support($_SESSION['user_id'], $message, $type); 
+        add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'sucessfully support send';
         redirect(url('profiles'));
         break;

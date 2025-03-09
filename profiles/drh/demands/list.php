@@ -1,7 +1,7 @@
-<?php 
+<?php
 include __DIR__ . '/../../../vendor/autoload.php';
 
-if( ! session_id() ){
+if (! session_id()) {
     session_start();
 }
 
@@ -653,11 +653,14 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                     <th>Type de demande</th>
                     <th>Date de demande</th>
                     <th>Statut</th>
+                    <th>
+                        compte_rendu
+                    </th>
                     <th>Détails</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach($user_demands as $demand): ?>
+                <?php foreach ($user_demands as $demand): ?>
                     <?php $info = json_decode($demand['info'], true) ?>
                     <tr>
                         <td>
@@ -673,26 +676,33 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                             <?= $demand['status'] ?>
                         </td>
                         <td>
-                            <?php if( $info['type'] == 'text' ): ?>
-                                <td>
-                                    <?= $info['content'] ?>
-                                </td>
-                            <?php elseif($info['type'] == 'keys'): ?>
-                                <td>
-                                    <ul>
-                                        <?php foreach($info['content'] as $key => $value): ?>
-                                            <li>
-                                                <?= $key ?> : <?= $value ?>
-                                            </li>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                </td>
+                            <?php if (in_array($demand['type'], ['mission', 'deplacement'])): ?>
+                            <?php if ($demand['status'] == 'accepted'): ?>
+                                <a href="<?= url('profiles/drh/compte-rendus/' . $demand['type'] . '.php?demand_id=' . $demand['id']) ?>">
+                                    create/update compte rendu
+                                </a>
+                                <?php else: ?>
+                                    wait untill accept
+                                <?php endif; ?>
                             <?php else: ?>
-                                <td>
-                                    <a href="<?= url('storage/' . $info['content'] ) ?>" download="file.pdf">
-                                        download
-                                    </a>
-                                </td>
+                                no compte rendu
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <?php if ($info['type'] == 'text'): ?>
+                                <?= $info['content'] ?>
+                            <?php elseif ($info['type'] == 'keys'): ?>
+                                <ul>
+                                    <?php foreach ($info['content'] as $key => $value): ?>
+                                        <li>
+                                            <?= $key ?> : <?= $value ?>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php else: ?>
+                                <a href="<?= url('storage/' . $info['content']) ?>" download="file.pdf">
+                                    download
+                                </a>
                             <?php endif; ?>
                         </td>
                     </tr>

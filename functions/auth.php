@@ -16,18 +16,15 @@ if (! function_exists('login')){
             ];
         }
 
-        $sql = "SELECT * FROM `employees` WHERE email_professionnel = ? AND password = ?";
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $stmt = $db->prepare($sql);
+        $user_hashed_password = $user['password'];
 
-        $stmt->execute([$email, $password]);
-
-        if( $stmt->rowCount() < 1 ){
+        if( !password_verify($password, $user_hashed_password) ){
             return [
                 'error' => 'wrong password'
             ];
         }
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if( $user['compte_valid'] != 1 ){
             return [
@@ -70,7 +67,7 @@ if(! function_exists('register')){
         $stmt = $db->prepare($sql);
 
         try{
-            $stmt->execute([$prenom, $nom, $email, $password, $department, $service, $enterprise_position]);
+            $stmt->execute([$prenom, $nom, $email, password_hash($password, PASSWORD_BCRYPT), $department, $service, $enterprise_position]);
         }catch (PDOException $e){
             echo implode("-",[$prenom, $nom, $email, $password, $department, $service, $enterprise_position]);
 
@@ -146,3 +143,4 @@ if( ! function_exists('redirect_if_auth') ){
         }
     }
 }
+
