@@ -1,3 +1,16 @@
+<?php
+
+include __DIR__ . '/../../../../vendor/autoload.php';
+
+if (! session_id()) {
+    session_start();
+}
+
+redirect_if_not_auth();
+
+$user = fetch_user_information($_SESSION['user_id']);
+
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
