@@ -556,53 +556,53 @@ $requests = fetch_creation_demands();
                                 <span class="menu-text">Demande Congé</span>
                             </a>
                             <div class="submenu" id="congeSubmenu" style="display: none;">
-                                <a href="<?= url('admin/demands/conge/annual.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/annual.php') ?>" class="menu-item">
                                     <i class="fas fa-sun"></i>
                                     <span class="menu-text">Congé Annuel</span>
                                 </a>
-                                <a href="<?= url('admin/demands/conge/malady.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/malady.php') ?>" class="menu-item">
                                     <i class="fas fa-hospital"></i>
                                     <span class="menu-text">Congé Maladie</span>
                                 </a>
-                                <a href="<?= url('admin/demands/conge/maternity.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/maternity.php') ?>" class="menu-item">
                                     <i class="fas fa-baby"></i>
                                     <span class="menu-text">Congé Maternité</span>
                                 </a>
-                                <a href="<?= url('admin/demands/conge/rc.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/rc.php') ?>" class="menu-item">
                                     <i class="fas fa-clock"></i>
                                     <span class="menu-text">Congé RC</span>
                                 </a>
                             </div>
                         </div>
-                        <a href="<?= url('admin/demands/formation') ?>" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/formation') ?>" class="menu-item">
                             <i class="fas fa-graduation-cap"></i>
                             <span class="menu-text">Demande Formation</span>
                         </a>
-                        <a href="<?= url('admin/demands/mission') ?>" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/mission') ?>" class="menu-item">
                             <i class="fas fa-plane"></i>
                             <span class="menu-text">Demande Ordre Mission</span>
                         </a>
-                        <a href="<?= url('admin/demands/deplacement') ?>" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/deplacement') ?>" class="menu-item">
                             <i class="fas fa-car"></i>
                             <span class="menu-text">Demande Déplacement</span>
                         </a>
-                        <a href="sortie_admin1.html" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/leave') ?>" class="menu-item">
                             <i class="fas fa-door-open"></i>
                             <span class="menu-text">Demande Sortie</span>
                         </a>
                     </div>
-                    <a href="<?= url('admin/demands/list.php') ?>" class="menu-item">
+                    <a href="<?= url('profiles/directeur/demands') ?>" class="menu-item">
                         <i class="fas fa-tasks"></i>
                         <span class="menu-text">État de demande</span>
                     </a>
-                    <a href="<?= url('admin/demands/consulte.php') ?>" class="menu-item">
+                    <a href="<?= url('profiles/directeur/demands/consulte.php') ?>" class="menu-item">
                         <i class="fas fa-eye"></i>
                         <span class="menu-text">Consulter Demande</span>
                     </a>
                 </div>
 
                 <div class="nav-title">Autres</div>
-                <a href="support_admin1.html" class="menu-item">
+                <a href="<?= url('profiles/directeur/support') ?>" class="menu-item">
                     <i class="fas fa-question-circle"></i>
                     <span class="menu-text">Support</span>
                 </a>

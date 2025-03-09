@@ -1,9 +1,8 @@
-
 <?php
 
-include __DIR__ . '/../../../vendor/autoload.php';
+include __DIR__ . '/../../../../vendor/autoload.php';
 
-if( ! session_id() ){
+if (! session_id()) {
     session_start();
 }
 
@@ -15,6 +14,7 @@ $user = fetch_user_information($_SESSION['user_id']);
 
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -129,7 +129,8 @@ $user = fetch_user_information($_SESSION['user_id']);
             font-weight: 500;
         }
 
-        .sidebar a:hover, .sidebar .active {
+        .sidebar a:hover,
+        .sidebar .active {
             background: var(--hover-color);
             transform: translateX(5px);
             color: var(--primary-color);
@@ -150,7 +151,9 @@ $user = fetch_user_information($_SESSION['user_id']);
             color: var(--secondary-color);
         }
 
-        .submenu, .sub-submenu, .sub-sub-submenu {
+        .submenu,
+        .sub-submenu,
+        .sub-sub-submenu {
             display: none;
             flex-direction: column;
             padding-left: 20px;
@@ -169,7 +172,9 @@ $user = fetch_user_information($_SESSION['user_id']);
             border-radius: 1px;
         }
 
-        .submenu a, .sub-submenu a, .sub-sub-submenu a {
+        .submenu a,
+        .sub-submenu a,
+        .sub-sub-submenu a {
             font-size: 0.95em;
             padding: 12px 16px;
             opacity: 0.9;
@@ -244,10 +249,14 @@ $user = fetch_user_information($_SESSION['user_id']);
             transition: var(--transition);
             position: relative;
         }
+
         .small-text {
-            font-size: 14px; /* Réduit la taille de la police */
-            font-weight: normal; /* Évite qu'il soit en gras */
-            color: #555; /* Optionnel : une couleur plus douce */
+            font-size: 14px;
+            /* Réduit la taille de la police */
+            font-weight: normal;
+            /* Évite qu'il soit en gras */
+            color: #555;
+            /* Optionnel : une couleur plus douce */
         }
 
         .icon-wrapper:hover {
@@ -285,6 +294,7 @@ $user = fetch_user_information($_SESSION['user_id']);
             box-shadow: var(--shadow-sm);
             animation: pulse 2s infinite;
         }
+
         .notification-dropdown {
             display: none;
             position: absolute;
@@ -324,15 +334,18 @@ $user = fetch_user_information($_SESSION['user_id']);
             font-size: 14px;
             padding: 20px;
         }
+
         @keyframes pulse {
             0% {
                 transform: scale(1);
                 box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.4);
             }
+
             70% {
                 transform: scale(1.1);
                 box-shadow: 0 0 0 10px rgba(255, 51, 102, 0);
             }
+
             100% {
                 transform: scale(1);
                 box-shadow: 0 0 0 0 rgba(255, 51, 102, 0);
@@ -354,13 +367,16 @@ $user = fetch_user_information($_SESSION['user_id']);
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        .submenu.show, .sub-submenu.show, .sub-sub-submenu.show {
+        .submenu.show,
+        .sub-submenu.show,
+        .sub-sub-submenu.show {
             animation: slideDown 0.3s ease forwards;
         }
 
@@ -398,7 +414,9 @@ $user = fetch_user_information($_SESSION['user_id']);
         }
 
         /* Remove search-related styles */
-        .nav-left, .nav-right, .nav-search {
+        .nav-left,
+        .nav-right,
+        .nav-search {
             display: none;
         }
 
@@ -434,18 +452,29 @@ $user = fetch_user_information($_SESSION['user_id']);
         }
 
         .title {
-            text-align: center; /* Centrer le texte */
-            color: #124170; /* Bleu foncé */
-            font-size: 28px; /* Agrandir le texte */
-            font-weight: bold; /* Texte en gras */
-            text-transform: uppercase; /* Majuscules */
-            letter-spacing: 1px; /* Espacement entre lettres */
-            margin-bottom: 20px; /* Espacement sous le titre */
-            padding-bottom: 5px; /* Espacement sous le titre */
-            display: block; /* Empêcher toute ligne latérale */
-            width: fit-content; /* Ajuster la largeur au texte */
+            text-align: center;
+            /* Centrer le texte */
+            color: #124170;
+            /* Bleu foncé */
+            font-size: 28px;
+            /* Agrandir le texte */
+            font-weight: bold;
+            /* Texte en gras */
+            text-transform: uppercase;
+            /* Majuscules */
+            letter-spacing: 1px;
+            /* Espacement entre lettres */
+            margin-bottom: 20px;
+            /* Espacement sous le titre */
+            padding-bottom: 5px;
+            /* Espacement sous le titre */
+            display: block;
+            /* Empêcher toute ligne latérale */
+            width: fit-content;
+            /* Ajuster la largeur au texte */
             margin-left: auto;
-            margin-right: auto; /* Centrer le bloc */
+            margin-right: auto;
+            /* Centrer le bloc */
         }
 
 
@@ -466,21 +495,27 @@ $user = fetch_user_information($_SESSION['user_id']);
         .form-group {
             margin-bottom: 1rem;
         }
+
         .form-group-row {
             display: flex;
-            gap: 20px; /* Espacement entre les champs */
+            gap: 20px;
+            /* Espacement entre les champs */
         }
 
         .form-group-row .form-group {
-            flex: 1; /* Permet aux champs de prendre un espace égal */
+            flex: 1;
+            /* Permet aux champs de prendre un espace égal */
         }
+
         .form-group-row {
             display: flex;
-            gap: 20px; /* Espacement entre les champs */
+            gap: 20px;
+            /* Espacement entre les champs */
         }
 
         .form-group-row .form-group {
-            flex: 1; /* Permet aux champs de prendre un espace égal */
+            flex: 1;
+            /* Permet aux champs de prendre un espace égal */
         }
 
         .form-label {
@@ -517,15 +552,19 @@ $user = fetch_user_information($_SESSION['user_id']);
             border-radius: 0.375rem;
             animation: fadeIn 0.3s ease-out;
         }
+
         .buttons-container {
             display: flex;
             justify-content: flex-end;
-            gap: 10px; /* Espacement entre les boutons */
+            gap: 10px;
+            /* Espacement entre les boutons */
         }
 
         .button-primary {
-            background-color: white; /* Fond blanc */
-            color: #003366; /* Texte bleu foncé */
+            background-color: white;
+            /* Fond blanc */
+            color: #003366;
+            /* Texte bleu foncé */
             font-size: 16px;
             font-weight: bold;
             padding: 12px 20px;
@@ -535,7 +574,8 @@ $user = fetch_user_information($_SESSION['user_id']);
             transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 8px; /* Espacement entre l'icône et le texte */
+            gap: 8px;
+            /* Espacement entre l'icône et le texte */
         }
 
         .button-primary:hover {
@@ -582,6 +622,7 @@ $user = fetch_user_information($_SESSION['user_id']);
                 opacity: 0;
                 transform: translateY(-0.5rem);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -697,374 +738,394 @@ $user = fetch_user_information($_SESSION['user_id']);
         }
     </style>
 </head>
+
 <body>
-<div class="sidebar">
-    <div class="sidebar-header">
-        <div class="logo">
-            <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
-            <span class="logo-text">DjazairRH</span>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
+                <span class="logo-text">DjazairRH</span>
+            </div>
         </div>
-    </div>
-    <div class="sidebar-content">
-        <div class="menu-items">
-            <div class="nav-title">Principal</div>
-            <a href="accueil.html" class ="menu-item">
-                <i class="fas fa-home"></i>
-                <span>Accueil</span>
-            </a>
-            <a href="profile_employe.html" class="menu-item">
-                <i class="fas fa-user-circle"></i>
-                <span>Mon Profil</span>
-            </a>
-
-            <div class="nav-title">Demandes</div>
-            <div class="request-section">
-                <a href="#" class="menu-item" id="faireDemandeBtn">
-                    <i class="fas fa-file-alt"></i>
-                    <span class="menu-text">Faire une demande</span>
+        <div class="sidebar-content">
+            <div class="menu-items">
+                <div class="nav-title">Principal</div>
+                <a href="<?php echo url('profiles/employee/profile.php') ?>" class="menu-item">
+                    <i class="fas fa-home"></i>
+                    <span class="menu-text">Accueil</span>
                 </a>
-                <div class="submenu" id="demandeSubmenu" style="display: none; padding-left: 20px;">
-                    <div>
-                        <a href="#" class="menu-item" id="congeBtn">
-                            <i class="fas fa-calendar-alt"></i>
-                            <span class="menu-text">Demande Congé</span>
+                <a href="<?php echo url('profiles/employee/profile.php') ?>" class="menu-item active">
+                    <i class="fas fa-user-circle"></i>
+                    <span class="menu-text">Mon Profil</span>
+                </a>
+
+                <div class="nav-title">Demandes</div>
+                <div class="request-section">
+                    <a href="#" class="menu-item" id="faireDemandeBtn">
+                        <i class="fas fa-file-alt"></i>
+                        <span class="menu-text">Faire une demande</span>
+                    </a>
+                    <div class="submenu" id="demandeSubmenu" style="display: none;">
+                        <div>
+                            <a href="#" class="menu-item" id="congeBtn">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span class="menu-text">Demande Congé</span>
+                            </a>
+                            <div class="submenu" id="congeSubmenu" style="display: none;">
+                                <a href="<?php echo url('profiles/employee/demands/conge/annual.php') ?>" class="menu-item">
+                                    <i class="fas fa-sun"></i>
+                                    <span class="menu-text">Congé Annuel</span>
+                                </a>
+                                <a href="<?php echo url('profiles/employee/demands/conge/malady.php') ?>" class="menu-item">
+                                    <i class="fas fa-hospital"></i>
+                                    <span class="menu-text">Congé Maladie</span>
+                                </a>
+                                <a href="<?php echo url('profiles/employee/demands/conge/maternity.php') ?>" class="menu-item">
+                                    <i class="fas fa-baby"></i>
+                                    <span class="menu-text">Congé Maternité</span>
+                                </a>
+                                <a href="<?php echo url('profiles/employee/demands/conge/rc.php') ?>" class="menu-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span class="menu-text">Congé RC</span>
+                                </a>
+                            </div>
+                        </div>
+                        <a href="<?php echo url('profiles/employee/demands/formation') ?>" class="menu-item">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span class="menu-text">Demande Formation</span>
                         </a>
-                        <div class="submenu" id="congeSubmenu" style="display: none; padding-left: 20px;">
-                            <a href="annuel_employe.html" class="menu-item">
-                                <i class="fas fa-sun"></i>
-                                <span class="menu-text">Congé Annuel</span>
-                            </a>
-                            <a href="maladie_employe.html" class="menu-item">
-                                <i class="fas fa-hospital"></i>
-                                <span class="menu-text">Congé Maladie</span>
-                            </a>
-                            <a href="maternite_employe.html" class="menu-item">
-                                <i class="fas fa-baby"></i>
-                                <span class="menu-text">Congé Maternité</span>
-                            </a>
-                            <a href="rc_employe.html" class="menu-item">
-                                <i class="fas fa-clock"></i>
-                                <span class="menu-text">Congé RC</span>
-                            </a>
-                        </div>
+                        <a href="<?php echo url('profiles/employee/demands/mission') ?>" class="menu-item">
+                            <i class="fas fa-plane"></i>
+                            <span class="menu-text">Demande Ordre Mission</span>
+                        </a>
+                        <a href="<?php echo url('profiles/employee/demands/deplacement') ?>" class="menu-item">
+                            <i class="fas fa-car"></i>
+                            <span class="menu-text">Demande Déplacement</span>
+                        </a>
+                        <a href="<?php echo url('profiles/employee/demands/leave') ?>" class="menu-item">
+                            <i class="fas fa-door-open"></i>
+                            <span class="menu-text">Demande Sortie</span>
+                        </a>
                     </div>
-                    <a href="formation_employe.html" class="menu-item">
-                        <i class="fas fa-graduation-cap"></i>
-                        <span class="menu-text">Demande Formation</span>
-                    </a>
-                    <a href="mission_employe.html" class="menu-item">
-                        <i class="fas fa-plane"></i>
-                        <span class="menu-text">Demande Ordre Mission</span>
-                    </a>
-                    <a href="déplacement_employe.html" class="menu-item">
-                        <i class="fas fa-car"></i>
-                        <span class="menu-text">Demande Déplacement</span>
-                    </a>
-                    <a href="sortie_employe.html" class="menu-item">
-                        <i class="fas fa-door-open"></i>
-                        <span class="menu-text">Demande Sortie</span>
-                    </a>
+                    <?php if (($l = isProfileComplete($user)) !== true): ?>
+                        <a href="#" onclick="alert('please fill all information')" class="menu-item">
+                            <i class="fas fa-tasks"></i>
+                            <span class="menu-text">État de demande</span>
+                        </a>
+                    <?php else: ?>
+                        <a href="<?= url('profiles/employee/demands/list.php') ?>" class="menu-item">
+                            <i class="fas fa-tasks"></i>
+                            <span class="menu-text">État de demande</span>
+                        </a>
+                    <?php endif ?>
+
                 </div>
-                <a href="etat_demande_employe.html" class="menu-item">
-                    <i class="fas fa-tasks"></i>
-                    <span class="menu-text">État de demande</span>
+
+                <div class="nav-title">Autres</div>
+                <a href="<?php echo url('profiles/employee/support') ?>" class="menu-item">
+                    <i class="fas fa-question-circle"></i>
+                    <span class="menu-text">Support</span>
                 </a>
-
-
             </div>
-
-            <div class="nav-title">Autres</div>
-            <a href="support_employe.html" class="menu-item">
-                <i class="fas fa-question-circle"></i>
-                <span class="menu-text">Support</span>
-            </a>
         </div>
-    </div>
-    <div class="user-section" style="margin-top: auto;">
-        <div class="user-avatar">
-            <i class="fas fa-sign-in-alt"></i>
-        </div>
-        <span>Se déconnecter</span>
-    </div>
-</div>
-
-<!-- Top Navbar -->
-<nav class="navbar">
-    <div class="nav-icons">
-        <div class="icon-wrapper" onclick="toggleNotifications()">
-            <i class="fa-solid fa-bell"></i>
-            <!-- Badge pour les notifications non lues -->
-            <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
-        </div>
-        <div class="icon-wrapper" onclick="toggleMessenger()">
-            <i class="fa-brands fa-facebook-messenger"></i>
-        </div>
-    </div>
-</nav>
-
-<!-- Menu déroulant des notifications -->
-<div class="notification-dropdown" id="notificationDropdown">
-    <div class="no-notifications">
-        Aucune notification pour le moment.
-    </div>
-</div>
-
-<!-- Menu déroulant de messagerie -->
-<div class="messenger-dropdown" id="messengerDropdown">
-    <div class="messenger-header">
-        Messagerie
-    </div>
-    <div class="messenger-body">
-        <ul class="contact-list" id="contactList">
-            <!-- Aucun contact pour l'instant -->
-        </ul>
-        <div class="no-messages" id="noMessages">
-            <i class="fas fa-comment-slash"></i>
-            <p>Aucun message pour le moment.</p>
-        </div>
-    </div>
-    <div class="messenger-footer">
-        <input type="text" placeholder="Entrez un nom">
-    </div>
-</div>
-</nav>
-
-<div class="content">
-    <div class="container">
-        <div class="form-card">
-            <div class="header">
-                <h1 class="title"> Demande  congé Annuel </h1>
+        <form action="<?= url('actions/auth.php') ?>" method="post" class="user-section">
+            <input type="hidden" value="logout" name="action" />
+            <div class="user-avatar">
+                <i class="fas fa-sign-in-alt"></i>
             </div>
-            <form action="<?= url('employee/demands/actions/demand.php') ?>" method="post" id="formConvocation" onsubmit="handleSubmit(event)">
-                <div class="section">
-                    <h3 class="section-title">Informations Personnelles</h3>
-                    <div class="form-group">
-                        <label class="form-label" for="matricule">Matricule</label>
-                        <input value="<?= $user['matricule'] ?>" type="text" id="matricule" class="form-input" required>
-                    </div>
-                    <div class="form-group-row">
-                        <div class="form-group">
-                            <label class="form-label" for="nom">Nom</label>
-                            <input value="<?= $user['nom'] ?>" type="text" id="nom" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="prenom">Prénom</label>
-                            <input value="<?= $user['prenom'] ?>" type="text" id="prenom" class="form-input" required>
-                        </div>
-                    </div>
+            <button type="submit" style="border : none">Se déconnecter</button>
+        </form>
+    </div>
 
-                    <h3 class="section-title">Informations Professionnelles</h3>
+    <!-- Top Navbar -->
+    <nav class="navbar">
+        <div class="nav-icons">
+            <div class="icon-wrapper" onclick="toggleNotifications()">
+                <i class="fa-solid fa-bell"></i>
+                <!-- Badge pour les notifications non lues -->
+                <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+            </div>
+            <div class="icon-wrapper" onclick="toggleMessenger()">
+                <i class="fa-brands fa-facebook-messenger"></i>
+            </div>
+        </div>
+    </nav>
 
-                    <div class="form-group">
-                        <label class="form-label" for=" Fonction"> Fonction</label>
-                        <input value="<?= $user['role']['nom'] ?>" type="text" id=" Fonction" class="form-input" required>
-                    </div>
-                </div>
-                <div class="section">
-                    <h3 class="section-title">Détails de congé</h3>
-                    <div class="form-group">
-                        <label class="form-label" for=" demande ">Description</label>
-                        <input name="description" type="text" id="demande" class="form-input" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="duree">Durée</label>
-                        <select name="duree" id="duree-select" class="form-input" onchange="handleDureeChange()">
-                            <option value="">Sélectionner une durée</option>
-                            <option value="30">1 mois</option>
-                            <option value="15">15 jours</option>
-                            <option value="autre">Autre</option>
-                        </select>
-                        <input name="duree_2" type="number" id="duree-input" class="form-input" placeholder="Entrez la durée en jours" style="display: none; margin-top: 10px;" min="1" max="30">
-                    </div>
-                    <div class="form-group-row">
-                        <div class="form-group">
-                            <label class="form-label" for="date-debut">Date début</label>
-                            <input name="start_date" type="date" id="date-debut" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="date-fin">Date de fin</label>
-                            <input name="end_date" type="date" id="date-fin" class="form-input" required>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="section">
-                    <h3 class="section-title">Informations Complémentaires</h3>
-                    <h4 class="section-subtitle small-text">pour en jouir a l'adresse suivante </h4>
-                    <div class="form-group">
-                        <textarea name="info" id="info-complementaire" class="form-input" rows="4" placeholder="Entrez vos informations complémentaires ici..."></textarea>
-                    </div>
-                </div>
-                <div class="buttons-container" style="display: flex; justify-content: flex-end; gap: 10px;">
-                    <button type="button" id="printButton" class="button button-secondary">
-                        <i class="fas fa-print"></i> Imprimer
-                    </button>
-
-                    <button type="submit" id="submitButton" class="button button-primary">
-                        <span id="submitText">Soumettre</span>
-                    </button>
-                </div>
-
-
-            </form>
+    <!-- Menu déroulant des notifications -->
+    <div class="notification-dropdown" id="notificationDropdown">
+        <div class="no-notifications">
+            Aucune notification pour le moment.
         </div>
     </div>
-</div>
-<script>
-    // Navigation menu toggle functions
-    document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        const submenu = document.getElementById('demandeSubmenu');
-        submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
-    });
 
-    document.getElementById('congeBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        const submenu = document.getElementById('congeSubmenu');
-        submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
-    });
-    // Navigation menu toggle functions
-    document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        const submenu = document.getElementById('demandeSubmenu');
-        submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
-    });
+    <!-- Menu déroulant de messagerie -->
+    <div class="messenger-dropdown" id="messengerDropdown">
+        <div class="messenger-header">
+            Messagerie
+        </div>
+        <div class="messenger-body">
+            <ul class="contact-list" id="contactList">
+                <!-- Aucun contact pour l'instant -->
+            </ul>
+            <div class="no-messages" id="noMessages">
+                <i class="fas fa-comment-slash"></i>
+                <p>Aucun message pour le moment.</p>
+            </div>
+        </div>
+        <div class="messenger-footer">
+            <input type="text" placeholder="Entrez un nom">
+        </div>
+    </div>
+    </nav>
 
-    document.getElementById('congeBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        const submenu = document.getElementById('congeSubmenu');
-        submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
-    });
-    document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        const submenu = document.getElementById('demandeSubmenu');
-        if (submenu.style.display === 'none') {
-            submenu.style.display = 'block';
-        } else {
-            submenu.style.display = 'none';
+    <div class="content">
+        <div class="container">
+            <div class="form-card">
+                <div class="header">
+                    <h1 class="title"> Demande congé Annuel </h1>
+                </div>
+                <form action="<?= url('actions/demand.php') ?>" method="post" id="formConvocation" onsubmit="handleSubmit(event)">
+                    <input type="hidden" name="demand_type" value="conge_annual">
+                    <div class="section">
+                        <h3 class="section-title">Informations Personnelles</h3>
+                        <div class="form-group">
+                            <label class="form-label" for="matricule">Matricule</label>
+                            <input readonly value="<?= $user['matricule'] ?>" type="text" id="matricule" class="form-input" required>
+                        </div>
+                        <div class="form-group-row">
+                            <div class="form-group">
+                                <label class="form-label" for="nom">Nom</label>
+                                <input readonly value="<?= $user['nom'] ?>" type="text" id="nom" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="prenom">Prénom</label>
+                                <input readonly value="<?= $user['prenom'] ?>" type="text" id="prenom" class="form-input" required>
+                            </div>
+                        </div>
+
+                        <h3 class="section-title">Informations Professionnelles</h3>
+
+                        <div class="form-group">
+                            <label class="form-label" for=" Fonction"> Fonction</label>
+                            <input readonly value="<?= $user['role']['nom'] ?>" type="text" id=" Fonction" class="form-input" required>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h3 class="section-title">Détails de congé</h3>
+                        <div class="form-group">
+                            <label class="form-label" for=" demande ">Description</label>
+                            <input name="description" type="text" id="demande" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="duree">Durée</label>
+                            <select name="duree" id="duree-select" class="form-input" onchange="handleDureeChange()">
+                                <option value="">Sélectionner une durée</option>
+                                <option value="30">1 mois</option>
+                                <option value="15">15 jours</option>
+                                <option value="autre">Autre</option>
+                            </select>
+                            <input name="duree_2" type="number" id="duree-input" class="form-input" placeholder="Entrez la durée en jours" style="display: none; margin-top: 10px;" min="1" max="30">
+                        </div>
+                        <div class="form-group-row">
+                            <div class="form-group">
+                                <label class="form-label" for="date-debut">Date début</label>
+                                <input name="start_date" type="date" id="date-debut" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="date-fin">Date de fin</label>
+                                <input name="end_date" type="date" id="date-fin" class="form-input" required>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="section">
+                        <h3 class="section-title">Informations Complémentaires</h3>
+                        <h4 class="section-subtitle small-text">pour en jouir a l'adresse suivante </h4>
+                        <div class="form-group">
+                            <textarea name="info" id="info-complementaire" class="form-input" rows="4" placeholder="Entrez vos informations complémentaires ici..."></textarea>
+                        </div>
+                    </div>
+                    <div class="buttons-container" style="display: flex; justify-content: flex-end; gap: 10px;">
+                        <button type="button" id="printButton" class="button button-secondary">
+                            <i class="fas fa-print"></i> Imprimer
+                        </button>
+
+                        <button type="submit" id="submitButton" class="button button-primary">
+                            <span id="submitText">Soumettre</span>
+                        </button>
+                    </div>
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Navigation menu toggle functions
+        document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const submenu = document.getElementById('demandeSubmenu');
+            submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+        });
+
+        document.getElementById('congeBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const submenu = document.getElementById('congeSubmenu');
+            submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+        });
+        // Navigation menu toggle functions
+        document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const submenu = document.getElementById('demandeSubmenu');
+            submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+        });
+
+        document.getElementById('congeBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const submenu = document.getElementById('congeSubmenu');
+            submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+        });
+        document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const submenu = document.getElementById('demandeSubmenu');
+            if (submenu.style.display === 'none') {
+                submenu.style.display = 'block';
+            } else {
+                submenu.style.display = 'none';
+            }
+        });
+
+        document.getElementById('congeBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const submenu = document.getElementById('congeSubmenu');
+            if (submenu.style.display === 'none') {
+                submenu.style.display = 'block';
+            } else {
+                submenu.style.display = 'none';
+            }
+        });
+
+        document.querySelector(".menu-toggle").addEventListener("click", function(e) {
+            e.preventDefault();
+            let submenu = document.querySelector(".submenu");
+            let icon = this.querySelector(".fa-chevron-right");
+
+            if (submenu.style.display === "flex") {
+                submenu.style.display = "none";
+                icon.style.transform = "rotate(0deg)";
+            } else {
+                submenu.style.display = "flex";
+                icon.style.transform = "rotate(90deg)";
+            }
+        });
+
+        document.querySelector(".sub-menu-toggle").addEventListener("click", function(e) {
+            e.preventDefault();
+            let subSubmenu = document.querySelector(".sub-submenu");
+            let icon = this.querySelector(".fa-chevron-right");
+
+            if (subSubmenu.style.display === "flex") {
+                subSubmenu.style.display = "none";
+                icon.style.transform = "rotate(0deg)";
+            } else {
+                subSubmenu.style.display = "flex";
+                icon.style.transform = "rotate(90deg)";
+            }
+        });
+
+        document.querySelector(".conges-toggle").addEventListener("click", function(e) {
+            e.preventDefault();
+            let subSubSubmenu = document.querySelector(".sub-sub-submenu");
+            let icon = this.querySelector(".fa-chevron-right");
+
+            if (subSubSubmenu.style.display === "flex") {
+                subSubSubmenu.style.display = "none";
+                icon.style.transform = "rotate(0deg)";
+            } else {
+                subSubSubmenu.style.display = "flex";
+                icon.style.transform = "rotate(90deg)";
+            }
+        });
+
+        function handleDureeChange() {
+            const select = document.getElementById('duree-select');
+            const input = document.getElementById('duree-input');
+
+            if (select.value === 'autre') {
+                input.style.display = 'block'; // Afficher le champ de saisie
+                input.focus(); // Donner le focus au champ de saisie
+            } else {
+                input.style.display = 'none'; // Masquer le champ de saisie
+            }
         }
-    });
 
-    document.getElementById('congeBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        const submenu = document.getElementById('congeSubmenu');
-        if (submenu.style.display === 'none') {
-            submenu.style.display = 'block';
-        } else {
-            submenu.style.display = 'none';
-        }
-    });
-
-    document.querySelector(".menu-toggle").addEventListener("click", function(e) {
-        e.preventDefault();
-        let submenu = document.querySelector(".submenu");
-        let icon = this.querySelector(".fa-chevron-right");
-
-        if (submenu.style.display === "flex") {
-            submenu.style.display = "none";
-            icon.style.transform = "rotate(0deg)";
-        } else {
-            submenu.style.display = "flex";
-            icon.style.transform = "rotate(90deg)";
-        }
-    });
-
-    document.querySelector(".sub-menu-toggle").addEventListener("click", function(e) {
-        e.preventDefault();
-        let subSubmenu = document.querySelector(".sub-submenu");
-        let icon = this.querySelector(".fa-chevron-right");
-
-        if (subSubmenu.style.display === "flex") {
-            subSubmenu.style.display = "none";
-            icon.style.transform = "rotate(0deg)";
-        } else {
-            subSubmenu.style.display = "flex";
-            icon.style.transform = "rotate(90deg)";
-        }
-    });
-
-    document.querySelector(".conges-toggle").addEventListener("click", function(e) {
-        e.preventDefault();
-        let subSubSubmenu = document.querySelector(".sub-sub-submenu");
-        let icon = this.querySelector(".fa-chevron-right");
-
-        if (subSubSubmenu.style.display === "flex") {
-            subSubSubmenu.style.display = "none";
-            icon.style.transform = "rotate(0deg)";
-        } else {
-            subSubSubmenu.style.display = "flex";
-            icon.style.transform = "rotate(90deg)";
-        }
-    });
-    function handleDureeChange() {
-        const select = document.getElementById('duree-select');
-        const input = document.getElementById('duree-input');
-
-        if (select.value === 'autre') {
-            input.style.display = 'block'; // Afficher le champ de saisie
-            input.focus(); // Donner le focus au champ de saisie
-        } else {
-            input.style.display = 'none'; // Masquer le champ de saisie
-        }
-    }
-    function validateName(value) {
-        // Validation logic here
-    }
-    function validateDates(depart, retour) {
-        // Validation logic here
-    }
-    function showError(elementId, show) {
-        // Show error logic here
-    }
-    function handleSubmit(event) {
-        event.preventDefault();
-        // Form submission logic here
-        event.target.submit()
-    }
-    function handlePrint() {
-        // Print logic here
-    }
-    document.getElementById('printButton').addEventListener('click', function() {
-        window.print();
-    });
-
-    // Fonction pour afficher/masquer les notifications
-    function toggleNotifications() {
-        const dropdown = document.getElementById('notificationDropdown');
-        dropdown.classList.toggle('show');
-    }
-
-    // Fonction pour afficher/masquer la messagerie
-    function toggleMessenger() {
-        const dropdown = document.getElementById('messengerDropdown');
-        dropdown.classList.toggle('show');
-
-        // Vérifier s'il y a des contacts
-        const contactList = document.getElementById('contactList');
-        const noMessages = document.getElementById('noMessages');
-
-        if (contactList.children.length === 0) {
-            noMessages.style.display = 'flex'; // Afficher le message
-        } else {
-            noMessages.style.display = 'none'; // Masquer le message
-        }
-    }
-
-    // Fermer les menus déroulants si on clique en dehors
-    document.addEventListener('click', function(event) {
-        const notificationDropdown = document.getElementById('notificationDropdown');
-        const messengerDropdown = document.getElementById('messengerDropdown');
-        const notificationIcon = document.querySelector('.icon-wrapper[onclick="toggleNotifications()"]');
-        const messengerIcon = document.querySelector('.icon-wrapper[onclick="toggleMessenger()"]');
-
-        if (!notificationDropdown.contains(event.target) && !notificationIcon.contains(event.target)) {
-            notificationDropdown.classList.remove('show');
+        function validateName(value) {
+            // Validation logic here
         }
 
-        if (!messengerDropdown.contains(event.target) && !messengerIcon.contains(event.target)) {
-            messengerDropdown.classList.remove('show');
+        function validateDates(depart, retour) {
+            // Validation logic here
         }
-    });
-</script>
+
+        function showError(elementId, show) {
+            // Show error logic here
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            // Form submission logic here
+            event.target.submit()
+        }
+
+        function handlePrint() {
+            // Print logic here
+        }
+        document.getElementById('printButton').addEventListener('click', function() {
+            window.print();
+        });
+
+        // Fonction pour afficher/masquer les notifications
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Fonction pour afficher/masquer la messagerie
+        function toggleMessenger() {
+            const dropdown = document.getElementById('messengerDropdown');
+            dropdown.classList.toggle('show');
+
+            // Vérifier s'il y a des contacts
+            const contactList = document.getElementById('contactList');
+            const noMessages = document.getElementById('noMessages');
+
+            if (contactList.children.length === 0) {
+                noMessages.style.display = 'flex'; // Afficher le message
+            } else {
+                noMessages.style.display = 'none'; // Masquer le message
+            }
+        }
+
+        // Fermer les menus déroulants si on clique en dehors
+        document.addEventListener('click', function(event) {
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            const messengerDropdown = document.getElementById('messengerDropdown');
+            const notificationIcon = document.querySelector('.icon-wrapper[onclick="toggleNotifications()"]');
+            const messengerIcon = document.querySelector('.icon-wrapper[onclick="toggleMessenger()"]');
+
+            if (!notificationDropdown.contains(event.target) && !notificationIcon.contains(event.target)) {
+                notificationDropdown.classList.remove('show');
+            }
+
+            if (!messengerDropdown.contains(event.target) && !messengerIcon.contains(event.target)) {
+                messengerDropdown.classList.remove('show');
+            }
+        });
+    </script>
+    <script>
+        
+        document.querySelector("input[name=start_date]").min = new Date().toISOString().split("T")[0];
+     </script>
 </body>
+
 </html>

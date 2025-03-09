@@ -1,6 +1,6 @@
 <?php
 
-include __DIR__ . '/../vendor/autoload.php';
+include __DIR__ . '/../../vendor/autoload.php';
 
 if (! session_id()) {
     session_start();
@@ -9,6 +9,12 @@ if (! session_id()) {
 redirect_if_not_auth();
 
 $user = $_SESSION['user'];
+
+$services = get_services();
+$departments = get_departments();
+$employees = get_all_users();
+$roles = get_roles();
+
 
 $notifications = get_notifications($_SESSION['user_id']);
 
@@ -31,13 +37,14 @@ $user_demands = get_user_demands($_SESSION['user_id']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DjazairRH - Profil Employé</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <script>
         function setNotificationToRead(el) {
             let id = el.dataset.id
@@ -58,6 +65,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             }
         }
     </script>
+
     <style>
         :root {
             --primary-color: #003366;
@@ -704,17 +712,11 @@ $user_demands = get_user_demands($_SESSION['user_id']);
     </style>
 </head>
 
-<body class="relative" x-data="body">
-    <div id="bottomLeft" class="fixed bottom-4 left-4 max-w-xs space-y-2"></div>
-
+<body x-data="body">
     <!-- Navigation Sidebar -->
-    <div x-data class="sidebar">
+    <div class="sidebar">
         <div class="sidebar-header">
-            <div @click="setTimeout(() => $notify('Nihil distinctio suscipit iste impedit magnam eius iure culpa mollitia tenetur', {
-      wrapperId: 'bottomLeft',
-      templateId: 'alertStandard',
-      autoRemove: 3000
-    }), 2000)" class="logo">
+            <div class="logo">
                 <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
                 <span class="logo-text">DjazairRH</span>
             </div>
@@ -726,7 +728,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                     <i class="fas fa-home"></i>
                     <span class="menu-text">Accueil</span>
                 </a>
-                <a href="<?= url('admin/profile.php') ?>" class="menu-item active">
+                <a href="<?= url('profiles/directeur/profile.php') ?>" class="menu-item active">
                     <i class="fas fa-user-circle"></i>
                     <span class="menu-text">Mon Profil</span>
                 </a>
@@ -744,55 +746,60 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                                 <span class="menu-text">Demande Congé</span>
                             </a>
                             <div class="submenu" id="congeSubmenu" style="display: none;">
-                                <a href="<?= url('admin/demands/conge/annual.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/annual.php') ?>" class="menu-item">
                                     <i class="fas fa-sun"></i>
                                     <span class="menu-text">Congé Annuel</span>
                                 </a>
-                                <a href="<?= url('admin/demands/conge/malady.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/malady.php') ?>" class="menu-item">
                                     <i class="fas fa-hospital"></i>
                                     <span class="menu-text">Congé Maladie</span>
                                 </a>
-                                <a href="<?= url('admin/demands/conge/maternity.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/maternity.php') ?>" class="menu-item">
                                     <i class="fas fa-baby"></i>
                                     <span class="menu-text">Congé Maternité</span>
                                 </a>
-                                <a href="<?= url('admin/demands/conge/rc.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/rc.php') ?>" class="menu-item">
                                     <i class="fas fa-clock"></i>
                                     <span class="menu-text">Congé RC</span>
                                 </a>
                             </div>
                         </div>
-                        <a href="<?= url('admin/demands/formation') ?>" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/formation') ?>" class="menu-item">
                             <i class="fas fa-graduation-cap"></i>
                             <span class="menu-text">Demande Formation</span>
                         </a>
-                        <a href="<?= url('admin/demands/mission') ?>" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/mission') ?>" class="menu-item">
                             <i class="fas fa-plane"></i>
                             <span class="menu-text">Demande Ordre Mission</span>
                         </a>
-                        <a href="<?= url('admin/demands/deplacement') ?>" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/deplacement') ?>" class="menu-item">
                             <i class="fas fa-car"></i>
                             <span class="menu-text">Demande Déplacement</span>
                         </a>
-                        <a href="sortie_admin1.html" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/leave') ?>" class="menu-item">
                             <i class="fas fa-door-open"></i>
                             <span class="menu-text">Demande Sortie</span>
                         </a>
                     </div>
-                    <a href="<?= url('admin/demands/list.php') ?>" class="menu-item">
+                    <a href="<?= url('profiles/directeur/demands/list.php') ?>" class="menu-item">
                         <i class="fas fa-tasks"></i>
                         <span class="menu-text">État de demande</span>
                     </a>
-                    <a href="<?= url('admin/demands/consulte.php') ?>" class="menu-item">
+                    <a href="<?= url('profiles/directeur/demands/consulte.php') ?>" class="menu-item">
                         <i class="fas fa-eye"></i>
                         <span class="menu-text">Consulter Demande</span>
                     </a>
                 </div>
 
                 <div class="nav-title">Autres</div>
-                <a href="support_admin1.html" class="menu-item">
+                <a href="<?= url('profiles/directeur/support') ?>" class="menu-item">
                     <i class="fas fa-question-circle"></i>
                     <span class="menu-text">Support</span>
+                </a>
+                <!-- Nouveau bouton "Calendrier RC d'Employé" -->
+                <a href="<?= url('profiles/directeur/calendrier') ?>" class="menu-item">
+                    <i class="fas fa-calendar"></i>
+                    <span class="menu-text">Calendrier RC d'Employé</span>
                 </a>
             </div>
         </div>
@@ -808,12 +815,8 @@ $user_demands = get_user_demands($_SESSION['user_id']);
     <!-- Top Navbar -->
     <nav class="navbar">
         <div class="nav-icons">
-            <div class="icon-wrapper relative" onclick="toggleNotifications()">
+            <div class="icon-wrapper" onclick="toggleNotifications()">
                 <i class="fa-solid fa-bell"></i>
-                <span
-                    :class="{'hidden' : (notifications.filter(vn=> vn.read_state == '0')).length < 1 }" id="notify-red" class="w-1.5 h-1.5 bg-red-500 rounded-full top-1/4 right-1/4 absolute <?= $redPin ? 'block' : 'hidden' ?>">
-
-                </span>
                 <!-- Badge pour les notifications non lues -->
                 <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
             </div>
@@ -896,15 +899,15 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                     <div class="profile-info">
                         <div class="info-item">
                             <i class="fas fa-envelope"></i>
-                            <input value="<?= $user['email_professionnel'] ?>" type="email" placeholder="Email professionnel">
+                            <input value="<?php echo $_SESSION['user']['email_professionnel'] ?>" type="email" placeholder="Email professionnel">
                         </div>
                         <div class="info-item">
                             <i class="fas fa-phone"></i>
-                            <input value="<?= $user['phone'] ?? '' ?>" type="tel" placeholder="Numéro de téléphone">
+                            <input name="phone" value="<?php echo $user['phone'] ?? '' ?>" type="tel" placeholder="Nphoneuméro de télé">
                         </div>
                         <div class="info-item">
                             <i class="fas fa-map-marker-alt"></i>
-                            <input <?= join_address($user['address']) ?? '' ?> type="text" placeholder="Adresse">
+                            <input value="<?php echo join_address($user['address']) ?? '' ?>" type="text" placeholder="Adresse">
                         </div>
                     </div>
                 </div>
@@ -915,45 +918,45 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                     <div class="content-card">
                         <div class="card-header">
                             <h2 class="card-title">Informations Personnelles</h2>
-                            <button class="edit-button">
-                                <i class="fas fa-edit"></i>
-                                Modifier
+                            <button id="saveBtn" class="edit-button">
+                                <i class="fas fa-floppy-disk"></i>
+                                Save Changes
                             </button>
                         </div>
                         <div class="info-grid">
                             <div class="info-field">
                                 <div class="field-label">Nom</div>
                                 <div class="field-value">
-                                    <input value="<?= $user['nom'] ?>" type="text" name="nom" placeholder="Entrez votre nom">
+                                    <input value="<?php echo $user['nom'] ?>" type="text" name="nom" placeholder="Entrez votre nom">
                                 </div>
                             </div>
                             <div class="info-field">
                                 <div class="field-label">Prénom</div>
                                 <div class="field-value">
-                                    <input value="<?= $user['prenom'] ?>" type="text" name="prenom" placeholder="Entrez votre prénom">
+                                    <input value="<?php echo $user['prenom'] ?>" type="text" name="prenom" placeholder="Entrez votre prénom">
                                 </div>
                             </div>
                             <div class="info-field">
                                 <div class="field-label">Date de Naissance</div>
                                 <div class="field-value">
-                                    <input value="<?= $user['birth_day'] ?? '' ?>" type="date" name="dateNaissance">
+                                    <input value="<?php echo $user['birth_day'] ?>" type="date" name="birth_day">
                                 </div>
                             </div>
                             <div class="info-field">
                                 <div class="field-label">Lieu de Naissance</div>
                                 <div class="field-value">
-                                    <input value="<?= $user['birth_place'] ?? '' ?>" type="text" name="lieuNaissance" placeholder="Entrez votre lieu de naissance">
+                                    <input value="<?php echo $user['birth_place'] ?>" type="text" name="birth_place" placeholder="Entrez votre lieu de naissance">
                                 </div>
                             </div>
                             <div class="info-field">
                                 <div class="field-label">État Civil</div>
                                 <div class="field-value">
-                                    <select name="etatCivil">
-                                        <option value="">Sélectionner</option>
-                                        <option value="celibataire">Célibataire</option>
-                                        <option value="marie">Marié(e)</option>
-                                        <option value="divorce">Divorcé(e)</option>
-                                        <option value="veuf">Veuf/Veuve</option>
+                                    <select name="etat_cevil">
+                                        <option value="" <?= empty($user['etat_civil']) ? "selected" : "" ?>>Sélectionner</option>
+                                        <option value="celibataire" <?= $user['etat_civil'] == 'celibataire' ? "selected" : "" ?>>Célibataire</option>
+                                        <option value="marie" <?= $user['etat_civil'] == 'marie' ? "selected" : "" ?>>Marié(e)</option>
+                                        <option value="divorce" <?= $user['etat_civil'] == 'divorce' ? "selected" : "" ?>>Divorcé(e)</option>
+                                        <option value="veuf" <?= $user['etat_civil'] == 'veuf' ? "selected" : "" ?>>Veuf/Veuve</option>
                                     </select>
                                 </div>
                             </div>
@@ -966,7 +969,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                             <div class="info-field">
                                 <div class="field-label">Mot de passe du compte</div>
                                 <div class="field-value">
-                                    <input value="<?= str_repeat('*', 8) ?>" type="password" name="accountPassword" placeholder="Entrez votre mot de passe" required>
+                                    <input type="password" name="accountPassword" placeholder="Entrez votre mot de passe" required>
                                 </div>
                             </div>
                         </div>
@@ -976,68 +979,69 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                     <div class="content-card">
                         <div class="card-header">
                             <h2 class="card-title">Informations Professionnelles</h2>
-                            <button class="edit-button">
-                                <i class="fas fa-edit"></i>
-                                Modifier
+                            <button id="saveProfissionel" class="edit-button">
+                                <i class="fas fa-floppy-disk"></i>
+                                save changes
                             </button>
                         </div>
                         <div class="info-grid">
                             <div class="info-field">
                                 <div class="field-label">Matricule</div>
                                 <div class="field-value">
-                                    <input type="text" name="matricule" placeholder="Entrez votre matricule">
+                                    <input value="<?php echo $user['matricule'] ?? '' ?>" type="text" name="matricule" placeholder="Entrez votre matricule">
                                 </div>
                             </div>
                             <div class="info-field">
-                                <div class="field-label">Poste</div>
+                                <div class="field-label">Role</div>
                                 <div class="field-value">
-                                    <input type="text" name="poste" placeholder="Entrez votre poste">
+                                    <select name="role_id">
+                                        <option value="">Sélectionner</option>
+                                        <?php foreach ($roles as $role): ?>
+                                            <option <?php echo $user['role']['id'] == $role['id'] ? 'selected' : '' ?> value="<?php echo $role['id'] ?>"><?php echo $role['nom'] ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
                                 </div>
                             </div>
                             <div class="info-field">
                                 <div class="field-label">Date d'Embauche</div>
                                 <div class="field-value">
-                                    <input type="date" name="dateEmbauche">
+                                    <input type="date" name="start_date" value="<?php echo $user['start_date'] ?? '' ?>">
                                 </div>
                             </div>
                             <div class="info-field">
                                 <div class="field-label">Département</div>
                                 <div class="field-value">
-                                    <select name="departement">
+                                    <select name="department_id">
                                         <option value="">Sélectionner</option>
-                                        <option value="dpt_technique">Département Technique</option>
-                                        <option value="dpt_commercial">Département Commercial</option>
-                                        <option value="dpt_rh">Département Ressources Humaines</option>
-                                        <option value="dpt_finance">Département Finance</option>
-                                        <option value="dpt_informatique">Département Informatique</option>
-                                        <option value="dpt_logistique">Département Logistique</option>
-                                        <option value="dpt_juridique">Département Juridique</option>
-                                        <option value="dpt_qualite">Département Qualité</option>
+                                        <?php foreach ($departments as $department): ?>
+                                            <option <?php echo $user['department']['id'] == $department['id'] ? 'selected' : '' ?> value="<?php echo $department['id'] ?>"><?php echo $department['nom'] ?></option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                             </div>
                             <div class="info-field">
                                 <div class="field-label">Services</div>
                                 <div class="field-value">
-                                    <select name="service">
-                                        <option value="">Sélectionner</option>
-                                        <option value="technique">Service Technique</option>
-                                        <option value="commercial">Service Commercial</option>
-                                        <option value="exploitation">Service Exploitation</option>
-                                        <option value="informatique">Service Informatique</option>
-                                        <option value="maintenance">Service Maintenance</option>
-                                        <option value="clientele">Service Clientèle</option>
-                                        <option value="qualite">Service Qualité</option>
-                                        <option value="reseaux">Service Réseaux</option>
-                                        <option value="administration">Service Administration</option>
-                                        <option value="finance">Service Finance et Comptabilité</option>
+                                    <select name="service_id">
+                                        <option value="" disabled>Sélectionner</option>
+                                        <?php foreach ($services as $service): ?>
+                                            <option <?php echo $user['service']['id'] == $service['id'] ? 'selected' : '' ?> value="<?php echo $service['id'] ?>"><?php echo $service['nom'] ?></option>
+                                        <?php endforeach; ?>
+
                                     </select>
                                 </div>
                             </div>
                             <div class="info-field">
-                                <div class="field-label">Supérieur Direct</div>
+                                <div class="field-label">superior director</div>
                                 <div class="field-value">
-                                    <input type="text" name="superieur" placeholder="Entrez le nom de votre supérieur">
+                                    <select name="superior_id">
+                                        <option value="" disabled selected>Sélectionner</option>
+                                        <?php foreach ($employees as $employee): ?>
+                                            <?php if ($employee['id'] != $user['id']): ?>
+                                                <option <?php echo $user['superior']['id'] ?? -1 == $employee['id'] ? 'selected' : '' ?> value="<?php echo $employee['id'] ?>"><?php echo $employee['nom'] . ' ' . $employee['prenom'] ?></option>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -1047,12 +1051,112 @@ $user_demands = get_user_demands($_SESSION['user_id']);
         </div>
     </div>
 
+
+    <script>
+        const btn = document.querySelector('#saveProfissionel')
+        btn.onclick = () => {
+            let data = new FormData
+            data.append('action', 'save_prof')
+
+            let keys = ["matricule", "role_id", "department_id", "start_date", "service_id", "superior_id"]
+
+
+            keys.forEach(e => {
+                try {
+                    data.append(e, (document.querySelector(`input[name=${e}]`) || document.querySelector(`select[name=${e}]`)).value)
+                } catch (err) {
+                    console.log(e, err)
+                }
+            })
+            fetch('<?= url('actions/account.php') ?>', {
+                    method: "post",
+                    body: data
+                }).then(res => res.json())
+                .then(js => {
+                    Swal.fire({
+                        title: 'done!',
+                        text: 'informations updated successfully',
+                        icon: 'success'
+                    })
+                }).catch(err => {
+                    Swal.fire({
+                        title: 'error!',
+                        text: err,
+                        icon: 'error'
+                    })
+                })
+        }
+    </script>
+
+    <script>
+        const warnInfo = (text = "to unlock all the sections you need to fill all the information in the profile") => {
+            Swal.fire({
+                title: "warning",
+                text,
+                icon: "warning"
+            });
+        }
+
+        <?php if (($l = isProfileComplete($user)) !== true): ?>
+            warnInfo()
+        <?php endif; ?>
+    </script>
+
+<script>
+        const saveBtn = document.querySelector('#saveBtn')
+
+        saveBtn.onclick = () => {
+            let data = new FormData
+            data.append('action', 'save')
+
+            let keys = ["phone", "nom", "prenom", "birth_day", "birth_place", "etat_cevil"]
+
+
+            keys.forEach(e => {
+                try {
+                    data.append(e, (document.querySelector(`input[name=${e}]`) || document.querySelector(`select[name=${e}]`)).value)
+                } catch (err) {
+                    console.log(e, err)
+                }
+            })
+            fetch('<?= url('actions/account.php') ?>', {
+                    method: "post",
+                    body: data
+                }).then(res => res.json())
+                .then(js => {
+                    Swal.fire({
+                        title: 'done!',
+                        text: 'informations updated successfully',
+                        icon: 'success'
+                    })
+                }).catch(err => {
+                    Swal.fire({
+                        title: 'error!',
+                        text: err,
+                        icon: 'error'
+                    })
+                })
+        }
+    </script>
+
+    <?php if (isset($_SESSION['status'])): ?>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            Swal.fire({
+                title: "demand deposé!",
+                text: "le demand deposé avec succes!",
+                icon: "success"
+            });
+        </script>
+    <?php unset($_SESSION['status']);
+    endif; ?>
+    
     <script>
         // Navigation menu toggle functions
         document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
             e.preventDefault();
             const submenu = document.getElementById('demandeSubmenu');
-            submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+            submenu.style.display = submenu.style.display == 'none' ? 'block' : 'none';
         });
 
         document.getElementById('congeBtn').addEventListener('click', function(e) {
@@ -1060,13 +1164,10 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             const submenu = document.getElementById('congeSubmenu');
             submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
         });
-        // Navigation menu toggle functions
-        document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            const submenu = document.getElementById('demandeSubmenu');
-            submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
-        });
 
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            window.location.href = 'loginAT1.html';
+        });
         document.getElementById('congeBtn').addEventListener('click', function(e) {
             e.preventDefault();
             const submenu = document.getElementById('congeSubmenu');
@@ -1197,8 +1298,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
         });
     </script>
 
-
-    <script defer>
+<script defer>
         const notifyContainer = document.querySelector('#notifications-container');
         const poll_interval = 4000; // 10 seconds
         function pollNotifications($data) {
@@ -1232,17 +1332,6 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             m = setInterval(() => pollNotifications(Alpine.data('body')), poll_interval);
         })
     </script>
-
-    <?php if (isset($_SESSION['status'])): ?>
-        <script>
-            Swal.fire({
-                title: "demand deposé!",
-                text: "le demand deposé avec succes!",
-                icon: "success"
-            });
-        </script>
-    <?php unset($_SESSION['status']);
-    endif; ?>
 </body>
 
 </html>

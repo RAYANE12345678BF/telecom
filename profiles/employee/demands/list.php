@@ -1,5 +1,5 @@
 <?php 
-include __DIR__ . '/../../vendor/autoload.php';
+include __DIR__ . '/../../../vendor/autoload.php';
 
 if( ! session_id() ){
     session_start();
@@ -21,7 +21,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DjazairRH - Suivi des Demandes</title>
+    <title>DjazairRH - Suivi de l'état des demandes</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -50,26 +50,66 @@ $user_demands = get_user_demands($_SESSION['user_id']);
         }
 
         body {
-            display: flex;
-            min-height: 100vh;
-            background: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
+            font-family: Arial, sans-serif;
+            background-color: #ebf2ff;
+            margin: 0;
+            padding: 10px;
+        }
+
+        h1 {
+            color: #002d72;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #d0e1ff;
+        }
+
+        th, td {
+            border: 1px solid #6b9ed7;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #004085;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #b3d1ff;
+        }
+
+        .details-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .details-btn:hover {
+            background-color: #0056b3;
         }
 
         /* Navigation Styles */
-        .sidebar {
-            width: 280px;
-            background: white;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100%;
-            color: var(--text-color);
-            box-shadow: var(--shadow-lg);
-            z-index: 1000;
-        }
+       .sidebar {
+        width: 280px;
+        background: white;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        height: 100%;
+        color: var(--text-color);
+        box-shadow: none; /* Suppression de l'ombre */
+        z-index: 1000;
+        left: 0; /* Coller au bord gauche */
+        top: 0;
+    }
 
         .sidebar-header {
             height: var(--nav-height);
@@ -311,50 +351,6 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             width: calc(100% - 280px);
         }
 
-        /* Table Styles (from etat.html) */
-        h1 {
-            color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-
-        th {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        tr:nth-child(even) {
-            background-color: var(--hover-color);
-        }
-
-        .details-btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            cursor: pointer;
-            border-radius: var(--border-radius);
-            transition: var(--transition);
-        }
-
-        .details-btn:hover {
-            background-color: var(--secondary-color);
-        }
-
         @media (max-width: 1024px) {
             .sidebar {
                 width: 80px;
@@ -375,8 +371,12 @@ $user_demands = get_user_demands($_SESSION['user_id']);
         }
 
         @media (max-width: 768px) {
-            .main-content {
-                padding: 90px 15px 15px;
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
             }
         }
               /* Styles pour le menu déroulant de messagerie */
@@ -500,15 +500,15 @@ $user_demands = get_user_demands($_SESSION['user_id']);
         <div class="sidebar-content">
             <div class="menu-items">
                 <div class="nav-title">Principal</div>
-                <a href="accueil.html" class="menu-item">
+                <a href="<?php echo url('profiles/employee/profile.php') ?>" class="menu-item">
                     <i class="fas fa-home"></i>
                     <span class="menu-text">Accueil</span>
                 </a>
-                <a href="<?= url('employee/profile.php') ?>" class="menu-item">
+                <a href="<?php echo url('profiles/employee/profile.php') ?>" class="menu-item active">
                     <i class="fas fa-user-circle"></i>
                     <span class="menu-text">Mon Profil</span>
                 </a>
-                
+
                 <div class="nav-title">Demandes</div>
                 <div class="request-section">
                     <a href="#" class="menu-item" id="faireDemandeBtn">
@@ -522,49 +522,57 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                                 <span class="menu-text">Demande Congé</span>
                             </a>
                             <div class="submenu" id="congeSubmenu" style="display: none;">
-                                <a href="annuel_admin1.html" class="menu-item">
+                                <a href="<?php echo url('profiles/employee/demands/conge/annual.php') ?>" class="menu-item">
                                     <i class="fas fa-sun"></i>
                                     <span class="menu-text">Congé Annuel</span>
                                 </a>
-                                <a href="maladie_admin1.html" class="menu-item">
+                                <a href="<?php echo url('profiles/employee/demands/conge/malady.php') ?>" class="menu-item">
                                     <i class="fas fa-hospital"></i>
                                     <span class="menu-text">Congé Maladie</span>
                                 </a>
-                                <a href="maternite_admin1.html" class="menu-item">
+                                <a href="<?php echo url('profiles/employee/demands/conge/maternity.php') ?>" class="menu-item">
                                     <i class="fas fa-baby"></i>
                                     <span class="menu-text">Congé Maternité</span>
                                 </a>
-                                <a href="rc_admin1.html" class="menu-item">
+                                <a href="<?php echo url('profiles/employee/demands/conge/rc.php') ?>" class="menu-item">
                                     <i class="fas fa-clock"></i>
                                     <span class="menu-text">Congé RC</span>
                                 </a>
                             </div>
                         </div>
-                        <a href="formation_admin1.html" class="menu-item">
+                        <a href="<?php echo url('profiles/employee/demands/formation') ?>" class="menu-item">
                             <i class="fas fa-graduation-cap"></i>
                             <span class="menu-text">Demande Formation</span>
                         </a>
-                        <a href="mission_admin1.html" class="menu-item">
+                        <a href="<?php echo url('profiles/employee/demands/mission') ?>" class="menu-item">
                             <i class="fas fa-plane"></i>
                             <span class="menu-text">Demande Ordre Mission</span>
                         </a>
-                        <a href="déplacement_admin1.html" class="menu-item">
+                        <a href="<?php echo url('profiles/employee/demands/deplacement') ?>" class="menu-item">
                             <i class="fas fa-car"></i>
                             <span class="menu-text">Demande Déplacement</span>
                         </a>
-                        <a href="sortie_admin1.html" class="menu-item">
+                        <a href="<?php echo url('profiles/employee/demands/leave') ?>" class="menu-item">
                             <i class="fas fa-door-open"></i>
                             <span class="menu-text">Demande Sortie</span>
                         </a>
                     </div>
-                    <a href="#" class="menu-item active">
+                    <?php if (($l = isProfileComplete($user)) !== true): ?>
+                    <a href="#" onclick="alert('please fill all information')"  class="menu-item">
                         <i class="fas fa-tasks"></i>
                         <span class="menu-text">État de demande</span>
                     </a>
+                    <?php else: ?>
+                    <a href="<?= url('profiles/employee/demands/list.php') ?>" class="menu-item">
+                        <i class="fas fa-tasks"></i>
+                        <span class="menu-text">État de demande</span>
+                    </a>
+                    <?php endif ?>
+                    
                 </div>
-                
+
                 <div class="nav-title">Autres</div>
-                <a href="support_admin1.html" class="menu-item">
+                <a href="<?php echo url('profiles/employee/support') ?>" class="menu-item">
                     <i class="fas fa-question-circle"></i>
                     <span class="menu-text">Support</span>
                 </a>
@@ -621,7 +629,6 @@ $user_demands = get_user_demands($_SESSION['user_id']);
         </nav>
     
     
-
     <!-- Main Content -->
     <div class="main-content">
         <h1>Suivi de l'état des demandes</h1>
@@ -637,13 +644,44 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             </thead>
             <tbody>
                 <?php foreach($user_demands as $demand): ?>
-                <tr>
-                    <td>#<?= $demand['id'] ?></td>
-                    <td><?= $demand['type'] ?? 'congé annual' ?></td>
-                    <td><?= $demand['date_depose'] ?></td>
-                    <td><?= $demand['status'] ?></td>
-                    <td><?= $demand['info'] ?></td>
-                </tr>
+                    <?php $info = json_decode($demand['info'], true) ?>
+                    <tr>
+                        <td>
+                            #<?= $demand['id'] ?>
+                        </td>
+                        <td>
+                            <?= $demand['type'] ?>
+                        </td>
+                        <td>
+                            <?= $demand['date_depose'] ?>
+                        </td>
+                        <td>
+                            <?= $demand['status'] ?>
+                        </td>
+                        <td>
+                            <?php if( $info['type'] == 'text' ): ?>
+                                <td>
+                                    <?= $info['content'] ?>
+                                </td>
+                            <?php elseif($info['type'] == 'keys'): ?>
+                                <td>
+                                    <ul>
+                                        <?php foreach($info['content'] as $key => $value): ?>
+                                            <li>
+                                                <?= $key ?> : <?= $value ?>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </td>
+                            <?php else: ?>
+                                <td>
+                                    <a href="<?= url('storage/' . $info['content'] ) ?>" download="file.pdf">
+                                        download
+                                    </a>
+                                </td>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
@@ -693,7 +731,9 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                 submenu.style.display = 'none';
             }
         });
-
+        document.getElementById('logoutButton').addEventListener('click', function() {
+    window.location.href = 'loginAT1.html';
+});
         document.querySelector(".menu-toggle").addEventListener("click", function(e) {
             e.preventDefault();
             let submenu = document.querySelector(".submenu");

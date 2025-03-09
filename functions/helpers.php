@@ -250,3 +250,45 @@ if( !function_exists('uploadPdf') ){
     }
 
 }
+
+if( !function_exists('get_services') ){
+
+    function get_services(){
+        $db = load_db();
+
+        $sql = "SELECT * FROM `services`";
+
+        $stmt = $db->prepare($sql);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
+
+if( !function_exists('get_departments') ){
+    function get_departments(){
+        $db = load_db();
+
+        $sql = "SELECT * FROM `departements`";
+
+        $stmt = $db->prepare($sql);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
+
+if( !function_exists('insert_support') ){
+    function insert_support($user_id, $message, $type){
+        $db = load_db();
+
+        $sql = "INSERT INTO `support` (`employee_id`, `type`, `message`, `date_depose`) VALUES (?, ?, ?, NOW())";
+
+        $stmt = $db->prepare($sql);
+
+        $stmt->execute([$user_id, $type, $message]);
+    }
+}
+

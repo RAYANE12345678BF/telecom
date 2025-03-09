@@ -1,4 +1,17 @@
 
+<?php
+
+include __DIR__ . '/../../../../vendor/autoload.php';
+
+if (! session_id()) {
+    session_start();
+}
+
+redirect_if_not_auth();
+
+$user = fetch_user_information($_SESSION['user_id']);
+
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -693,102 +706,103 @@
     </style>
 </head>
 <body>
-<div x-data class="sidebar">
-    <div class="sidebar-header">
-        <div @click="setTimeout(() => $notify('Nihil distinctio suscipit iste impedit magnam eius iure culpa mollitia tenetur', {
-      wrapperId: 'bottomLeft',
-      templateId: 'alertStandard',
-      autoRemove: 3000
-    }), 2000)" class="logo">
-            <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
-            <span class="logo-text">DjazairRH</span>
+<div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
+                <span class="logo-text">DjazairRH</span>
+            </div>
         </div>
-    </div>
-    <div class="sidebar-content">
-        <div class="menu-items">
-            <div class="nav-title">Principal</div>
-            <a href="<?= url('/') ?>" class="menu-item">
-                <i class="fas fa-home"></i>
-                <span class="menu-text">Accueil</span>
-            </a>
-            <a href="<?= url('admin/profile.php') ?>" class="menu-item active">
-                <i class="fas fa-user-circle"></i>
-                <span class="menu-text">Mon Profil</span>
-            </a>
-
-            <div class="nav-title">Demandes</div>
-            <div class="request-section">
-                <a href="#" class="menu-item" id="faireDemandeBtn">
-                    <i class="fas fa-file-alt"></i>
-                    <span class="menu-text">Faire une demande</span>
+        <div class="sidebar-content">
+            <div class="menu-items">
+                <div class="nav-title">Principal</div>
+                <a href="<?= url('/') ?>" class="menu-item">
+                    <i class="fas fa-home"></i>
+                    <span class="menu-text">Accueil</span>
                 </a>
-                <div class="submenu" id="demandeSubmenu" style="display: none;">
-                    <div>
-                        <a href="#" class="menu-item" id="congeBtn">
-                            <i class="fas fa-calendar-alt"></i>
-                            <span class="menu-text">Demande Congé</span>
-                        </a>
-                        <div class="submenu" id="congeSubmenu" style="display: none;">
-                            <a href="<?= url('admin/demands/conge/annual.php') ?>" class="menu-item">
-                                <i class="fas fa-sun"></i>
-                                <span class="menu-text">Congé Annuel</span>
+                <a href="<?= url('profiles/directeur/profile.php') ?>" class="menu-item active">
+                    <i class="fas fa-user-circle"></i>
+                    <span class="menu-text">Mon Profil</span>
+                </a>
+
+                <div class="nav-title">Demandes</div>
+                <div class="request-section">
+                    <a href="#" class="menu-item" id="faireDemandeBtn">
+                        <i class="fas fa-file-alt"></i>
+                        <span class="menu-text">Faire une demande</span>
+                    </a>
+                    <div class="submenu" id="demandeSubmenu" style="display: none;">
+                        <div>
+                            <a href="#" class="menu-item" id="congeBtn">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span class="menu-text">Demande Congé</span>
                             </a>
-                            <a href="<?= url('admin/demands/conge/malady.php') ?>" class="menu-item">
-                                <i class="fas fa-hospital"></i>
-                                <span class="menu-text">Congé Maladie</span>
-                            </a>
-                            <a href="<?= url('admin/demands/conge/maternity.php') ?>" class="menu-item">
-                                <i class="fas fa-baby"></i>
-                                <span class="menu-text">Congé Maternité</span>
-                            </a>
-                            <a href="<?= url('admin/demands/conge/rc.php') ?>" class="menu-item">
-                                <i class="fas fa-clock"></i>
-                                <span class="menu-text">Congé RC</span>
-                            </a>
+                            <div class="submenu" id="congeSubmenu" style="display: none;">
+                                <a href="<?= url('profiles/directeur/demands/conge/annual.php') ?>" class="menu-item">
+                                    <i class="fas fa-sun"></i>
+                                    <span class="menu-text">Congé Annuel</span>
+                                </a>
+                                <a href="<?= url('profiles/directeur/demands/conge/malady.php') ?>" class="menu-item">
+                                    <i class="fas fa-hospital"></i>
+                                    <span class="menu-text">Congé Maladie</span>
+                                </a>
+                                <a href="<?= url('profiles/directeur/demands/conge/maternity.php') ?>" class="menu-item">
+                                    <i class="fas fa-baby"></i>
+                                    <span class="menu-text">Congé Maternité</span>
+                                </a>
+                                <a href="<?= url('profiles/directeur/demands/conge/rc.php') ?>" class="menu-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span class="menu-text">Congé RC</span>
+                                </a>
+                            </div>
                         </div>
+                        <a href="<?= url('profiles/directeur/demands/formation') ?>" class="menu-item">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span class="menu-text">Demande Formation</span>
+                        </a>
+                        <a href="<?= url('profiles/directeur/demands/mission') ?>" class="menu-item">
+                            <i class="fas fa-plane"></i>
+                            <span class="menu-text">Demande Ordre Mission</span>
+                        </a>
+                        <a href="<?= url('profiles/directeur/demands/deplacement') ?>" class="menu-item">
+                            <i class="fas fa-car"></i>
+                            <span class="menu-text">Demande Déplacement</span>
+                        </a>
+                        <a href="<?= url('profiles/directeur/demands/leave') ?>" class="menu-item">
+                            <i class="fas fa-door-open"></i>
+                            <span class="menu-text">Demande Sortie</span>
+                        </a>
                     </div>
-                    <a href="<?= url('admin/demands/formation') ?>" class="menu-item">
-                        <i class="fas fa-graduation-cap"></i>
-                        <span class="menu-text">Demande Formation</span>
+                    <a href="<?= url('profiles/directeur/demands/list.php') ?>" class="menu-item">
+                        <i class="fas fa-tasks"></i>
+                        <span class="menu-text">État de demande</span>
                     </a>
-                    <a href="<?= url('admin/demands/mission') ?>" class="menu-item">
-                        <i class="fas fa-plane"></i>
-                        <span class="menu-text">Demande Ordre Mission</span>
-                    </a>
-                    <a href="<?= url('admin/demands/deplacement') ?>" class="menu-item">
-                        <i class="fas fa-car"></i>
-                        <span class="menu-text">Demande Déplacement</span>
-                    </a>
-                    <a href="sortie_admin1.html" class="menu-item">
-                        <i class="fas fa-door-open"></i>
-                        <span class="menu-text">Demande Sortie</span>
+                    <a href="<?= url('profiles/directeur/demands/consulte.php') ?>" class="menu-item">
+                        <i class="fas fa-eye"></i>
+                        <span class="menu-text">Consulter Demande</span>
                     </a>
                 </div>
-                <a href="<?= url('admin/demands/list.php') ?>" class="menu-item">
-                    <i class="fas fa-tasks"></i>
-                    <span class="menu-text">État de demande</span>
+
+                <div class="nav-title">Autres</div>
+                <a href="<?= url('profiles/directeur/support') ?>" class="menu-item">
+                    <i class="fas fa-question-circle"></i>
+                    <span class="menu-text">Support</span>
                 </a>
-                <a href="<?= url('admin/demands/consulte.php') ?>" class="menu-item">
-                    <i class="fas fa-eye"></i>
-                    <span class="menu-text">Consulter Demande</span>
+                <!-- Nouveau bouton "Calendrier RC d'Employé" -->
+                <a href="<?= url('profiles/directeur/calendrier') ?>" class="menu-item">
+                    <i class="fas fa-calendar"></i>
+                    <span class="menu-text">Calendrier RC d'Employé</span>
                 </a>
             </div>
-
-            <div class="nav-title">Autres</div>
-            <a href="support_admin1.html" class="menu-item">
-                <i class="fas fa-question-circle"></i>
-                <span class="menu-text">Support</span>
-            </a>
         </div>
+        <form action="<?= url('actions/auth.php') ?>" method="post" class="user-section">
+            <input type="hidden" value="logout" name="action" />
+            <div class="user-avatar">
+                <i class="fas fa-sign-in-alt"></i>
+            </div>
+            <button type="submit" style="border : none">Se déconnecter</button>
+        </form>
     </div>
-    <form action="<?= url('actions/auth.php') ?>" method="post" class="user-section">
-        <input type="hidden" value="logout" name="action" />
-        <div class="user-avatar">
-            <i class="fas fa-sign-in-alt"></i>
-        </div>
-        <button type="submit" style="border : none">Se déconnecter</button>
-    </form>
-</div>
     
     <!-- Top Navbar -->
 <nav class="navbar">
@@ -837,80 +851,77 @@
                 <div class="header">
                     <h1 class="title">Demande d'ordre mission  </h1>
                 </div>
-                <form id="formConvocation" onsubmit="handleSubmit(event)">
+                <form action="<?= url('actions/demand.php') ?>" method="post" id="formConvocation">
+                    <input type="hidden" name="demand_type" value="mission">
                     <div class="section">
                         <h3 class="section-title">Informations Personnelles</h3>
                         <div class="form-group">
                             <label class="form-label" for="matricule">Matricule</label>
-                            <input type="text" id="matricule" class="form-input" required>
+                            <input readonly value="<?= $user['matricule'] ?>" type="text" id="matricule" class="form-input" required>
                         </div>
                         <div class="form-group-row">
                             <div class="form-group">
                                 <label class="form-label" for="nom">Nom</label>
-                                <input type="text" id="nom" class="form-input" required>
+                                <input readonly value="<?= $user['nom'] ?>" type="text" id="nom" class="form-input" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="prenom">Prénom</label>
-                                <input type="text" id="prenom" class="form-input" required>
+                                <input readonly value="<?= $user['prenom'] ?>" type="text" id="prenom" class="form-input" required>
                             </div>
                         </div>
-                        
+
                         <h3 class="section-title">Informations Professionnelles</h3>
-                    
+
                         <div class="form-group">
-                            <label class="form-label" for="Grade et Fonction">Grade et Fonction</label>
-                            <input type="text" id="Grade et Fonction" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="Service_d'attache ">Service d'attache  </label>
-                            <input type="text" id="Service d'attache " class="form-input" required>
+                            <label class="form-label" for=" Fonction"> Fonction</label>
+                            <input readonly value="<?= $user['role']['nom'] ?>" type="text" id=" Fonction" class="form-input" required>
                         </div>
                     </div>
                     <div class="section">
-                       <h3 class="section-title">Détails de misson </h3>
+                        <h3 class="section-title">Détails de misson </h3>
                         <div class="form-group-row">
                             <div class="form-group">
                                 <label class="form-label" for="date-Sortie">Date de sortie</label>
-                                <input type="date" id="date-sortie" class="form-input" required>
+                                <input name="leave_date" type="date" id="date-sortie" class="form-input" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="date-entrée">date de entrée</label>
-                                <input type="date" id="date-entrée" class="form-input" required>
+                                <input name="come_date" type="date" id="date-entrée" class="form-input" required>
                             </div>
                         </div>
-                            
+
                         <div class="form-group-row">
                             <div class="form-group">
                                 <label class="form-label" for="heur-sortie">heur de sortie</label>
-                                <input type="date" id="heur-sortie" class="form-input" required>
+                                <input name="leave_hour" type="date" id="heur-sortie" class="form-input" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="heur-entrée">heur d'entrée</label>
-                                <input type="date" id="heur-entrée" class="form-input" required>
+                                <input name="come_hour" type="date" id="heur-entrée" class="form-input" required>
                             </div>
                         </div>
-                        
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="Distination">Distination</label>
-                            <input type="text" id="Distination" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="Motif_mission">Motif de la mission </label>
-                            <input type="text" id="Motif_mission" class="form-input" required>
-                        </div>
-                    
+
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="Distination">Distination</label>
+                        <input name="destination" type="text" id="Distination" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="Motif_mission">Motif de la mission </label>
+                        <input name="motif" type="text" id="Motif_mission" class="form-input" required>
+                    </div>
+
                     <div class="buttons-container" style="display: flex; justify-content: flex-end; gap: 10px;">
                         <button type="button" id="printButton" class="button button-secondary">
                             <i class="fas fa-print"></i> Imprimer
                         </button>
-                        
+
                         <button type="submit" id="submitButton" class="button button-primary">
                             <span id="submitText">Soumettre</span>
                         </button>
                     </div>
-                    
-                    
+
+
                 </form>
             </div>
         </div>
@@ -936,7 +947,9 @@
                 submenu.style.display = 'none';
             }
         });
-
+        document.getElementById('logoutButton').addEventListener('click', function() {
+    window.location.href = 'loginAT1.html';
+});
         document.querySelector(".menu-toggle").addEventListener("click", function(e) {
             e.preventDefault();
             let submenu = document.querySelector(".submenu");
@@ -1072,7 +1085,7 @@
                 icon.style.transform = "rotate(90deg)";
             }
         });
-
+      
         function validateName(value) {
             // Validation logic here
         }
@@ -1131,5 +1144,9 @@
             }
         });
     </script>
+    <script>
+        alert((new Date()).toISOString().split("T")[0])
+        document.querySelector("input[name=start_date]").min = new Date().toISOString().split("T")[0];
+     </script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 <?php 
-include __DIR__ . '/../../vendor/autoload.php';
+include __DIR__ . '/../../../vendor/autoload.php';
 
 if( ! session_id() ){
     session_start();
@@ -490,13 +490,9 @@ $user_demands = get_user_demands($_SESSION['user_id']);
 </head>
 <body>
     <!-- Navigation Sidebar -->
-    <div x-data class="sidebar">
+    <div class="sidebar">
         <div class="sidebar-header">
-            <div @click="setTimeout(() => $notify('Nihil distinctio suscipit iste impedit magnam eius iure culpa mollitia tenetur', {
-      wrapperId: 'bottomLeft',
-      templateId: 'alertStandard',
-      autoRemove: 3000
-    }), 2000)" class="logo">
+            <div class="logo">
                 <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
                 <span class="logo-text">DjazairRH</span>
             </div>
@@ -508,7 +504,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                     <i class="fas fa-home"></i>
                     <span class="menu-text">Accueil</span>
                 </a>
-                <a href="<?= url('admin/profile.php') ?>" class="menu-item active">
+                <a href="<?= url('profiles/directeur/profile.php') ?>" class="menu-item active">
                     <i class="fas fa-user-circle"></i>
                     <span class="menu-text">Mon Profil</span>
                 </a>
@@ -526,55 +522,60 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                                 <span class="menu-text">Demande Congé</span>
                             </a>
                             <div class="submenu" id="congeSubmenu" style="display: none;">
-                                <a href="<?= url('admin/demands/conge/annual.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/annual.php') ?>" class="menu-item">
                                     <i class="fas fa-sun"></i>
                                     <span class="menu-text">Congé Annuel</span>
                                 </a>
-                                <a href="<?= url('admin/demands/conge/malady.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/malady.php') ?>" class="menu-item">
                                     <i class="fas fa-hospital"></i>
                                     <span class="menu-text">Congé Maladie</span>
                                 </a>
-                                <a href="<?= url('admin/demands/conge/maternity.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/maternity.php') ?>" class="menu-item">
                                     <i class="fas fa-baby"></i>
                                     <span class="menu-text">Congé Maternité</span>
                                 </a>
-                                <a href="<?= url('admin/demands/conge/rc.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/rc.php') ?>" class="menu-item">
                                     <i class="fas fa-clock"></i>
                                     <span class="menu-text">Congé RC</span>
                                 </a>
                             </div>
                         </div>
-                        <a href="<?= url('admin/demands/formation') ?>" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/formation') ?>" class="menu-item">
                             <i class="fas fa-graduation-cap"></i>
                             <span class="menu-text">Demande Formation</span>
                         </a>
-                        <a href="<?= url('admin/demands/mission') ?>" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/mission') ?>" class="menu-item">
                             <i class="fas fa-plane"></i>
                             <span class="menu-text">Demande Ordre Mission</span>
                         </a>
-                        <a href="<?= url('admin/demands/deplacement') ?>" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/deplacement') ?>" class="menu-item">
                             <i class="fas fa-car"></i>
                             <span class="menu-text">Demande Déplacement</span>
                         </a>
-                        <a href="sortie_admin1.html" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/leave') ?>" class="menu-item">
                             <i class="fas fa-door-open"></i>
                             <span class="menu-text">Demande Sortie</span>
                         </a>
                     </div>
-                    <a href="<?= url('admin/demands/list.php') ?>" class="menu-item">
+                    <a href="<?= url('profiles/directeur/demands/list.php') ?>" class="menu-item">
                         <i class="fas fa-tasks"></i>
                         <span class="menu-text">État de demande</span>
                     </a>
-                    <a href="<?= url('admin/demands/consulte.php') ?>" class="menu-item">
+                    <a href="<?= url('profiles/directeur/demands/consulte.php') ?>" class="menu-item">
                         <i class="fas fa-eye"></i>
                         <span class="menu-text">Consulter Demande</span>
                     </a>
                 </div>
 
                 <div class="nav-title">Autres</div>
-                <a href="support_admin1.html" class="menu-item">
+                <a href="<?= url('profiles/directeur/support') ?>" class="menu-item">
                     <i class="fas fa-question-circle"></i>
                     <span class="menu-text">Support</span>
+                </a>
+                <!-- Nouveau bouton "Calendrier RC d'Employé" -->
+                <a href="<?= url('profiles/directeur/calendrier') ?>" class="menu-item">
+                    <i class="fas fa-calendar"></i>
+                    <span class="menu-text">Calendrier RC d'Employé</span>
                 </a>
             </div>
         </div>
@@ -644,31 +645,45 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                 </tr>
             </thead>
             <tbody>
-
                 <?php foreach($user_demands as $demand): ?>
-                    <?php $demand['info'] = json_decode($demand['info'], true); ?>
-                <tr>
-                    <td>#<?= $demand['id'] ?></td>
-                    <td><?= $demand['type'] ?? 'congé annual' ?></td>
-                    <td><?= $demand['date_depose'] ?></td>
-                    <td><?= $demand['status'] ?></td>
-                    <td>
-                        <?php if(in_array($demand['type'], ['conge_maternity', 'conge_malady'])): ?>
-                            <?php $content = explode('/', $demand['info']['content']); ?>
-                            <a
-                               download="<?= end($content) ?>"
-                               href="<?= url('storage/' . $demand['info']['content']) ?>"
-                            >
-                                download pdf
-                            </a>
-                        <?php elseif(in_array($demand['type'], ['formation'])): ?>
-                        <?php $data = $demand['info']['content'] ?>
-                            <?= sprintf("%s, %s, %s", $data['grade'], $data['place'], $data['intitule']) ?>
-                        <?php else: ?>
-                            <?= $demand['info']['content'] ?>
-                        <?php endif; ?>
-                    </td>
-                </tr>
+                    <?php $info = json_decode($demand['info'], true) ?>
+                    <tr>
+                        <td>
+                            #<?= $demand['id'] ?>
+                        </td>
+                        <td>
+                            <?= $demand['type'] ?>
+                        </td>
+                        <td>
+                            <?= $demand['date_depose'] ?>
+                        </td>
+                        <td>
+                            <?= $demand['status'] ?>
+                        </td>
+                        <td>
+                            <?php if( $info['type'] == 'text' ): ?>
+                                <td>
+                                    <?= $info['content'] ?>
+                                </td>
+                            <?php elseif($info['type'] == 'keys'): ?>
+                                <td>
+                                    <ul>
+                                        <?php foreach($info['content'] as $key => $value): ?>
+                                            <li>
+                                                <?= $key ?> : <?= $value ?>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </td>
+                            <?php else: ?>
+                                <td>
+                                    <a href="<?= url('storage/' . $info['content'] ) ?>" download="file.pdf">
+                                        download
+                                    </a>
+                                </td>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
@@ -693,7 +708,9 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             const submenu = document.getElementById('demandeSubmenu');
             submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
         });
-
+        document.getElementById('logoutButton').addEventListener('click', function() {
+    window.location.href = 'loginAT1.html';
+});
         document.getElementById('congeBtn').addEventListener('click', function(e) {
             e.preventDefault();
             const submenu = document.getElementById('congeSubmenu');

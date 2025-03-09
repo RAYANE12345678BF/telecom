@@ -1,5 +1,5 @@
 <?php 
-include __DIR__ . '/../../vendor/autoload.php';
+include __DIR__ . '/../../../vendor/autoload.php';
 
 if( ! session_id() ){
     session_start();
@@ -15,7 +15,6 @@ $user_demands = get_users_demands();
 
 
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -25,44 +24,6 @@ $user_demands = get_users_demands();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    
-    <script>
-        function accept(id){
-            let data = new FormData
-            data.append('demand_id', id)
-            data.append('action', 'change_status')
-            data.append('status', 'accepted')
-
-            fetch('<?= url('admin/demands/actions/demand.php') ?>', {
-                method : 'POST',
-                body : data
-            }).then(res => res.json())
-            .then(js => {
-                window.location.reload()
-            }).catch(err => {
-                alert(err)
-            })
-        }
-
-        function reject(id){
-            let data = new FormData
-            data.append('demand_id', id)
-            data.append('action', 'change_status')
-            data.append('status', 'rejected')
-            fetch('<?= url('admin/demands/actions/demand.php') ?>', {
-                method : 'POST',
-                body : data
-            }).then(res => res.json())
-            .then(js => {
-                window.location.reload()
-            }).catch(err=> {
-                alert(err)
-            })
-        }
-    </script>
-    
-    
     <style>
         :root {
             --primary-color: #003366;
@@ -787,16 +748,47 @@ $user_demands = get_users_demands();
             margin: 0;
         }
     </style>
+
+<script>
+        function accept(id){
+            let data = new FormData
+            data.append('demand_id', id)
+            data.append('action', 'change_status')
+            data.append('status', 'accepted')
+
+            fetch('<?= url('actions/demand.php') ?>', {
+                method : 'POST',
+                body : data
+            }).then(res => res.json())
+            .then(js => {
+                window.location.reload()
+            }).catch(err => {
+                alert(err)
+            })
+        }
+
+        function reject(id){
+            let data = new FormData
+            data.append('demand_id', id)
+            data.append('action', 'change_status')
+            data.append('status', 'rejected')
+            fetch('<?= url('actions/demand.php') ?>', {
+                method : 'POST',
+                body : data
+            }).then(res => res.json())
+            .then(js => {
+                window.location.reload()
+            }).catch(err=> {
+                alert(err)
+            })
+        }
+    </script>
 </head>
 <body>
     <!-- Navigation Sidebar -->
-    <div x-data class="sidebar">
+    <div class="sidebar">
         <div class="sidebar-header">
-            <div @click="setTimeout(() => $notify('Nihil distinctio suscipit iste impedit magnam eius iure culpa mollitia tenetur', {
-      wrapperId: 'bottomLeft',
-      templateId: 'alertStandard',
-      autoRemove: 3000
-    }), 2000)" class="logo">
+            <div class="logo">
                 <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
                 <span class="logo-text">DjazairRH</span>
             </div>
@@ -808,7 +800,7 @@ $user_demands = get_users_demands();
                     <i class="fas fa-home"></i>
                     <span class="menu-text">Accueil</span>
                 </a>
-                <a href="<?= url('admin/profile.php') ?>" class="menu-item active">
+                <a href="<?= url('profiles/directeur/profile.php') ?>" class="menu-item active">
                     <i class="fas fa-user-circle"></i>
                     <span class="menu-text">Mon Profil</span>
                 </a>
@@ -826,55 +818,60 @@ $user_demands = get_users_demands();
                                 <span class="menu-text">Demande Congé</span>
                             </a>
                             <div class="submenu" id="congeSubmenu" style="display: none;">
-                                <a href="<?= url('admin/demands/conge/annual.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/annual.php') ?>" class="menu-item">
                                     <i class="fas fa-sun"></i>
                                     <span class="menu-text">Congé Annuel</span>
                                 </a>
-                                <a href="<?= url('admin/demands/conge/malady.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/malady.php') ?>" class="menu-item">
                                     <i class="fas fa-hospital"></i>
                                     <span class="menu-text">Congé Maladie</span>
                                 </a>
-                                <a href="<?= url('admin/demands/conge/maternity.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/maternity.php') ?>" class="menu-item">
                                     <i class="fas fa-baby"></i>
                                     <span class="menu-text">Congé Maternité</span>
                                 </a>
-                                <a href="<?= url('admin/demands/conge/rc.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/rc.php') ?>" class="menu-item">
                                     <i class="fas fa-clock"></i>
                                     <span class="menu-text">Congé RC</span>
                                 </a>
                             </div>
                         </div>
-                        <a href="<?= url('admin/demands/formation') ?>" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/formation') ?>" class="menu-item">
                             <i class="fas fa-graduation-cap"></i>
                             <span class="menu-text">Demande Formation</span>
                         </a>
-                        <a href="<?= url('admin/demands/mission') ?>" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/mission') ?>" class="menu-item">
                             <i class="fas fa-plane"></i>
                             <span class="menu-text">Demande Ordre Mission</span>
                         </a>
-                        <a href="<?= url('admin/demands/deplacement') ?>" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/deplacement') ?>" class="menu-item">
                             <i class="fas fa-car"></i>
                             <span class="menu-text">Demande Déplacement</span>
                         </a>
-                        <a href="sortie_admin1.html" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/leave') ?>" class="menu-item">
                             <i class="fas fa-door-open"></i>
                             <span class="menu-text">Demande Sortie</span>
                         </a>
                     </div>
-                    <a href="<?= url('admin/demands/list.php') ?>" class="menu-item">
+                    <a href="<?= url('profiles/directeur/demands/list.php') ?>" class="menu-item">
                         <i class="fas fa-tasks"></i>
                         <span class="menu-text">État de demande</span>
                     </a>
-                    <a href="<?= url('admin/demands/consulte.php') ?>" class="menu-item">
+                    <a href="<?= url('profiles/directeur/demands/consulte.php') ?>" class="menu-item">
                         <i class="fas fa-eye"></i>
                         <span class="menu-text">Consulter Demande</span>
                     </a>
                 </div>
 
                 <div class="nav-title">Autres</div>
-                <a href="support_admin1.html" class="menu-item">
+                <a href="<?= url('profiles/directeur/support') ?>" class="menu-item">
                     <i class="fas fa-question-circle"></i>
                     <span class="menu-text">Support</span>
+                </a>
+                <!-- Nouveau bouton "Calendrier RC d'Employé" -->
+                <a href="<?= url('profiles/directeur/calendrier') ?>" class="menu-item">
+                    <i class="fas fa-calendar"></i>
+                    <span class="menu-text">Calendrier RC d'Employé</span>
                 </a>
             </div>
         </div>
@@ -964,11 +961,7 @@ $user_demands = get_users_demands();
 
     <script>
          // Navigation menu toggle functions
-         document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            const submenu = document.getElementById('demandeSubmenu');
-            submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
-        });
+        
 
         document.getElementById('congeBtn').addEventListener('click', function(e) {
             e.preventDefault();
@@ -984,7 +977,9 @@ $user_demands = get_users_demands();
                 submenu.style.display = 'none';
             }
         });
-
+        document.getElementById('logoutButton').addEventListener('click', function() {
+    window.location.href = 'loginAT1.html';
+});
         document.getElementById('congeBtn').addEventListener('click', function(e) {
             e.preventDefault();
             const submenu = document.getElementById('congeSubmenu');

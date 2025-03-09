@@ -1,6 +1,6 @@
 <?php
 
-include __DIR__ . '/../vendor/autoload.php';
+include __DIR__ . '/../../vendor/autoload.php';
 
 if (! session_id()) {
     session_start();
@@ -8,6 +8,10 @@ if (! session_id()) {
 
 redirect_if_not_auth();
 
+$services = get_services();
+$departments = get_departments();
+$employees = get_all_users();
+$roles = get_roles();
 
 $user = fetch_user_information($_SESSION['user_id']);
 
@@ -28,651 +32,7 @@ $user = fetch_user_information($_SESSION['user_id']);
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <style>
-        :root {
-            --primary-color: #003366;
-            --secondary-color: #0066cc;
-            --accent-color: #66b3ff;
-            --text-color: #2c3e50;
-            --bg-color: #f8f9fa;
-            --hover-color: #f0f4f8;
-            --border-radius: 12px;
-            --nav-height: 70px;
-            --transition: all 0.3s ease;
-            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        body {
-            display: flex;
-            min-height: 100vh;
-            background: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-        }
-
-        /* Navigation Styles */
-        .sidebar {
-            width: 280px;
-            background: white;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100%;
-            color: var(--text-color);
-            box-shadow: var(--shadow-lg);
-            z-index: 1000;
-        }
-
-        .sidebar-header {
-            height: var(--nav-height);
-            display: flex;
-            align-items: center;
-            padding: 0 24px;
-            background: white;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .sidebar-content {
-            flex: 1;
-            padding: 24px;
-            overflow-y: auto;
-        }
-
-        .menu-items {
-            margin-bottom: auto;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            height: 100%;
-        }
-
-        .logo img {
-            width: 50px;
-            height: 50px;
-            object-fit: contain;
-            border-radius: var(--border-radius);
-            background: transparent;
-            padding: 0;
-            transition: var(--transition);
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-        }
-
-        .logo-text {
-            font-size: 26px;
-            font-weight: 700;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
-        }
-
-        .nav-title {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #64748b;
-            margin: 20px 0 10px;
-            padding-left: 18px;
-        }
-
-        .sidebar a {
-            text-decoration: none;
-            color: var(--text-color);
-            padding: 14px 18px;
-            display: flex;
-            align-items: center;
-            border-radius: var(--border-radius);
-            margin-bottom: 8px;
-            transition: var(--transition);
-            position: relative;
-            font-weight: 500;
-        }
-
-        .sidebar a:hover,
-        .sidebar .active {
-            background: var(--hover-color);
-            transform: translateX(5px);
-            color: var(--primary-color);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .sidebar i {
-            margin-right: 12px;
-            font-size: 1.2em;
-            min-width: 25px;
-            text-align: center;
-            color: var(--primary-color);
-            transition: var(--transition);
-        }
-
-        .submenu {
-            display: none;
-            flex-direction: column;
-            padding-left: 20px;
-            margin: 5px 0;
-            position: relative;
-        }
-
-        .submenu::before {
-            content: '';
-            position: absolute;
-            left: 10px;
-            top: 0;
-            height: 100%;
-            width: 2px;
-            background: linear-gradient(to bottom, var(--hover-color) 0%, var(--accent-color) 100%);
-            border-radius: 1px;
-        }
-
-        .submenu a {
-            font-size: 0.95em;
-            padding: 12px 16px;
-            opacity: 0.9;
-        }
-
-        .user-section {
-            padding: 16px;
-            background: var(--hover-color);
-            border-radius: var(--border-radius);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-            transition: var(--transition);
-            color: var(--text-color);
-            margin: 24px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .user-section:hover {
-            background: var(--bg-color);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        /* Navbar Styles */
-        .navbar {
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: calc(100% - 280px);
-            height: var(--nav-height);
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding: 0 30px;
-            box-shadow: var(--shadow-sm);
-            z-index: 900;
-        }
-
-        .nav-icons {
-            display: flex;
-            gap: 20px;
-        }
-
-        .icon-wrapper {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .icon-wrapper:hover {
-            background: var(--hover-color);
-        }
-
-        .icon-wrapper i {
-            font-size: 1.2em;
-            color: var(--primary-color);
-            transition: var(--transition);
-        }
-
-        .icon-wrapper:hover i {
-            color: var(--secondary-color);
-            transform: scale(1.1);
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            background: #ff3366;
-            color: white;
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            font-size: 12px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid white;
-            box-shadow: var(--shadow-sm);
-            animation: pulse 2s infinite;
-        }
-
-        .notification-dropdown {
-            display: none;
-            position: absolute;
-            top: 60px;
-            right: 20px;
-            background-color: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-md);
-            width: 300px;
-            max-height: 400px;
-            overflow-y: auto;
-            z-index: 1000;
-            padding: 10px;
-        }
-
-        .notification-dropdown.show {
-            display: block;
-        }
-
-        .notification-item {
-            padding: 10px;
-            border-bottom: 1px solid var(--hover-color);
-            transition: var(--transition);
-        }
-
-        .notification-item:last-child {
-            border-bottom: none;
-        }
-
-        .notification-item:hover {
-            background-color: var(--hover-color);
-        }
-
-        .no-notifications {
-            text-align: center;
-            color: #64748b;
-            font-size: 14px;
-            padding: 20px;
-        }
-
-        /* Main Content Styles */
-        .main-content {
-            margin-left: 280px;
-            padding: 90px 30px 30px;
-            width: calc(100% - 280px);
-        }
-
-        /* Profile Styles */
-        :root {
-            --primary-color: #003366;
-            --secondary-color: #0066cc;
-            --accent-color: #e6f3ff;
-            --success-color: #10b981;
-            --text-color: #2c3e50;
-            --bg-color: #f8f9fa;
-            --border-radius: 12px;
-            --transition: all 0.3s ease;
-            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        .profile-grid {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 30px;
-        }
-
-        /* Profile Sidebar */
-        .profile-sidebar {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 30px;
-            box-shadow: var(--shadow);
-            height: fit-content;
-        }
-
-        .profile-photo {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            background: var(--accent-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 50px;
-            color: var(--primary-color);
-            position: relative;
-        }
-
-        .edit-photo {
-            position: absolute;
-            bottom: 5px;
-            right: 5px;
-            background: var(--primary-color);
-            color: white;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .edit-photo:hover {
-            transform: scale(1.1);
-        }
-
-        .profile-name {
-            text-align: center;
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-
-        .profile-title {
-            text-align: center;
-            color: #64748b;
-            margin-bottom: 20px;
-        }
-
-        .profile-info {
-            margin-top: 20px;
-        }
-
-        .info-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            color: var(--text-color);
-        }
-
-        .info-item i {
-            width: 20px;
-            margin-right: 10px;
-            color: var(--primary-color);
-        }
-
-        .info-item input {
-            flex: 1;
-            padding: 6px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            background-color: white;
-        }
-
-        .info-item input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(0, 51, 102, 0.1);
-        }
-
-        /* Main Content */
-        .profile-content {
-            display: grid;
-            gap: 25px;
-        }
-
-        .content-card {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 25px;
-            box-shadow: var(--shadow);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--accent-color);
-        }
-
-        .card-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--secondary-color);
-        }
-
-        .edit-button {
-            background: var(--accent-color);
-            color: var(--primary-color);
-            border: none;
-            padding: 8px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .edit-button:hover {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-
-        .info-field {
-            margin-bottom: 15px;
-        }
-
-        .field-label {
-            font-size: 14px;
-            color: #64748b;
-            margin-bottom: 5px;
-        }
-
-        .field-value {
-            font-size: 16px;
-            color: var(--text-color);
-            font-weight: 500;
-        }
-
-        .field-value input,
-        .field-value select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            margin-top: 5px;
-            background-color: white;
-        }
-
-        .field-value input:focus,
-        .field-value select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(0, 51, 102, 0.1);
-        }
-
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 80px;
-            }
-
-            .logo-text,
-            .menu-text {
-                display: none;
-            }
-
-            .main-content {
-                margin-left: 80px;
-                width: calc(100% - 80px);
-            }
-
-            .navbar {
-                width: calc(100% - 80px);
-            }
-
-            .profile-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .profile-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Styles pour le menu déroulant de messagerie */
-        .messenger-dropdown {
-            display: none;
-            position: absolute;
-            top: 60px;
-            right: 20px;
-            background-color: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-md);
-            width: 350px;
-            max-height: 500px;
-            overflow-y: auto;
-            z-index: 1000;
-            padding: 10px;
-        }
-
-        .messenger-dropdown.show {
-            display: block;
-        }
-
-        .messenger-header {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--primary-color);
-            padding: 10px;
-            border-bottom: 1px solid var(--hover-color);
-        }
-
-        .messenger-body {
-            padding: 10px;
-        }
-
-        .contact-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid var(--hover-color);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .contact-item:hover {
-            background-color: var(--hover-color);
-        }
-
-        .contact-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--accent-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 10px;
-        }
-
-        .contact-name {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-color);
-        }
-
-        .messenger-footer {
-            padding: 10px;
-            border-top: 1px solid var(--hover-color);
-        }
-
-        .messenger-footer input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        .messenger-footer input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(0, 51, 102, 0.1);
-        }
-
-        /* Styles pour le message "Aucun message" */
-        .no-messages {
-            text-align: center;
-            padding: 20px;
-            color: #64748b;
-            font-size: 14px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .no-messages i {
-            font-size: 24px;
-            color: var(--accent-color);
-        }
-
-        .no-messages p {
-            margin: 0;
-        }
-    </style>
+    <link rel="stylesheet" href="./assets/css/main.css">
 </head>
 
 <body>
@@ -687,11 +47,11 @@ $user = fetch_user_information($_SESSION['user_id']);
         <div class="sidebar-content">
             <div class="menu-items">
                 <div class="nav-title">Principal</div>
-                <a href="<?php echo url('employee/profile.php') ?>" class="menu-item">
+                <a href="<?php echo url('profiles/employee/profile.php') ?>" class="menu-item">
                     <i class="fas fa-home"></i>
                     <span class="menu-text">Accueil</span>
                 </a>
-                <a href="profile_employe.html" class="menu-item active">
+                <a href="<?php echo url('profiles/employee/profile.php') ?>" class="menu-item active">
                     <i class="fas fa-user-circle"></i>
                     <span class="menu-text">Mon Profil</span>
                 </a>
@@ -709,37 +69,37 @@ $user = fetch_user_information($_SESSION['user_id']);
                                 <span class="menu-text">Demande Congé</span>
                             </a>
                             <div class="submenu" id="congeSubmenu" style="display: none;">
-                                <a href="<?php echo url('employee/demands/conge/annual.php') ?>" class="menu-item">
+                                <a href="<?php echo url('profiles/employee/demands/conge/annual.php') ?>" class="menu-item">
                                     <i class="fas fa-sun"></i>
                                     <span class="menu-text">Congé Annuel</span>
                                 </a>
-                                <a href="maladie_employe.html" class="menu-item">
+                                <a href="<?php echo url('profiles/employee/demands/conge/malady.php') ?>" class="menu-item">
                                     <i class="fas fa-hospital"></i>
                                     <span class="menu-text">Congé Maladie</span>
                                 </a>
-                                <a href="maternite_employe.html" class="menu-item">
+                                <a href="<?php echo url('profiles/employee/demands/conge/maternity.php') ?>" class="menu-item">
                                     <i class="fas fa-baby"></i>
                                     <span class="menu-text">Congé Maternité</span>
                                 </a>
-                                <a href="rc_employe.html" class="menu-item">
+                                <a href="<?php echo url('profiles/employee/demands/conge/rc.php') ?>" class="menu-item">
                                     <i class="fas fa-clock"></i>
                                     <span class="menu-text">Congé RC</span>
                                 </a>
                             </div>
                         </div>
-                        <a href="formation_employe.html" class="menu-item">
+                        <a href="<?php echo url('profiles/employee/demands/formation') ?>" class="menu-item">
                             <i class="fas fa-graduation-cap"></i>
                             <span class="menu-text">Demande Formation</span>
                         </a>
-                        <a href="mission_employe.html" class="menu-item">
+                        <a href="<?php echo url('profiles/employee/demands/mission') ?>" class="menu-item">
                             <i class="fas fa-plane"></i>
                             <span class="menu-text">Demande Ordre Mission</span>
                         </a>
-                        <a href="Déplacement_employe.html" class="menu-item">
+                        <a href="<?php echo url('profiles/employee/demands/deplacement') ?>" class="menu-item">
                             <i class="fas fa-car"></i>
                             <span class="menu-text">Demande Déplacement</span>
                         </a>
-                        <a href="sortie_employe.html" class="menu-item">
+                        <a href="<?php echo url('profiles/employee/demands/leave') ?>" class="menu-item">
                             <i class="fas fa-door-open"></i>
                             <span class="menu-text">Demande Sortie</span>
                         </a>
@@ -750,7 +110,7 @@ $user = fetch_user_information($_SESSION['user_id']);
                         <span class="menu-text">État de demande</span>
                     </a>
                     <?php else: ?>
-                    <a href="<?= url('employee/demands/list.php') ?>" class="menu-item">
+                    <a href="<?= url('profiles/employee/demands/list.php') ?>" class="menu-item">
                         <i class="fas fa-tasks"></i>
                         <span class="menu-text">État de demande</span>
                     </a>
@@ -759,7 +119,7 @@ $user = fetch_user_information($_SESSION['user_id']);
                 </div>
 
                 <div class="nav-title">Autres</div>
-                <a href="support_employe.html" class="menu-item">
+                <a href="<?php echo url('profiles/employee/support') ?>" class="menu-item">
                     <i class="fas fa-question-circle"></i>
                     <span class="menu-text">Support</span>
                 </a>
@@ -913,9 +273,9 @@ $user = fetch_user_information($_SESSION['user_id']);
                     <div class="content-card">
                         <div class="card-header">
                             <h2 class="card-title">Informations Professionnelles</h2>
-                            <button class="edit-button">
-                                <i class="fas fa-edit"></i>
-                                Modifier
+                            <button id="saveProfissionel" class="edit-button">
+                                <i class="fas fa-floppy-disk"></i>
+                                save changes
                             </button>
                         </div>
                         <div class="info-grid">
@@ -926,56 +286,56 @@ $user = fetch_user_information($_SESSION['user_id']);
                                 </div>
                             </div>
                             <div class="info-field">
-                                <div class="field-label">Poste</div>
+                                <div class="field-label">Role</div>
                                 <div class="field-value">
-                                    <input value="<?php echo $user['role']['nom'] ?>" type="text" name="poste" placeholder="Entrez votre poste">
+                                    <select name="role_id">
+                                        <option value="">Sélectionner</option>
+                                        <?php foreach($roles as $role): ?>
+                                            <option <?php echo $user['role']['id'] == $role['id'] ? 'selected' : '' ?> value="<?php echo $role['id'] ?>"><?php echo $role['nom'] ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
                                 </div>
                             </div>
                             <div class="info-field">
                                 <div class="field-label">Date d'Embauche</div>
                                 <div class="field-value">
-                                    <input type="date" name="dateEmbauche">
+                                    <input type="date" name="start_date" value="<?php echo $user['start_date'] ?? '' ?>">
                                 </div>
                             </div>
                             <div class="info-field">
                                 <div class="field-label">Département</div>
                                 <div class="field-value">
-                                    <select name="departement">
+                                    <select name="department_id">
                                         <option value="">Sélectionner</option>
-                                        <option <?php echo $user['department']['code'] == 'direction_op' ? 'selected' : '' ?> value="direction_op">Direction Opérationnelle</option>
-                                        <option <?php echo $user['department']['code'] == 'dpt_technique' ? 'selected' : '' ?> value="dpt_technique">Département Technique</option>
-                                        <option <?php echo $user['department']['code'] == 'dpt_commercial' ? 'selected' : '' ?> value="dpt_commercial">Département Commercial</option>
-                                        <option <?php echo $user['department']['code']  == 'dpt_rh' ? 'selected' : '' ?> value="dpt_rh">Département Ressources Humaines</option>
-                                        <option <?php echo $user['department']['code']  == 'dpt_finance' ? 'selected' : '' ?> value="dpt_finance">Département Finance</option>
-                                        <option <?php echo $user['department']['code']  == 'dpt_informatique' ? 'selected' : '' ?> value="dpt_informatique">Département Informatique</option>
-                                        <option <?php echo $user['department']['code']  == 'dpt_logistique' ? 'selected' : '' ?> value="dpt_logistique">Département Logistique</option>
-                                        <option <?php echo $user['department']['code']  == 'dpt_juridique' ? 'selected' : '' ?> value="dpt_juridique">Département Juridique</option>
-                                        <option <?php echo $user['department']['code']  == 'dpt_qualite' ? 'selected' : '' ?> value="dpt_qualite">Département Qualité</option>
+                                        <?php foreach($departments as $department): ?>
+                                            <option <?php echo $user['department']['id'] == $department['id'] ? 'selected' : '' ?> value="<?php echo $department['id'] ?>"><?php echo $department['nom'] ?></option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                             </div>
                             <div class="info-field">
                                 <div class="field-label">Services</div>
                                 <div class="field-value">
-                                    <select name="service">
-                                        <option value="">Sélectionner</option>
-                                        <option value="technique">Service Technique</option>
-                                        <option value="commercial">Service Commercial</option>
-                                        <option value="exploitation">Service Exploitation</option>
-                                        <option value="informatique">Service Informatique</option>
-                                        <option value="maintenance">Service Maintenance</option>
-                                        <option value="clientele">Service Clientèle</option>
-                                        <option value="qualite">Service Qualité</option>
-                                        <option value="reseaux">Service Réseaux</option>
-                                        <option value="administration">Service Administration</option>
-                                        <option value="finance">Service Finance et Comptabilité</option>
+                                    <select name="service_id">
+                                        <option value="" disabled>Sélectionner</option>
+                                        <?php foreach($services as $service): ?>
+                                            <option <?php echo $user['service']['id'] == $service['id'] ? 'selected' : '' ?> value="<?php echo $service['id'] ?>"><?php echo $service['nom'] ?></option>
+                                        <?php endforeach; ?>
+                                        
                                     </select>
                                 </div>
                             </div>
                             <div class="info-field">
-                                <div class="field-label">Supérieur Direct</div>
+                                <div class="field-label">superior director</div>
                                 <div class="field-value">
-                                    <input type="text" name="superieur" placeholder="Entrez le nom de votre supérieur">
+                                    <select name="superior_id">
+                                        <option value="" disabled selected>Sélectionner</option>
+                                        <?php foreach($employees as $employee): ?>
+                                            <?php if( $employee['id'] != $user['id'] ): ?>
+                                                <option <?php echo $user['superior']['id']??-1 == $employee['id'] ? 'selected' : '' ?> value="<?php echo $employee['id'] ?>"><?php echo $employee['nom'] . ' ' . $employee['prenom'] ?></option>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -984,6 +344,42 @@ $user = fetch_user_information($_SESSION['user_id']);
             </div>
         </div>
     </div>
+
+    <script>
+        const btn = document.querySelector('#saveProfissionel')
+        btn.onclick = () => {
+            let data = new FormData
+            data.append('action', 'save_prof')
+
+            let keys = ["matricule", "role_id", "department_id", "start_date", "service_id", "superior_id"]
+
+
+            keys.forEach(e => {
+                try {
+                    data.append(e, (document.querySelector(`input[name=${e}]`) || document.querySelector(`select[name=${e}]`)).value)
+                } catch (err) {
+                    console.log(e, err)
+                }
+            })
+            fetch('<?= url('actions/account.php') ?>', {
+                method: "post",
+                body: data
+            }).then(res => res.json())
+            .then(js => {
+                Swal.fire({
+                    title: 'done!',
+                    text : 'informations updated successfully',
+                    icon : 'success'
+                })
+            }).catch(err => {
+                Swal.fire({
+                    title: 'error!',
+                    text : err,
+                    icon : 'error'
+                })
+            })
+        }
+    </script>
 
     <script>
         const warnInfo = (text = "to unlock all the sections you need to fill all the information in the profile") => {
@@ -1173,6 +569,19 @@ $user = fetch_user_information($_SESSION['user_id']);
             fetch('<?= url('actions/account.php') ?>', {
                 method: "post",
                 body: data
+            }).then(res => res.json())
+            .then(js => {
+                Swal.fire({
+                    title: 'done!',
+                    text : 'informations updated successfully',
+                    icon : 'success'
+                })
+            }).catch(err => {
+                Swal.fire({
+                    title: 'error!',
+                    text : err,
+                    icon : 'error'
+                })
             })
         }
     </script>

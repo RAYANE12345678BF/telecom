@@ -142,7 +142,7 @@ if( ! function_exists('redirect_if_auth') ){
         }
 
         if( isset($_SESSION['user_id']) && isset($_SESSION['user']) ){
-            redirect(url('dashboard/'));
+            redirect(url('profiles/'));
         }
     }
 }

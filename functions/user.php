@@ -180,6 +180,7 @@ if( !function_exists('fetch_user_information') ){
         $user['role'] = get_role($user['role_id']);
         $user['service'] = get_service($user['service_id']);
         $user['department'] = get_department($user['departement_id']);
+        $user['superior'] = empty($user['superior_id']) ? null :  get_user($user['superior_id']);
         $user['address'] = !empty($user['address_id']) ? get_address($user['user_id']) : [];
 
         return $user;

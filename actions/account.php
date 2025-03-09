@@ -38,4 +38,27 @@ switch($action){
     }
 
     break;
+    case 'save_prof':
+        $matricule = empty($_POST['matricule'])? null : $_POST['matricule'];
+        $role_id = empty( $_POST['role_id']) ? null :  $_POST['role_id'];
+        $departement_id = empty($_POST['department_id']) ? null : $_POST['department_id'];
+        $service_id =  empty($_POST['service_id']) ? null : $_POST['service_id'];
+        $superior_id = empty($_POST['superior_id']) ? null : $_POST['superior_id'];
+        $start_date = empty($_POST['start_date']) ? null : $_POST['start_date'];
+    
+        $user_id = $_SESSION['user_id'];
+    
+        $data = compact('matricule', 'role_id', 'departement_id', 'start_date', 'service_id', 'superior_id');
+    
+        $user = update_user($user_id, $data);
+    
+        if( $user ){
+            send_json_response([
+                'message' => "informations updated successfully"
+            ]);
+        }else{
+            throw new Exception('error was occured');
+        }
+    
+        break;
 }

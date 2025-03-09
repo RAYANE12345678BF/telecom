@@ -1,9 +1,18 @@
 <?php
-require_once __DIR__ . "/../../../vendor/autoload.php";
+
+include __DIR__ . '/../../../../vendor/autoload.php';
+
+if (! session_id()) {
+    session_start();
+}
+
+redirect_if_not_auth();
+
+$user = fetch_user_information($_SESSION['user_id']);
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -118,8 +127,7 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
             font-weight: 500;
         }
 
-        .sidebar a:hover,
-        .sidebar .active {
+        .sidebar a:hover, .sidebar .active {
             background: var(--hover-color);
             transform: translateX(5px);
             color: var(--primary-color);
@@ -140,9 +148,7 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
             color: var(--secondary-color);
         }
 
-        .submenu,
-        .sub-submenu,
-        .sub-sub-submenu {
+        .submenu, .sub-submenu, .sub-sub-submenu {
             display: none;
             flex-direction: column;
             padding-left: 20px;
@@ -161,9 +167,7 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
             border-radius: 1px;
         }
 
-        .submenu a,
-        .sub-submenu a,
-        .sub-sub-submenu a {
+        .submenu a, .sub-submenu a, .sub-sub-submenu a {
             font-size: 0.95em;
             padding: 12px 16px;
             opacity: 0.9;
@@ -238,15 +242,11 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
             transition: var(--transition);
             position: relative;
         }
-
         .small-text {
-            font-size: 14px;
-            /* Réduit la taille de la police */
-            font-weight: normal;
-            /* Évite qu'il soit en gras */
-            color: #555;
-            /* Optionnel : une couleur plus douce */
-        }
+    font-size: 14px; /* Réduit la taille de la police */
+    font-weight: normal; /* Évite qu'il soit en gras */
+    color: #555; /* Optionnel : une couleur plus douce */
+}
 
         .icon-wrapper:hover {
             transform: translateY(-2px) scale(1.05);
@@ -324,19 +324,17 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
             padding: 20px;
         }
 
-
+       
 
         @keyframes pulse {
             0% {
                 transform: scale(1);
                 box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.4);
             }
-
             70% {
                 transform: scale(1.1);
                 box-shadow: 0 0 0 10px rgba(255, 51, 102, 0);
             }
-
             100% {
                 transform: scale(1);
                 box-shadow: 0 0 0 0 rgba(255, 51, 102, 0);
@@ -358,16 +356,13 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
                 opacity: 0;
                 transform: translateY(-10px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        .submenu.show,
-        .sub-submenu.show,
-        .sub-sub-submenu.show {
+        .submenu.show, .sub-submenu.show, .sub-sub-submenu.show {
             animation: slideDown 0.3s ease forwards;
         }
 
@@ -405,9 +400,7 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
         }
 
         /* Remove search-related styles */
-        .nav-left,
-        .nav-right,
-        .nav-search {
+        .nav-left, .nav-right, .nav-search {
             display: none;
         }
 
@@ -443,30 +436,19 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
         }
 
         .title {
-            text-align: center;
-            /* Centrer le texte */
-            color: #124170;
-            /* Bleu foncé */
-            font-size: 28px;
-            /* Agrandir le texte */
-            font-weight: bold;
-            /* Texte en gras */
-            text-transform: uppercase;
-            /* Majuscules */
-            letter-spacing: 1px;
-            /* Espacement entre lettres */
-            margin-bottom: 20px;
-            /* Espacement sous le titre */
-            padding-bottom: 5px;
-            /* Espacement sous le titre */
-            display: block;
-            /* Empêcher toute ligne latérale */
-            width: fit-content;
-            /* Ajuster la largeur au texte */
-            margin-left: auto;
-            margin-right: auto;
-            /* Centrer le bloc */
-        }
+    text-align: center; /* Centrer le texte */
+    color: #124170; /* Bleu foncé */
+    font-size: 28px; /* Agrandir le texte */
+    font-weight: bold; /* Texte en gras */
+    text-transform: uppercase; /* Majuscules */
+    letter-spacing: 1px; /* Espacement entre lettres */
+    margin-bottom: 20px; /* Espacement sous le titre */
+    padding-bottom: 5px; /* Espacement sous le titre */
+    display: block; /* Empêcher toute ligne latérale */
+    width: fit-content; /* Ajuster la largeur au texte */
+    margin-left: auto;  
+    margin-right: auto; /* Centrer le bloc */
+}
 
 
 
@@ -486,28 +468,22 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
         .form-group {
             margin-bottom: 1rem;
         }
-
         .form-group-row {
-            display: flex;
-            gap: 20px;
-            /* Espacement entre les champs */
-        }
+    display: flex;
+    gap: 20px; /* Espacement entre les champs */
+}
 
-        .form-group-row .form-group {
-            flex: 1;
-            /* Permet aux champs de prendre un espace égal */
-        }
+.form-group-row .form-group {
+    flex: 1; /* Permet aux champs de prendre un espace égal */
+}
+.form-group-row {
+    display: flex;
+    gap: 20px; /* Espacement entre les champs */
+}
 
-        .form-group-row {
-            display: flex;
-            gap: 20px;
-            /* Espacement entre les champs */
-        }
-
-        .form-group-row .form-group {
-            flex: 1;
-            /* Permet aux champs de prendre un espace égal */
-        }
+.form-group-row .form-group {
+    flex: 1; /* Permet aux champs de prendre un espace égal */
+}
 
         .form-label {
             display: block;
@@ -543,69 +519,64 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
             border-radius: 0.375rem;
             animation: fadeIn 0.3s ease-out;
         }
-
         .buttons-container {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            /* Espacement entre les boutons */
-        }
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px; /* Espacement entre les boutons */
+}
 
-        .button-primary {
-            background-color: white;
-            /* Fond blanc */
-            color: #003366;
-            /* Texte bleu foncé */
-            font-size: 16px;
-            font-weight: bold;
-            padding: 12px 20px;
-            border: 2px solid #003366;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            /* Espacement entre l'icône et le texte */
-        }
+.button-primary {
+    background-color: white; /* Fond blanc */
+    color: #003366; /* Texte bleu foncé */
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px 20px;
+    border: 2px solid #003366;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espacement entre l'icône et le texte */
+}
 
-        .button-primary:hover {
-            background-color: #003366;
-            color: white;
-            transform: scale(1.05);
-        }
+.button-primary:hover {
+    background-color: #003366;
+    color: white;
+    transform: scale(1.05);
+}
 
-        .button-primary:active {
-            background-color: #002244;
-            color: white;
-            transform: scale(0.98);
-        }
+.button-primary:active {
+    background-color: #002244;
+    color: white;
+    transform: scale(0.98);
+}
 
-        .button-secondary {
-            background-color: white;
-            color: #444;
-            font-size: 16px;
-            font-weight: bold;
-            padding: 12px 20px;
-            border: 2px solid #444;
-            border-radius: 5px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: background 0.3s ease, transform 0.2s ease;
-        }
+.button-secondary {
+    background-color: white;
+    color: #444;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px 20px;
+    border: 2px solid #444;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
 
-        .button-secondary:hover {
-            background-color: #444;
-            color: white;
-            transform: scale(1.05);
-        }
+.button-secondary:hover {
+    background-color: #444;
+    color: white;
+    transform: scale(1.05);
+}
 
-        .button-secondary:active {
-            background-color: #222;
-            transform: scale(0.98);
-        }
+.button-secondary:active {
+    background-color: #222;
+    transform: scale(0.98);
+}
 
 
         @keyframes fadeIn {
@@ -613,14 +584,13 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
                 opacity: 0;
                 transform: translateY(-0.5rem);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        /* Styles pour le menu déroulant de messagerie */
+      /* Styles pour le menu déroulant de messagerie */
         .messenger-dropdown {
             display: none;
             position: absolute;
@@ -729,16 +699,11 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
         }
     </style>
 </head>
-
 <body>
-    <!-- Navigation Sidebar -->
-    <div x-data class="sidebar">
+      <!-- Navigation Sidebar -->
+      <div class="sidebar">
         <div class="sidebar-header">
-            <div @click="setTimeout(() => $notify('Nihil distinctio suscipit iste impedit magnam eius iure culpa mollitia tenetur', {
-      wrapperId: 'bottomLeft',
-      templateId: 'alertStandard',
-      autoRemove: 3000
-    }), 2000)" class="logo">
+            <div class="logo">
                 <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
                 <span class="logo-text">DjazairRH</span>
             </div>
@@ -750,7 +715,7 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
                     <i class="fas fa-home"></i>
                     <span class="menu-text">Accueil</span>
                 </a>
-                <a href="<?= url('admin/profile.php') ?>" class="menu-item active">
+                <a href="<?= url('profiles/directeur/profile.php') ?>" class="menu-item active">
                     <i class="fas fa-user-circle"></i>
                     <span class="menu-text">Mon Profil</span>
                 </a>
@@ -768,55 +733,60 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
                                 <span class="menu-text">Demande Congé</span>
                             </a>
                             <div class="submenu" id="congeSubmenu" style="display: none;">
-                                <a href="<?= url('admin/demands/conge/annual.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/annual.php') ?>" class="menu-item">
                                     <i class="fas fa-sun"></i>
                                     <span class="menu-text">Congé Annuel</span>
                                 </a>
-                                <a href="<?= url('admin/demands/conge/malady.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/malady.php') ?>" class="menu-item">
                                     <i class="fas fa-hospital"></i>
                                     <span class="menu-text">Congé Maladie</span>
                                 </a>
-                                <a href="<?= url('admin/demands/conge/maternity.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/maternity.php') ?>" class="menu-item">
                                     <i class="fas fa-baby"></i>
                                     <span class="menu-text">Congé Maternité</span>
                                 </a>
-                                <a href="<?= url('admin/demands/conge/rc.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/rc.php') ?>" class="menu-item">
                                     <i class="fas fa-clock"></i>
                                     <span class="menu-text">Congé RC</span>
                                 </a>
                             </div>
                         </div>
-                        <a href="<?= url('admin/demands/formation') ?>" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/formation') ?>" class="menu-item">
                             <i class="fas fa-graduation-cap"></i>
                             <span class="menu-text">Demande Formation</span>
                         </a>
-                        <a href="<?= url('admin/demands/mission') ?>" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/mission') ?>" class="menu-item">
                             <i class="fas fa-plane"></i>
                             <span class="menu-text">Demande Ordre Mission</span>
                         </a>
-                        <a href="<?= url('admin/demands/deplacement') ?>" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/deplacement') ?>" class="menu-item">
                             <i class="fas fa-car"></i>
                             <span class="menu-text">Demande Déplacement</span>
                         </a>
-                        <a href="sortie_admin1.html" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/leave') ?>" class="menu-item">
                             <i class="fas fa-door-open"></i>
                             <span class="menu-text">Demande Sortie</span>
                         </a>
                     </div>
-                    <a href="<?= url('admin/demands/list.php') ?>" class="menu-item">
+                    <a href="<?= url('profiles/directeur/demands/list.php') ?>" class="menu-item">
                         <i class="fas fa-tasks"></i>
                         <span class="menu-text">État de demande</span>
                     </a>
-                    <a href="<?= url('admin/demands/consulte.php') ?>" class="menu-item">
+                    <a href="<?= url('profiles/directeur/demands/consulte.php') ?>" class="menu-item">
                         <i class="fas fa-eye"></i>
                         <span class="menu-text">Consulter Demande</span>
                     </a>
                 </div>
 
                 <div class="nav-title">Autres</div>
-                <a href="support_admin1.html" class="menu-item">
+                <a href="<?= url('profiles/directeur/support') ?>" class="menu-item">
                     <i class="fas fa-question-circle"></i>
                     <span class="menu-text">Support</span>
+                </a>
+                <!-- Nouveau bouton "Calendrier RC d'Employé" -->
+                <a href="<?= url('profiles/directeur/calendrier') ?>" class="menu-item">
+                    <i class="fas fa-calendar"></i>
+                    <span class="menu-text">Calendrier RC d'Employé</span>
                 </a>
             </div>
         </div>
@@ -843,14 +813,14 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
             </div>
         </div>
     </nav>
-
+    
     <!-- Menu déroulant des notifications -->
     <div class="notification-dropdown" id="notificationDropdown">
         <div class="no-notifications">
             Aucune notification pour le moment.
         </div>
     </div>
-
+    
     <!-- Menu déroulant de messagerie -->
     <div class="messenger-dropdown" id="messengerDropdown">
         <div class="messenger-header">
@@ -868,37 +838,33 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
         <div class="messenger-footer">
             <input type="text" placeholder="Entrez un nom">
         </div>
-    </div>
-    </nav>
+            </div>
+        </nav>
+    
 
-
-
+   
     <div class="content">
         <div class="container">
             <div class="form-card">
                 <div class="header">
-                    <h1 class="title"> Demande congé RC </h1>
+                    <h1 class="title"> Demande  congé  RC </h1>
                 </div>
-                <form
-                        method="post"
-                        enctype="multipart/form-data"
-                        id="formConvocation"
-                        action="<?= url('admin/demands/actions/demand.php') ?>">
-                    <input type="hidden" name="demand_type" value="conge_rc" />
+                <form action="<?= url('actions/demand.php') ?>" method="post" id="formConvocation">
+                    <input type="hidden" name="demand_type" value="conge_rc">
                     <div class="section">
                         <h3 class="section-title">Informations Personnelles</h3>
                         <div class="form-group">
                             <label class="form-label" for="matricule">Matricule</label>
-                            <input type="text" id="matricule" class="form-input" required>
+                            <input readonly value="<?= $user['matricule'] ?>" type="text" id="matricule" class="form-input" required>
                         </div>
                         <div class="form-group-row">
                             <div class="form-group">
                                 <label class="form-label" for="nom">Nom</label>
-                                <input type="text" id="nom" class="form-input" required>
+                                <input readonly value="<?= $user['nom'] ?>" type="text" id="nom" class="form-input" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="prenom">Prénom</label>
-                                <input type="text" id="prenom" class="form-input" required>
+                                <input readonly value="<?= $user['prenom'] ?>" type="text" id="prenom" class="form-input" required>
                             </div>
                         </div>
 
@@ -906,14 +872,14 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
 
                         <div class="form-group">
                             <label class="form-label" for=" Fonction"> Fonction</label>
-                            <input type="text" id=" Fonction" class="form-input" required>
+                            <input readonly value="<?= $user['role']['nom'] ?>" type="text" id=" Fonction" class="form-input" required>
                         </div>
                     </div>
                     <div class="section">
                         <h3 class="section-title">Détails de congé</h3>
                         <div class="form-group">
                             <label class="form-label" for="durée">durée</label>
-                            <input name="duree" type="text" id="durée" class="form-input" required>
+                            <input name="duree" type="number" id="durée" class="form-input" required>
                         </div>
                         <div class="form-group-row">
                             <div class="form-group">
@@ -970,7 +936,7 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
             e.preventDefault();
             let submenu = document.querySelector(".submenu");
             let icon = this.querySelector(".fa-chevron-right");
-
+            
             if (submenu.style.display === "flex") {
                 submenu.style.display = "none";
                 icon.style.transform = "rotate(0deg)";
@@ -984,7 +950,7 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
             e.preventDefault();
             let subSubmenu = document.querySelector(".sub-submenu");
             let icon = this.querySelector(".fa-chevron-right");
-
+            
             if (subSubmenu.style.display === "flex") {
                 subSubmenu.style.display = "none";
                 icon.style.transform = "rotate(0deg)";
@@ -998,7 +964,7 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
             e.preventDefault();
             let subSubSubmenu = document.querySelector(".sub-sub-submenu");
             let icon = this.querySelector(".fa-chevron-right");
-
+            
             if (subSubSubmenu.style.display === "flex") {
                 subSubSubmenu.style.display = "none";
                 icon.style.transform = "rotate(0deg)";
@@ -1011,34 +977,31 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
         function validateName(value) {
             // Validation logic here
         }
-
         function validateDates(depart, retour) {
             // Validation logic here
         }
-
         function showError(elementId, show) {
             // Show error logic here
         }
-
         function handleSubmit(event) {
             event.preventDefault();
             // Form submission logic here
         }
-
         function handlePrint() {
             // Print logic here
         }
         document.getElementById('printButton').addEventListener('click', function() {
-            window.print();
-        });
-        bar_navigation.html
-        // Navigation menu toggle functions
-        document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
+        window.print();
+    });bar_navigation.html
+     // Navigation menu toggle functions
+     document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
             e.preventDefault();
             const submenu = document.getElementById('demandeSubmenu');
             submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
         });
-
+        document.getElementById('logoutButton').addEventListener('click', function() {
+    window.location.href = 'loginAT1.html';
+});
         document.getElementById('congeBtn').addEventListener('click', function(e) {
             e.preventDefault();
             const submenu = document.getElementById('congeSubmenu');
@@ -1068,7 +1031,7 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
             e.preventDefault();
             let submenu = document.querySelector(".submenu");
             let icon = this.querySelector(".fa-chevron-right");
-
+            
             if (submenu.style.display === "flex") {
                 submenu.style.display = "none";
                 icon.style.transform = "rotate(0deg)";
@@ -1082,7 +1045,7 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
             e.preventDefault();
             let subSubmenu = document.querySelector(".sub-submenu");
             let icon = this.querySelector(".fa-chevron-right");
-
+            
             if (subSubmenu.style.display === "flex") {
                 subSubmenu.style.display = "none";
                 icon.style.transform = "rotate(0deg)";
@@ -1096,7 +1059,7 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
             e.preventDefault();
             let subSubSubmenu = document.querySelector(".sub-sub-submenu");
             let icon = this.querySelector(".fa-chevron-right");
-
+            
             if (subSubSubmenu.style.display === "flex") {
                 subSubSubmenu.style.display = "none";
                 icon.style.transform = "rotate(0deg)";
@@ -1109,26 +1072,22 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
         function validateName(value) {
             // Validation logic here
         }
-
         function validateDates(depart, retour) {
             // Validation logic here
         }
-
         function showError(elementId, show) {
             // Show error logic here
         }
-
         function handleSubmit(event) {
             event.preventDefault();
             // Form submission logic here
         }
-
         function handlePrint() {
             // Print logic here
         }
         document.getElementById('printButton').addEventListener('click', function() {
-            window.print();
-        });
+        window.print();
+    });
 
         // Fonction pour afficher/masquer les notifications
         function toggleNotifications() {
@@ -1168,6 +1127,9 @@ require_once __DIR__ . "/../../../vendor/autoload.php";
             }
         });
     </script>
+    <script>
+        alert((new Date()).toISOString().split("T")[0])
+        document.querySelector("input[name=start_date]").min = new Date().toISOString().split("T")[0];
+     </script>
 </body>
-
 </html>
