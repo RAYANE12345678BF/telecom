@@ -934,7 +934,7 @@ $user = fetch_user_information($_SESSION['user_id']);
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="date-fin">Date de fin</label>
-                                <input name="end_date" type="date" id="date-fin" class="form-input" required>
+                                <input readonly name="end_date" type="date" id="date-fin" class="form-input" required>
                             </div>
                         </div>
 
@@ -958,7 +958,18 @@ $user = fetch_user_information($_SESSION['user_id']);
                         </button>
                     </div>
 
-
+                    <script>
+                        const start_date = document.querySelector("input[name=start_date]")
+                        const end_date = document.querySelector("input[name=end_date]")
+                        start_date.min = new Date().toISOString().split("T")[0];
+                        start_date.onchange = () => {
+                            if (start_date.value.trim() != "") {
+                                let date = new Date(start_date.value);
+                                date.setDate(date.getDate() + 30)
+                                end_date.value = date.toISOString().split("T")[0]
+                            }
+                        }
+                    </script>
                 </form>
             </div>
         </div>
@@ -1191,10 +1202,6 @@ $user = fetch_user_information($_SESSION['user_id']);
             }
         });
     </script>
-    <script>
-        alert((new Date()).toISOString().split("T")[0])
-        document.querySelector("input[name=start_date]").min = new Date().toISOString().split("T")[0];
-     </script>
 </body>
 
 </html>

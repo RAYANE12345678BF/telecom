@@ -918,11 +918,11 @@
                         <div class="form-group-row">
                             <div class="form-group">
                                 <label class="form-label" for="heur-sortie">heur de sortie</label>
-                                <input name="leave_hour" type="date" id="heur-sortie" class="form-input" required>
+                                <input name="leave_hour" type="time" id="heur-sortie" class="form-input" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="heur-entrée">heur d'entrée</label>
-                                <input name="come_hour" type="date" id="heur-entrée" class="form-input" required>
+                                <input name="come_hour" type="time" id="heur-entrée" class="form-input" required>
                             </div>
                         </div>
 
@@ -942,7 +942,21 @@
                         </button>
                     </div>
 
+                    <script>
+                        const start_date = document.querySelector("input[name=leave_date]")
+                        const end_date = document.querySelector("input[name=come_date]")
+                        start_date.min = new Date().toISOString().split("T")[0];
+                        end_date.min = new Date().toISOString().split("T")[0];
 
+
+                        start_date.onchange = () => {
+                            if (start_date.value.trim() != "") {
+                                let date = new Date(start_date.value);
+                                date.setDate(date.getDate() + 1)
+                                end_date.min = date.toISOString().split("T")[0]
+                            }
+                        }
+                    </script>
                 </form>
             </div>
         </div>
@@ -1172,10 +1186,6 @@
             }
         });
     </script>
-    <script>
-        alert((new Date()).toISOString().split("T")[0])
-        document.querySelector("input[name=start_date]").min = new Date().toISOString().split("T")[0];
-     </script>
 </body>
 
 </html>

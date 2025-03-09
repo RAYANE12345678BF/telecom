@@ -959,6 +959,28 @@ $user = fetch_user_information($_SESSION['user_id']);
                         </button>
                     </div>
 
+                    <script>
+                        const start_date = document.querySelector("input[name=start_date]")
+                        const end_date = document.querySelector("input[name=end_date]")
+                        const duree = document.querySelector('input[name=duree]')
+                        start_date.min = new Date().toISOString().split("T")[0];
+                        end_date.min = new Date().toISOString().split("T")[0];
+
+                        duree.min = 1
+
+                        duree.onchange = () => {
+                            if (+duree.value < 1) {
+                                duree.value = 1
+                            }
+                        }
+                        start_date.onchange = () => {
+                            if (start_date.value.trim() != "") {
+                                let date = new Date(start_date.value);
+                                date.setDate(date.getDate() + +duree.value)
+                                end_date.value = date.toISOString().split("T")[0]
+                            }
+                        }
+                    </script>
 
                 </form>
             </div>
@@ -1189,10 +1211,6 @@ $user = fetch_user_information($_SESSION['user_id']);
             }
         });
     </script>
-    <script>
-        alert((new Date()).toISOString().split("T")[0])
-        document.querySelector("input[name=start_date]").min = new Date().toISOString().split("T")[0];
-     </script>
 </body>
 
 </html>

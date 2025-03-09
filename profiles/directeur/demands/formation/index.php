@@ -739,7 +739,7 @@ $user = fetch_user_information($_SESSION['user_id']);
 </head>
 
 <body>
-<div class="sidebar">
+    <div class="sidebar">
         <div class="sidebar-header">
             <div class="logo">
                 <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
@@ -946,7 +946,20 @@ $user = fetch_user_information($_SESSION['user_id']);
                             <span id="submitText">Soumettre</span>
                         </button>
                     </div>
+                    <script>
+                        const start_date = document.querySelector("input[name=start_date]")
+                        const end_date = document.querySelector("input[name=end_date]")
+                        start_date.min = new Date().toISOString().split("T")[0];
+                        end_date.min = new Date().toISOString().split("T")[0];
 
+                        start_date.onchange = () => {
+                            if (start_date.value.trim() != "") {
+                                let date = new Date(start_date.value);
+                                date.setDate(date.getDate() + 1)
+                                end_date.min = date.toISOString().split("T")[0]
+                            }
+                        }
+                    </script>
 
                 </form>
             </div>
@@ -1157,9 +1170,19 @@ $user = fetch_user_information($_SESSION['user_id']);
         });
     </script>
     <script>
-        alert((new Date()).toISOString().split("T")[0])
-        document.querySelector("input[name=start_date]").min = new Date().toISOString().split("T")[0];
-     </script>
+        const start_date = document.querySelector("input[name=start_date]")
+        const end_date = document.querySelector("input[name=end_date]")
+        start_date.min = new Date().toISOString().split("T")[0];
+        end_date.min = new Date().toISOString().split("T")[0];
+
+        start_date.onchange = () => {
+            if (start_date.value.trim() != "") {
+                let date = new Date(start_date.value);
+                date.setDate(date.getDate() + 1)
+                end_date.min = date.toISOString().split("T")[0]
+            }
+        }
+    </script>
 </body>
 
 </html>

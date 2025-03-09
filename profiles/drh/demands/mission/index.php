@@ -1192,7 +1192,7 @@ $user = fetch_user_information($_SESSION['user_id']);
         });
     </script>
     <script>
-        alert((new Date()).toISOString().split("T")[0])
+        
         document.querySelector("input[name=start_date]").min = new Date().toISOString().split("T")[0];
      </script>
 </body>

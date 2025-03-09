@@ -44,7 +44,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
     <script>
         function setNotificationToRead(el) {
             let id = el.dataset.id
@@ -1102,7 +1102,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
         <?php endif; ?>
     </script>
 
-<script>
+    <script>
         const saveBtn = document.querySelector('#saveBtn')
 
         saveBtn.onclick = () => {
@@ -1150,7 +1150,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
         </script>
     <?php unset($_SESSION['status']);
     endif; ?>
-    
+
     <script>
         // Navigation menu toggle functions
         document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
@@ -1298,7 +1298,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
         });
     </script>
 
-<script defer>
+    <script defer>
         const notifyContainer = document.querySelector('#notifications-container');
         const poll_interval = 4000; // 10 seconds
         function pollNotifications($data) {
@@ -1307,7 +1307,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                 .then(data => {
                     console.log(data)
                     $data.notifications = data
-                    
+
                 });
         }
         var m;

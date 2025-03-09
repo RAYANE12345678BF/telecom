@@ -893,7 +893,7 @@ $user = fetch_user_information($_SESSION['user_id']);
                 <div class="header">
                     <h1 class="title"> demande congé Annuel </h1>
                 </div>
-                <form action="<?= url('actions/demand.php') ?>" method="post" id="formConvocation" >
+                <form action="<?= url('actions/demand.php') ?>" method="post" id="formConvocation">
                     <input type="hidden" name="demand_type" value="conge_annual">
                     <div class="section">
                         <h3 class="section-title">Informations Personnelles</h3>
@@ -927,13 +927,7 @@ $user = fetch_user_information($_SESSION['user_id']);
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="duree">Durée</label>
-                            <select name="duree" id="duree-select" class="form-input" onchange="handleDureeChange()">
-                                <option value="">Sélectionner une durée</option>
-                                <option value="30">1 mois</option>
-                                <option value="15">15 jours</option>
-                                <option value="autre">Autre</option>
-                            </select>
-                            <input name="duree_2" type="number" id="duree-input" class="form-input" placeholder="Entrez la durée en jours" style="display: none; margin-top: 10px;" min="1" max="30">
+                            <input name="duree" type="number" id="duree-input" class="form-input" placeholder="Entrez la durée en jours" style="margin-top: 10px;" min="1" max="30">
                         </div>
                         <div class="form-group-row">
                             <div class="form-group">
@@ -942,7 +936,7 @@ $user = fetch_user_information($_SESSION['user_id']);
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="date-fin">Date de fin</label>
-                                <input name="end_date" type="date" id="date-fin" class="form-input" required>
+                                <input readonly name="end_date" type="date" id="date-fin" class="form-input" required>
                             </div>
                         </div>
 
@@ -963,7 +957,28 @@ $user = fetch_user_information($_SESSION['user_id']);
                             <span id="submitText">Soumettre</span>
                         </button>
                     </div>
+                    <script>
+                        const start_date = document.querySelector("input[name=start_date]")
+                        const end_date = document.querySelector("input[name=end_date]")
+                        const duree = document.querySelector('input[name=duree]')
+                        start_date.min = new Date().toISOString().split("T")[0];
+                        end_date.min = new Date().toISOString().split("T")[0];
 
+                        duree.min = 1
+
+                        duree.onchange = () => {
+                            if (+duree.value < 1) {
+                                duree.value = 1
+                            }
+                        }
+                        start_date.onchange = () => {
+                            if (start_date.value.trim() != "") {
+                                let date = new Date(start_date.value);
+                                date.setDate(date.getDate() + +duree.value)
+                                end_date.value = date.toISOString().split("T")[0]
+                            }
+                        }
+                    </script>
 
                 </form>
             </div>
@@ -1132,10 +1147,6 @@ $user = fetch_user_information($_SESSION['user_id']);
             }
         }
     </script>
-    <script>
-        alert((new Date()).toISOString().split("T")[0])
-        document.querySelector("input[name=start_date]").min = new Date().toISOString().split("T")[0];
-     </script>
 </body>
 
 </html>
