@@ -8,12 +8,25 @@ if (! session_id()) {
 
 redirect_if_not_auth();
 
+$user = $_SESSION['user'];
+
 $services = get_services();
 $departments = get_departments();
 $employees = get_all_users();
 $roles = get_roles();
 
+
+$notifications = get_notifications($_SESSION['user_id']);
+
+$user_requests = fetch_creation_demands();
+
+$redPin = count(array_filter($notifications, function ($v, $i) {
+    return $v['read_state'] == 0;
+}, ARRAY_FILTER_USE_BOTH)) > 0;
+
 $user = fetch_user_information($_SESSION['user_id']);
+
+$user_demands = get_user_demands($_SESSION['user_id']);
 
 ?>
 
@@ -24,10 +37,33 @@ $user = fetch_user_information($_SESSION['user_id']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DjazairRH - Profil Employé</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        function setNotificationToRead(el) {
+            let id = el.dataset.id
+            if (el.dataset.read != 1) {
+                let data = new FormData
+                data.append('action', 'set_read')
+                data.append('id', id)
+                fetch("<?= url('actions/notifications.php') ?>", {
+                        method: "POST",
+                        body: data
+                    }).then(res => res.json())
+                    .then(js => {
+                        el.dataset.read = 1
+                    })
+                return true
+            } else {
+                return false
+            }
+        }
+    </script>
     <style>
         :root {
             --primary-color: #003366;
@@ -674,7 +710,7 @@ $user = fetch_user_information($_SESSION['user_id']);
     </style>
 </head>
 
-<body>
+<body x-data="body">
     <!-- Navigation Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
@@ -793,8 +829,36 @@ $user = fetch_user_information($_SESSION['user_id']);
 
     <!-- Menu déroulant des notifications -->
     <div class="notification-dropdown" id="notificationDropdown">
-        <div class="no-notifications">
-            Aucune notification pour le moment.
+        <!-- <div class="no-notifications">
+        Aucune notification pour le moment.
+        </div> -->
+        <div class="w-full flex flex-col space-y-1" id="notifications-container">
+            <!-- start a notification with two actions (accept/reject) -->
+            <template x-if="notifications.length > 0">
+                <template x-for="notification in notifications">
+                    <a
+                        x-init="$el.dataset.read = notification['read_state'];$el.dataset.id = notification['id']"
+                        :key="notification['id']"
+                        :class="{'bg-gray-50' : notification['read_state'] != 0,'bg-gray-200' : notification['read_state'] == 0 }"
+                        x-intersect="setRead($el, $data)" :href="notification['url']" class="flex flex-col space-y-2 items-center justify-between p-2  hover:bg-slate-300 duration-300 ease-in-out rounded-lg">
+                        <div class="flex items-center space-x-2">
+                            <div class="flex items-center justify-center w-10 h-10 bg-gray-300 rounded-full">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold" x-text="notification['title']"></p>
+                                <p class="text-xs text-gray-500" x-text="notification['description']"></p>
+                            </div>
+                        </div>
+                    </a>
+                </template>
+            </template>
+            <template x-if="notifications.length == 0">
+                <div class="w-full text-center py-4 text-slate-800 font-semibold uppercase">
+                    no notifications right now
+                </div>
+            </template>
+            <!-- end a notification with two actions (accept/reject) -->
         </div>
     </div>
 
@@ -1238,6 +1302,41 @@ $user = fetch_user_information($_SESSION['user_id']);
         </script>
     <?php unset($_SESSION['status']);
     endif; ?>
+
+<script defer>
+        const notifyContainer = document.querySelector('#notifications-container');
+        const poll_interval = 4000; // 10 seconds
+        function pollNotifications($data) {
+            fetch('<?= url('actions/notifications.php') ?>')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    $data.notifications = data
+
+                });
+        }
+        var m;
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('body', () => {
+                return {
+                    notifications: JSON.parse(`<?= json_encode($notifications) ?>`),
+                    setRead: (el, data) => {
+                        if (setNotificationToRead(el)) {
+                            data.notifications = data.notifications.map(v => {
+                                if (v.id == el.dataset.id) {
+                                    v.read_state = 1
+                                }
+
+                                return v
+                            })
+                        }
+                    }
+                }
+            })
+
+            m = setInterval(() => pollNotifications(Alpine.data('body')), poll_interval);
+        })
+    </script>
 </body>
 
 </html>
