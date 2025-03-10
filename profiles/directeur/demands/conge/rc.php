@@ -8,8 +8,39 @@ if (! session_id()) {
 
 redirect_if_not_auth();
 
+
+
 $user = fetch_user_information($_SESSION['user_id']);
 
+$demands = get_user_demands($user['id']);
+
+$waiting_demands = array_filter($demands, function($value){
+    return $value['type'] == 'conge_rc' && $value['status'] == 'waiting';
+});
+
+if( count($waiting_demands) > 0 ){
+    $_SESSION['error'] = "you can not do that, because you have already demand";
+    redirect(url('profiles'));
+}
+
+$successfull_demands = array_filter($demands, function($value){
+    if( $value['type'] != 'conge_rc' ){
+        return false;
+    }
+    
+    $end_date = date_create($value['date_fin']);
+    $now = date_create();
+    $diff = date_diff($now, $end_date);
+    return $value['status'] == 'accepted' && $diff->invert === 0;
+});
+
+if( count($successfull_demands) > 0 ){
+    $_SESSION['error'] = "you can not do that, because you have in conge";
+    redirect(url('profiles'));
+}
+
+
+$rc_days = calculate_rc_days($user['id']);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -18,6 +49,7 @@ $user = fetch_user_information($_SESSION['user_id']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DjazairRH - Navigation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -918,6 +950,9 @@ $user = fetch_user_information($_SESSION['user_id']);
                     </div>
                     <div class="section">
                         <h3 class="section-title">Détails de congé</h3>
+                        <div class="my-2 py-2 px-2 bg-green-400/50 text-green-800 w-fit font-semibold text-sm border-l-4 border-l border-green-700">
+                            you can benefit maximum of : <?= $rc_days['rc_days'] ?> day
+                        </div>
                         <div class="form-group">
                             <label class="form-label" for="durée">durée</label>
                             <input name="duree" type="number" id="durée" class="form-input" required>
@@ -950,12 +985,18 @@ $user = fetch_user_information($_SESSION['user_id']);
                         const duree = document.querySelector('input[name=duree]')
                         start_date.min = new Date().toISOString().split("T")[0];
                         end_date.min = new Date().toISOString().split("T")[0];
+                        const max_days = Number("<?= $rc_days['rc_days'] ?>")
 
                         duree.min = 1
+                        duree.max = max_days
 
                         duree.onchange = () => {
                             if (+duree.value < 1) {
                                 duree.value = 1
+                            }
+
+                            if (+duree.value > max_days) {
+                                duree.value = max_days
                             }
                         }
                         start_date.onchange = () => {

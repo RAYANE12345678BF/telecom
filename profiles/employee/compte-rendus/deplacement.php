@@ -1,14 +1,20 @@
 <?php
 
-include __DIR__ . '/../../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
-if (! session_id()) {
+if (!session_id()) {
     session_start();
 }
 
 redirect_if_not_auth();
 
 $user = fetch_user_information($_SESSION['user_id']);
+
+if (empty($_GET['demand_id'])) {
+    throw new Exception('bad call to this page');
+}
+
+$demand = fetch_demand($_GET['demand_id']);
 
 ?>
 <!DOCTYPE html>
@@ -19,7 +25,6 @@ $user = fetch_user_information($_SESSION['user_id']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DjazairRH - Navigation</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -740,7 +745,8 @@ $user = fetch_user_information($_SESSION['user_id']);
 </head>
 
 <body>
-<div class="sidebar">
+    <!-- Navigation Sidebar -->
+    <div class="sidebar">
         <div class="sidebar-header">
             <div class="logo">
                 <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
@@ -875,66 +881,40 @@ $user = fetch_user_information($_SESSION['user_id']);
     </nav>
 
 
-
     <div class="content">
         <div class="container">
             <div class="form-card">
                 <div class="header">
-                    <h1 class="title"> Demande congé maladie </h1>
+                    <h1 class="title"> Compte rendue de déplacement </h1>
                 </div>
-                <form enctype="multipart/form-data" action="<?= url('actions/demand.php') ?>" method="post" id="formConvocation">
-                    <input type="hidden" name="demand_type" value="conge_malady">
+                <form id="formConvocation" action="<?= url('actions/compte_rendu.php') ?>" method="post">
+                    <input type="hidden" name="demand_id" value="<?= $_GET['demand_id'] ?>">
                     <div class="section">
-                        <h3 class="section-title">Informations Personnelles</h3>
+                        <h3 class="section-title">Nature et description des travaux effectués</h3>
                         <div class="form-group">
-                            <label class="form-label" for="matricule">Matricule</label>
-                            <input readonly value="<?= $user['matricule'] ?>" type="text" id="matricule" class="form-input" required>
-                        </div>
-                        <div class="form-group-row">
-                            <div class="form-group">
-                                <label class="form-label" for="nom">Nom</label>
-                                <input readonly value="<?= $user['nom'] ?>" type="text" id="nom" class="form-input" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="prenom">Prénom</label>
-                                <input readonly value="<?= $user['prenom'] ?>" type="text" id="prenom" class="form-input" required>
-                            </div>
+                            <label class="form-label" for="Nature">Nature</label>
+                            <input value="<?= $demand['compte_rendu']['info']['nature'] ?? '' ?>" name="nature" type="text" id="Nature" class="form-input" required style="width: 90%; height: 40px;">
                         </div>
 
-                        <h3 class="section-title">Informations Professionnelles</h3>
+                        <div class="form-group">
+                            <label class="form-label" for="Description">Description</label>
+                            <textarea name="description" id="Description" class="form-input" required style="width: 90%; height: 100px;"><?= $demand['compte_rendu']['info']['description'] ?? '' ?></textarea>
+                        </div>
+
+
+                        <h3 class="section-title">Raisons et justifications d'un deuxiéme déplacement</h3>
 
                         <div class="form-group">
-                            <label class="form-label" for=" Fonction"> Fonction</label>
-                            <input readonly value="<?= $user['role']['nom'] ?>" type="text" id=" Fonction" class="form-input" required>
+                            <label class="form-label" for="Raisons">Raisons</label>
+                            <input value="<?= $demand['compte_rendu']['info']['raisons'] ?? '' ?>" name="raisons" type="text" id="Raisons" class="form-input" required style="width: 90%; height: 40px;">
+                        </div>
+                        <div class=" form-group">
+                            <label class="form-label" for="justifications_d'un_deuxiéme_déplacement">justifications d'un deuxiéme déplacement</label>
+                            <textarea name="justify" id="justifications d'un deuxiéme déplacement" class="form-input" required style="width: 90%; height: 100px;"><?= $demand['compte_rendu']['info']['justify'] ?? '' ?></textarea>
                         </div>
                     </div>
-                    <div class="section">
-                        <h3 class="section-title">Détails de congé</h3>
-                        <div class="form-group">
-                            <label class="form-label" for="durée">durée</label>
-                            <input name="duree" type="number" id="durée" class="form-input" required>
-                        </div>
-                        <div class="form-group-row">
-                            <div class="form-group">
-                                <label class="form-label" for="date-debut">Date début</label>
-                                <input name="start_date" type="date" id="date-debut" class="form-input" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="date-fin">Date de fin</label>
-                                <input name="end_date" type="date" id="date-fin" class="form-input" required>
-                            </div>
-                        </div>
 
-                    </div>
-                    <div class="section">
-                        <h3 class="section-title">Informations Complémentaires</h3>
-                        <h4 class="section-subtitle small-text"> ajoutez les papiers de la maladie ici s'il vous plait </h4>
-                        <div class="form-group">
-                            <label for="file-upload">Ou téléchargez un fichier (PDF ou image) :</label>
-                            <input name="info" type="file" id="file-upload" class="form-input" accept=".pdf, .jpg, .jpeg, .png">
-                        </div>
 
-                    </div>
                     <div class="buttons-container" style="display: flex; justify-content: flex-end; gap: 10px;">
                         <button type="button" id="printButton" class="button button-secondary">
                             <i class="fas fa-print"></i> Imprimer
@@ -945,34 +925,11 @@ $user = fetch_user_information($_SESSION['user_id']);
                         </button>
                     </div>
 
-                    <script>
-                        const start_date = document.querySelector("input[name=start_date]")
-                        const end_date = document.querySelector("input[name=end_date]")
-                        const duree = document.querySelector('input[name=duree]')
-                        start_date.min = new Date().toISOString().split("T")[0];
-                        end_date.min = new Date().toISOString().split("T")[0];
-
-                        duree.min = 1
-
-                        duree.onchange = () => {
-                            if (+duree.value < 1) {
-                                duree.value = 1
-                            }
-                        }
-                        start_date.onchange = () => {
-                            if (start_date.value.trim() != "") {
-                                let date = new Date(start_date.value);
-                                date.setDate(date.getDate() + +duree.value)
-                                end_date.value = date.toISOString().split("T")[0]
-                            }
-                        }
-                    </script>
 
                 </form>
             </div>
         </div>
     </div>
-
     <script>
         document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
             e.preventDefault();
@@ -1051,7 +1008,6 @@ $user = fetch_user_information($_SESSION['user_id']);
         function handleSubmit(event) {
             event.preventDefault();
             // Form submission logic here
-            event.target.submit()
         }
 
         function handlePrint() {
@@ -1082,9 +1038,7 @@ $user = fetch_user_information($_SESSION['user_id']);
                 submenu.style.display = 'none';
             }
         });
-        document.getElementById('logoutButton').addEventListener('click', function() {
-            window.location.href = 'loginAT1.html';
-        });
+
         document.getElementById('congeBtn').addEventListener('click', function(e) {
             e.preventDefault();
             const submenu = document.getElementById('congeSubmenu');
@@ -1122,7 +1076,9 @@ $user = fetch_user_information($_SESSION['user_id']);
                 icon.style.transform = "rotate(90deg)";
             }
         });
-
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            window.location.href = 'loginAT1.html';
+        });
         document.querySelector(".conges-toggle").addEventListener("click", function(e) {
             e.preventDefault();
             let subSubSubmenu = document.querySelector(".sub-sub-submenu");
@@ -1200,17 +1156,11 @@ $user = fetch_user_information($_SESSION['user_id']);
         });
     </script>
 
-    <?php if (isset($_SESSION['error'])): ?>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <?php if(isset($_SESSION['status'])): ?>
         <script>
-            Swal.fire({
-                title: "demand no deposer!",
-                text: "<?= $_SESSION['error'] ?>",
-                icon: "error"
-            });
+            alert("<?= $_SESSION['status'] ?>")
         </script>
-    <?php unset($_SESSION['error']);
-    endif; ?>
+    <?php endif;unset($_SESSION['status']) ?>
 </body>
 
 </html>

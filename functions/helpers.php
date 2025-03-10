@@ -39,7 +39,9 @@ if (!function_exists('load_db')) {
 if (!function_exists('redirect')) {
     function redirect($location, int $status_code = 302)
     {
-        http_response_code($status_code);
+       if( http_response_code() != 302 ){
+            http_response_code($status_code);
+       }
         header('Location:' . $location);
         exit();
     }
@@ -380,6 +382,9 @@ if (!function_exists('add_lifecycle_entry')) {
 if (!function_exists('set_decision')) {
     function set_decision($demand_id, $superior_id, $decision){
         $pdo = load_db();
+
+        $demand = fetch_demand($demand_id);
+
         $sql = "UPDATE `demand_lifecycle` SET `decision`=?, `took_at`=NOW() WHERE `demand_id`=? AND `superior_id`=?";
 
         $stmt = $pdo->prepare($sql);
@@ -391,6 +396,17 @@ if (!function_exists('set_decision')) {
                 $sql = "UPDATE `demands` SET `status`=? WHERE `id`=?";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([$decision, $demand_id]);
+
+
+                if( $demand['type'] == 'conge_rc' && $decision == 'accepted' ){
+                    
+                    $response = deduct_leave_days($demand['employee_id'], $demand['duree'] );
+                    //die(var_dump($response));
+                    if( !$response['success'] ){
+                        return ["success" => false, "message" => $response['message']];
+                    }
+                
+                }
             }else{
                 $superior_id = fetch_user_information($superior_id)['superior_id'];
                 add_lifecycle_entry($demand_id, $superior_id);

@@ -11,7 +11,13 @@ $user = $_SESSION['user'];
 
 $user = fetch_user_information($_SESSION['user_id']);
 
-$user_demands = get_users_demands();
+$user_demands = get_all_demands_with_lifecycle()['demands'];
+
+$user_demands = array_filter($user_demands, function($demand) use ($user){
+    return count(array_filter($demand['lifecycle'] , function($el) use ($user){
+        return $el['superior_id'] == $user['id'] && $el['decision'] == 'waiting';
+    })) > 0;
+});
 
 
 ?>

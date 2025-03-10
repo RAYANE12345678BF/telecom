@@ -17,7 +17,7 @@ if(  empty($action) ){
 switch($action){
  case 'save':
     $phone = $_POST['phone'] ?? null;
-    $birth_day = $_POST['birth_day'] ?? null;
+    $birth_day = empty($_POST['birth_day']) ? null : $_POST['birth_day'];
     $birth_place = $_POST['birth_place'] ?? null;
     $etat_civil = $_POST['etat_cevil'] ?? null;
     $nom = $_POST['nom'] ?? null;
@@ -30,6 +30,7 @@ switch($action){
     $user = update_user($user_id, $data);
 
     if( $user ){
+        $_SESSION['user'] = fetch_user_information($_SESSION['user_id'], false);
         send_json_response([
             'message' => "informations updated successfully"
         ]);
@@ -40,20 +41,28 @@ switch($action){
     break;
     case 'save_prof':
         $matricule = empty($_POST['matricule'])? null : $_POST['matricule'];
-        $role_id = empty( $_POST['role_id']) ? null :  $_POST['role_id'];
         $departement_id = empty($_POST['department_id']) ? null : $_POST['department_id'];
         $service_id =  empty($_POST['service_id']) ? null : $_POST['service_id'];
         $superior_id = empty($_POST['superior_id']) ? null : $_POST['superior_id'];
         $start_date = empty($_POST['start_date']) ? null : $_POST['start_date'];
-    
+
+        if( get_user_with('matricule', $matricule) ){
+            send_json_response([
+                'success' => false,
+                'message' => 'matricule already exists'
+            ]);
+        }
+
         $user_id = $_SESSION['user_id'];
     
-        $data = compact('matricule', 'role_id', 'departement_id', 'start_date', 'service_id', 'superior_id');
+        $data = compact('matricule', 'departement_id', 'start_date', 'service_id', 'superior_id');
     
         $user = update_user($user_id, $data);
     
         if( $user ){
+            $_SESSION['user'] = fetch_user_information($_SESSION['user_id'], false);
             send_json_response([
+                'success' => true,
                 'message' => "informations updated successfully"
             ]);
         }else{

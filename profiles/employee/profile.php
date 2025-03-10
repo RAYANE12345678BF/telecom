@@ -47,13 +47,13 @@ $user = fetch_user_information($_SESSION['user_id']);
         <div class="sidebar-content">
             <div class="menu-items">
                 <div class="nav-title">Principal</div>
-                <a href="<?php echo url('profiles/employee/profile.php') ?>" class="menu-item">
+                <a href="<?= url('/') ?>" class="menu-item active">
                     <i class="fas fa-home"></i>
-                    <span class="menu-text">Accueil</span>
+                    <span>Accueil</span>
                 </a>
-                <a href="<?php echo url('profiles/employee/profile.php') ?>" class="menu-item active">
+                <a href="<?= url('profiles') ?>" class="menu-item">
                     <i class="fas fa-user-circle"></i>
-                    <span class="menu-text">Mon Profil</span>
+                    <span>Mon Profil</span>
                 </a>
 
                 <div class="nav-title">Demandes</div>
@@ -62,76 +62,72 @@ $user = fetch_user_information($_SESSION['user_id']);
                         <i class="fas fa-file-alt"></i>
                         <span class="menu-text">Faire une demande</span>
                     </a>
-                    <div class="submenu" id="demandeSubmenu" style="display: none;">
+                    <div class="submenu" id="demandeSubmenu" style="display: none; padding-left: 20px;">
                         <div>
                             <a href="#" class="menu-item" id="congeBtn">
                                 <i class="fas fa-calendar-alt"></i>
                                 <span class="menu-text">Demande Congé</span>
                             </a>
-                            <div class="submenu" id="congeSubmenu" style="display: none;">
-                                <a href="<?php echo url('profiles/employee/demands/conge/annual.php') ?>" class="menu-item">
+                            <div class="submenu" id="congeSubmenu" style="display: none; padding-left: 20px;">
+                                <a href="<?= url('profiles/employee/demands/conge/annual.php') ?>" class="menu-item">
                                     <i class="fas fa-sun"></i>
                                     <span class="menu-text">Congé Annuel</span>
                                 </a>
-                                <a href="<?php echo url('profiles/employee/demands/conge/malady.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/employee/demands/conge/malady.php') ?>" class="menu-item">
                                     <i class="fas fa-hospital"></i>
                                     <span class="menu-text">Congé Maladie</span>
                                 </a>
-                                <a href="<?php echo url('profiles/employee/demands/conge/maternity.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/employee/demands/conge/maternity.php') ?>" class="menu-item">
                                     <i class="fas fa-baby"></i>
                                     <span class="menu-text">Congé Maternité</span>
                                 </a>
-                                <a href="<?php echo url('profiles/employee/demands/conge/rc.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/employee/demands/conge/rc.php') ?>" class="menu-item">
                                     <i class="fas fa-clock"></i>
                                     <span class="menu-text">Congé RC</span>
                                 </a>
                             </div>
                         </div>
-                        <a href="<?php echo url('profiles/employee/demands/formation') ?>" class="menu-item">
+                        <a href="<?= url('profiles/employee/demands/formation') ?>" class="menu-item">
                             <i class="fas fa-graduation-cap"></i>
                             <span class="menu-text">Demande Formation</span>
                         </a>
-                        <a href="<?php echo url('profiles/employee/demands/mission') ?>" class="menu-item">
+                        <a href="<?= url('profiles/employee/demands/mission') ?>" class="menu-item">
                             <i class="fas fa-plane"></i>
                             <span class="menu-text">Demande Ordre Mission</span>
                         </a>
-                        <a href="<?php echo url('profiles/employee/demands/deplacement') ?>" class="menu-item">
+                        <a href="<?= url('profiles/employee/demands/deplacement') ?>" class="menu-item">
                             <i class="fas fa-car"></i>
                             <span class="menu-text">Demande Déplacement</span>
                         </a>
-                        <a href="<?php echo url('profiles/employee/demands/leave') ?>" class="menu-item">
+                        <a href="<?= url('profiles/employee/demands/leave') ?>" class="menu-item">
                             <i class="fas fa-door-open"></i>
                             <span class="menu-text">Demande Sortie</span>
                         </a>
                     </div>
-                    <?php if (($l = isProfileComplete($user)) !== true): ?>
-                    <a href="#" onclick="alert('please fill all information')"  class="menu-item">
+                    <a href="<?= url('profiles/employee/demands/list') ?>" class="menu-item">
                         <i class="fas fa-tasks"></i>
                         <span class="menu-text">État de demande</span>
                     </a>
-                    <?php else: ?>
-                    <a href="<?= url('profiles/employee/demands/list.php') ?>" class="menu-item">
-                        <i class="fas fa-tasks"></i>
-                        <span class="menu-text">État de demande</span>
-                    </a>
-                    <?php endif ?>
-                    
                 </div>
 
                 <div class="nav-title">Autres</div>
-                <a href="<?php echo url('profiles/employee/support') ?>" class="menu-item">
+                <a href="<?= url('profiles/employee/support') ?>" class="menu-item">
                     <i class="fas fa-question-circle"></i>
                     <span class="menu-text">Support</span>
                 </a>
+                <!-- Nouveau bouton "Calendrier RC d'Employé" -->
+                <a href="<?= url('profiles/employee/calendrier') ?>" class="menu-item">
+                    <i class="fas fa-calendar"></i>
+                    <span class="menu-text">Calendrier RC d'Employé</span>
+                </a>
             </div>
         </div>
-        <form action="<?= url('actions/auth.php') ?>" method="post" class="user-section">
-            <input type="hidden" value="logout" name="action" />
+        <div class="user-section" id="logoutButton">
             <div class="user-avatar">
                 <i class="fas fa-sign-in-alt"></i>
             </div>
-            <button type="submit" style="border : none">Se déconnecter</button>
-        </form>
+            <span>Se déconnecter</span>
+        </div>
     </div>
 
     <!-- Top Navbar -->
@@ -286,17 +282,6 @@ $user = fetch_user_information($_SESSION['user_id']);
                                 </div>
                             </div>
                             <div class="info-field">
-                                <div class="field-label">Role</div>
-                                <div class="field-value">
-                                    <select name="role_id">
-                                        <option value="">Sélectionner</option>
-                                        <?php foreach($roles as $role): ?>
-                                            <option <?php echo $user['role']['id'] == $role['id'] ? 'selected' : '' ?> value="<?php echo $role['id'] ?>"><?php echo $role['nom'] ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="info-field">
                                 <div class="field-label">Date d'Embauche</div>
                                 <div class="field-value">
                                     <input type="date" name="start_date" value="<?php echo $user['start_date'] ?? '' ?>">
@@ -307,7 +292,7 @@ $user = fetch_user_information($_SESSION['user_id']);
                                 <div class="field-value">
                                     <select name="department_id">
                                         <option value="">Sélectionner</option>
-                                        <?php foreach($departments as $department): ?>
+                                        <?php foreach ($departments as $department): ?>
                                             <option <?php echo $user['department']['id'] == $department['id'] ? 'selected' : '' ?> value="<?php echo $department['id'] ?>"><?php echo $department['nom'] ?></option>
                                         <?php endforeach; ?>
                                     </select>
@@ -318,10 +303,10 @@ $user = fetch_user_information($_SESSION['user_id']);
                                 <div class="field-value">
                                     <select name="service_id">
                                         <option value="" disabled>Sélectionner</option>
-                                        <?php foreach($services as $service): ?>
+                                        <?php foreach ($services as $service): ?>
                                             <option <?php echo $user['service']['id'] == $service['id'] ? 'selected' : '' ?> value="<?php echo $service['id'] ?>"><?php echo $service['nom'] ?></option>
                                         <?php endforeach; ?>
-                                        
+
                                     </select>
                                 </div>
                             </div>
@@ -330,9 +315,9 @@ $user = fetch_user_information($_SESSION['user_id']);
                                 <div class="field-value">
                                     <select name="superior_id">
                                         <option value="" disabled selected>Sélectionner</option>
-                                        <?php foreach($employees as $employee): ?>
-                                            <?php if( $employee['id'] != $user['id'] ): ?>
-                                                <option <?php echo $user['superior']['id']??-1 == $employee['id'] ? 'selected' : '' ?> value="<?php echo $employee['id'] ?>"><?php echo $employee['nom'] . ' ' . $employee['prenom'] ?></option>
+                                        <?php foreach ($employees as $employee): ?>
+                                            <?php if ($employee['id'] != $user['id']): ?>
+                                                <option <?php echo $user['superior']['id'] ?? -1 == $employee['id'] ? 'selected' : '' ?> value="<?php echo $employee['id'] ?>"><?php echo $employee['nom'] . ' ' . $employee['prenom'] ?></option>
                                             <?php endif; ?>
                                         <?php endforeach; ?>
                                     </select>
@@ -362,22 +347,30 @@ $user = fetch_user_information($_SESSION['user_id']);
                 }
             })
             fetch('<?= url('actions/account.php') ?>', {
-                method: "post",
-                body: data
-            }).then(res => res.json())
-            .then(js => {
-                Swal.fire({
-                    title: 'done!',
-                    text : 'informations updated successfully',
-                    icon : 'success'
+                    method: "post",
+                    body: data
+                }).then(res => res.json())
+                .then(js => {
+                    if (js.success) {
+                        Swal.fire({
+                            title: 'done!',
+                            text: 'informations updated successfully',
+                            icon: 'success'
+                        })
+                    }else{
+                        Swal.fire({
+                            title: 'error!',
+                            text: js.message,
+                            icon: 'error'
+                        })
+                    }
+                }).catch(err => {
+                    Swal.fire({
+                        title: 'error!',
+                        text: err,
+                        icon: 'error'
+                    })
                 })
-            }).catch(err => {
-                Swal.fire({
-                    title: 'error!',
-                    text : err,
-                    icon : 'error'
-                })
-            })
         }
     </script>
 
@@ -567,22 +560,22 @@ $user = fetch_user_information($_SESSION['user_id']);
                 }
             })
             fetch('<?= url('actions/account.php') ?>', {
-                method: "post",
-                body: data
-            }).then(res => res.json())
-            .then(js => {
-                Swal.fire({
-                    title: 'done!',
-                    text : 'informations updated successfully',
-                    icon : 'success'
+                    method: "post",
+                    body: data
+                }).then(res => res.json())
+                .then(js => {
+                    Swal.fire({
+                        title: 'done!',
+                        text: 'informations updated successfully',
+                        icon: 'success'
+                    })
+                }).catch(err => {
+                    Swal.fire({
+                        title: 'error!',
+                        text: err,
+                        icon: 'error'
+                    })
                 })
-            }).catch(err => {
-                Swal.fire({
-                    title: 'error!',
-                    text : err,
-                    icon : 'error'
-                })
-            })
         }
     </script>
 
@@ -598,6 +591,17 @@ $user = fetch_user_information($_SESSION['user_id']);
             });
         </script>
     <?php unset($_SESSION['status']);
+    endif; ?>
+    <?php if (isset($_SESSION['error'])): ?>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            Swal.fire({
+                title: "error!",
+                text: "<?= $_SESSION['error'] ?>",
+                icon: "error"
+            });
+        </script>
+    <?php unset($_SESSION['error']);
     endif; ?>
 </body>
 

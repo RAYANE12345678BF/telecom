@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DjazairRH - Interface Complète</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
     <style>
         :root {
@@ -122,7 +124,8 @@
             font-weight: 500;
         }
 
-        .sidebar a:hover, .sidebar .active {
+        .sidebar a:hover,
+        .sidebar .active {
             background: var(--hover-color);
             transform: translateX(5px);
             color: var(--primary-color);
@@ -395,7 +398,8 @@
             color: #003366;
         }
 
-        .fc-day-sat, .fc-day-fri {
+        .fc-day-sat,
+        .fc-day-fri {
             background-color: #e6f3ff !important;
         }
 
@@ -404,6 +408,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Navigation Sidebar -->
     <div class="sidebar">
@@ -424,7 +429,7 @@
                     <i class="fas fa-user-circle"></i>
                     <span>Mon Profil</span>
                 </a>
-                
+
                 <div class="nav-title">Demandes</div>
                 <div class="request-section">
                     <a href="#" class="menu-item" id="faireDemandeBtn">
@@ -478,7 +483,7 @@
                         <span class="menu-text">État de demande</span>
                     </a>
                 </div>
-                
+
                 <div class="nav-title">Autres</div>
                 <a href="support_employe.html" class="menu-item">
                     <i class="fas fa-question-circle"></i>
@@ -559,16 +564,16 @@
             '2024-12-25',
         ];
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const today = new Date();
-            today.setHours(0, 0, 0, 0); 
+            today.setHours(0, 0, 0, 0);
 
             const calendarEl = document.getElementById('calendar');
             const calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 locale: 'fr',
                 selectable: true,
-                selectAllow: function(selectInfo) {
+                selectAllow: function (selectInfo) {
                     const selectedDate = new Date(selectInfo.startStr);
                     selectedDate.setHours(0, 0, 0, 0);
 
@@ -579,7 +584,7 @@
 
                     return true;
                 },
-                select: function(selectInfo) {
+                select: function (selectInfo) {
                     const selectedDate = new Date(selectInfo.startStr);
                     selectedDate.setHours(0, 0, 0, 0);
                     const dateStr = selectInfo.startStr;
@@ -588,9 +593,9 @@
 
                     if (holidays.includes(dateStr)) {
                         message = `⚠ Vous avez travaillé un jour férié (${dateStr}).`;
-                    } else if (day === 5) { 
+                    } else if (day === 5) {
                         message = `✔ Vous avez travaillé un vendredi (${dateStr}).`;
-                    } else if (day === 6) { 
+                    } else if (day === 6) {
                         message = `✔ Vous avez travaillé un samedi (${dateStr}).`;
                     }
 
@@ -607,16 +612,16 @@
 
                     calculateRCDays();
                 },
-                eventClick: function(info) {
+                eventClick: function (info) {
                     if (confirm('Voulez-vous supprimer ce jour travaillé ?')) {
                         info.event.remove();
                         calculateRCDays();
                     }
                 },
-                dayCellDidMount: function(info) {
+                dayCellDidMount: function (info) {
                     const dateStr = info.date.toISOString().split('T')[0];
                     if (holidays.includes(dateStr)) {
-                        info.el.classList.add('holiday'); 
+                        info.el.classList.add('holiday');
                     }
                 }
             });
@@ -631,9 +636,9 @@
                     const date = event.start;
                     const day = date.getDay();
 
-                    if (day === 5) { 
+                    if (day === 5) {
                         rcDays += 2;
-                    } else if (day === 6) { 
+                    } else if (day === 6) {
                         rcDays += 1;
                     }
                 });
@@ -643,22 +648,22 @@
         });
 
         // Navigation menu toggle functions
-        document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
+        document.getElementById('faireDemandeBtn').addEventListener('click', function (e) {
             e.preventDefault();
             const submenu = document.getElementById('demandeSubmenu');
             submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
         });
-        document.getElementById('logoutButton').addEventListener('click', function() {
-    window.location.href = 'loginAT1.html';
-});
-        document.getElementById('congeBtn').addEventListener('click', function(e) {
+        document.getElementById('logoutButton').addEventListener('click', function () {
+            window.location.href = 'loginAT1.html';
+        });
+        document.getElementById('congeBtn').addEventListener('click', function (e) {
             e.preventDefault();
             const submenu = document.getElementById('congeSubmenu');
             submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
         });
 
         document.querySelectorAll('.menu-item').forEach(item => {
-            item.addEventListener('click', function(e) {
+            item.addEventListener('click', function (e) {
                 if (this !== document.getElementById('faireDemandeBtn') && this !== document.getElementById('congeBtn')) {
                     document.querySelectorAll('.submenu').forEach(sub => {
                         sub.style.display = 'none';
@@ -688,11 +693,11 @@
                 noMessages.style.display = 'none'; // Masquer le message
             }
         }
-        document.getElementById('logoutButton').addEventListener('click', function() {
-    window.location.href = 'loginAT1.html';
-});
+        document.getElementById('logoutButton').addEventListener('click', function () {
+            window.location.href = 'loginAT1.html';
+        });
         // Fermer les menus déroulants si on clique en dehors
-        document.addEventListener('click', function(event) {
+        document.addEventListener('click', function (event) {
             const notificationDropdown = document.getElementById('notificationDropdown');
             const messengerDropdown = document.getElementById('messengerDropdown');
             const notificationIcon = document.querySelector('.icon-wrapper[onclick="toggleNotifications()"]');
@@ -733,4 +738,5 @@
         }
     </script>
 </body>
+
 </html>

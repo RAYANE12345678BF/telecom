@@ -36,7 +36,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DjazairRH - Profil Employé</title>
+    <title>DjazairRH - Profil GRH</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -994,17 +994,6 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                                 </div>
                             </div>
                             <div class="info-field">
-                                <div class="field-label">Role</div>
-                                <div class="field-value">
-                                    <select name="role_id">
-                                        <option value="">Sélectionner</option>
-                                        <?php foreach ($roles as $role): ?>
-                                            <option <?php echo $user['role']['id'] == $role['id'] ? 'selected' : '' ?> value="<?php echo $role['id'] ?>"><?php echo $role['nom'] ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="info-field">
                                 <div class="field-label">Date d'Embauche</div>
                                 <div class="field-value">
                                     <input type="date" name="start_date" value="<?php echo $user['start_date'] ?? '' ?>">
@@ -1302,6 +1291,17 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             });
         </script>
     <?php unset($_SESSION['status']);
+    endif; ?>
+    <?php if (isset($_SESSION['error'])): ?>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            Swal.fire({
+                title: "error!",
+                text: "<?= $_SESSION['error'] ?>",
+                icon: "error"
+            });
+        </script>
+    <?php unset($_SESSION['error']);
     endif; ?>
 
     <script defer>

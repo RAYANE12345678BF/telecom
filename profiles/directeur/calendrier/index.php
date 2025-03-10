@@ -1,3 +1,18 @@
+<?php
+
+include __DIR__ . '/../../../vendor/autoload.php';
+
+if (! session_id()) {
+    session_start();
+}
+
+redirect_if_not_auth();
+
+$user = fetch_user_information($_SESSION['user_id']);
+
+$work_days = fetch_work_days($_SESSION['user_id']);
+
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -590,6 +605,29 @@
 
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/fr.min.js"></script>
+    
+    <script>
+        async function insertDateToDatabse(dateStr) {
+            let data = new FormData
+            data.append('date', dateStr)
+            data.append('action', 'add_work_day')
+            return await fetch("<?= url('actions/rc.php') ?>", {
+                method: 'POST',
+                body: data
+            })
+        }
+
+        async function removeDateFromDatabase(dateStr) {
+            let data = new FormData
+            data.append('date', dateStr)
+            data.append('action', 'remove_work_day')
+            return await fetch("<?= url('actions/rc.php') ?>", {
+                method: 'POST',
+                body: data
+            })
+        }
+    </script>
+    
     <script>
         const holidays = [
             '2024-01-01',
@@ -633,22 +671,49 @@
                         message = `✔ Vous avez travaillé un samedi (${dateStr}).`;
                     }
 
-                    calendar.addEvent({
-                        title: 'Jour travaillé',
-                        start: dateStr,
-                        backgroundColor: holidays.includes(dateStr) ? '#FF5733' : '#003366',
-                        borderColor: holidays.includes(dateStr) ? '#FF5733' : '#003366',
-                    });
+                    let dates = calendar.getEvents().map(e => e.startStr)
 
-                    if (message) {
-                        alert(message);
+                    if (dates.includes(dateStr)) {
+                        alert("Vous avez déjà travaillé ce jour.")
+                        return
                     }
+
+                    insertDateToDatabse(dateStr)
+                        .then(res => res.json())
+                        .then(json => {
+                            if (json.success) {
+                                if (message) {
+                                    alert(message);
+                                }
+
+                                calendar.addEvent({
+                                    title: 'Jour travaillé',
+                                    start: dateStr,
+                                    backgroundColor: holidays.includes(dateStr) ? '#FF5733' : '#003366',
+                                    borderColor: holidays.includes(dateStr) ? '#FF5733' : '#003366',
+                                });
+                            } else {
+                                alert('some error occured please retry')
+                            }
+                        })
 
                     calculateRCDays();
                 },
                 eventClick: function(info) {
                     if (confirm('Voulez-vous supprimer ce jour travaillé ?')) {
-                        info.event.remove();
+                        if( info.event.title.includes('(B)') ){
+                            alert('you can not remove  date you benefited from')
+                            return
+                        }
+                        removeDateFromDatabase(info.event.startStr)
+                            .then(res => res.json())
+                            .then(json => {
+                                if (json.success) {
+                                    info.event.remove();
+                                } else {
+                                    alert('some error occured when trying to remove this day')
+                                }
+                            })
                         calculateRCDays();
                     }
                 },
@@ -660,6 +725,20 @@
                 }
             });
 
+            var work_days = JSON.parse(`<?= json_encode($work_days['data']) ?>`);
+
+            console.info('work', work_days)
+
+            work_days.forEach(day => {
+                calendar.addEvent({
+                    benefited : day.benefited,
+                    title: `Jour travaillé ${day.benefited ? '(B)' : ''}`,
+                    start: day.date,
+                    backgroundColor: holidays.includes(day.date) ? '#FF5733' : '#003366',
+                    borderColor: holidays.includes(day.date) ? '#FF5733' : '#003366',
+                });
+            })
+            
             calendar.render();
 
             function calculateRCDays() {

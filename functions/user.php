@@ -175,13 +175,22 @@ if (!function_exists('get_grh_id')) {
 }
 
 if (!function_exists('fetch_user_information')) {
-    function fetch_user_information(string $user_id): array
+    function fetch_user_information(string $user_id, $check = true): array
     {
+        if( !session_id() ){
+            session_start();
+        }
         $db = load_db();
         $sql = "SELECT * FROM `employees` WHERE id=?";
         $result = $db->prepare($sql);
         $result->execute([$user_id]);
         $user = $result->fetch(PDO::FETCH_ASSOC);
+
+
+        if( $user['role_id'] != "5" && $check && (empty($user['matricule']) || empty($user['superior_id'])) && !str_ends_with($_SERVER['REQUEST_URI'], "profile.php") ){
+            $_SESSION['error'] = "must define matricule and superior employee";
+            redirect(url('profiles/'));
+        }
 
 
         $user['role'] = get_role($user['role_id']);
@@ -296,5 +305,23 @@ if( !function_exists('profile_photo_url') ){
     function profile_photo_url($user_id){
         $user = fetch_user_information($user_id);
         return url('uploads/'.$user['profile_photo']);
+    }
+}
+
+if( !function_exists('get_user_with') ){
+    function get_user_with($column, $value){
+        $db = load_db();
+
+        $sql = sprintf("SELECT * FROM `employees` WHERE %s=?", $column);
+
+        $stmt = $db->prepare($sql);
+
+        try{
+            $stmt->execute([$value]);
+        }catch(PDOException $e){
+            return null;
+        }
+
+        return $stmt->rowCount() > 0 ? $stmt->fetch(PDO::FETCH_ASSOC) : null;
     }
 }

@@ -8,7 +8,37 @@ if (! session_id()) {
 
 redirect_if_not_auth();
 
+
+
 $user = fetch_user_information($_SESSION['user_id']);
+
+$demands = get_user_demands($user['id']);
+
+$waiting_demands = array_filter($demands, function($value){
+    return $value['type'] == 'conge_rc' && $value['status'] == 'waiting';
+});
+
+if( count($waiting_demands) > 0 ){
+    $_SESSION['error'] = "you can not do that, because you have already demand";
+    redirect(url('profiles'));
+}
+
+$successfull_demands = array_filter($demands, function($value){
+    if( $value['type'] != 'conge_rc' ){
+        return false;
+    }
+    
+    $end_date = date_create($value['date_fin']);
+    $now = date_create();
+    $diff = date_diff($now, $end_date);
+    return $value['status'] == 'accepted' && $diff->invert === 0;
+});
+
+if( count($successfull_demands) > 0 ){
+    $_SESSION['error'] = "you can not do that, because you have in conge";
+    redirect(url('profiles'));
+}
+
 
 $rc_days = calculate_rc_days($user['id']);
 ?>
@@ -829,7 +859,7 @@ $rc_days = calculate_rc_days($user['id']);
                     <span class="menu-text">Support</span>
                 </a>
                 <!-- Nouveau bouton "Calendrier RC d'Employé" -->
-                <a href="<?= url('profiles/drh/calenfrier') ?>" class="menu-item">
+                <a href="<?= url('profiles/drh/calendrier') ?>" class="menu-item">
                     <i class="fas fa-calendar"></i>
                     <span class="menu-text">Calendrier RC d'Employé</span>
                 </a>

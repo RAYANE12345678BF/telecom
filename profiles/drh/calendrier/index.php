@@ -644,7 +644,6 @@ $work_days = fetch_work_days($_SESSION['user_id']);
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
-            console.log(window.FullCalender, window.calender)
 
             const calendarEl = document.getElementById('calendar');
             const calendar = new FullCalendar.Calendar(calendarEl, {

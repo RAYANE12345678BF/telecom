@@ -9,9 +9,15 @@ redirect_if_not_auth();
 
 $user = $_SESSION['user'];
 
-$user = fetch_user_information($_SESSION['user_id']);
+$user = fetch_user_information($_SESSION['user_id'], false);
 
 $user_demands = get_all_demands_with_lifecycle()['demands'];
+
+$user_demands = array_filter($user_demands, function($demand) use ($user){
+    return count(array_filter($demand['lifecycle'] , function($el) use ($user){
+        return $el['superior_id'] == $user['id'] && $el['decision'] == 'waiting';
+    })) > 0;
+});
 
 ?>
 <!DOCTYPE html>
@@ -960,12 +966,15 @@ $user_demands = get_all_demands_with_lifecycle()['demands'];
                         </ul>
                     </td>
                     <td>
-                    <button onclick="accept('<?= $demand['id'] ?>')" style="border-radius:10px;padding : 5px 10px;border:1px solid white;background:green;color:white">accept</button>
-                    <button onclick="reject('<?= $demand['id'] ?>')" style="border-radius:10px;padding : 5px 10px;border:1px solid white;background:red;color:white">reject</button>
+                        <button onclick="accept('<?= $demand['id'] ?>')" style="border-radius:10px;padding : 5px 10px;border:1px solid white;background:green;color:white">
+                            accept
+                        </button>
+                        <button onclick="reject('<?= $demand['id'] ?>')" style="border-radius:10px;padding : 5px 10px;border:1px solid white;background:red;color:white">
+                            reject
+                        </button>
                     </td>
                 </tr>
                 <?php endforeach; ?>
-
             </tbody>
         </table>
     </div>

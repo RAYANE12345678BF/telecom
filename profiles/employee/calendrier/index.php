@@ -10,6 +10,8 @@ redirect_if_not_auth();
 
 $user = fetch_user_information($_SESSION['user_id']);
 
+$work_days = fetch_work_days($_SESSION['user_id']);
+
 ?>
 
 <!DOCTYPE html>
@@ -18,10 +20,12 @@ $user = fetch_user_information($_SESSION['user_id']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DjazairRH - Support</title>
+    <title>DjazairRH - Interface Complète</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
     <style>
         :root {
             --primary-color: #003366;
@@ -32,7 +36,8 @@ $user = fetch_user_information($_SESSION['user_id']);
             --hover-color: #f0f4f8;
             --border-radius: 12px;
             --nav-height: 70px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.3s ease;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
@@ -47,11 +52,13 @@ $user = fetch_user_information($_SESSION['user_id']);
 
         body {
             display: flex;
-            height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+            min-height: 100vh;
+            background: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
         }
 
+        /* Navigation Styles */
         .sidebar {
             width: 280px;
             background: white;
@@ -102,11 +109,6 @@ $user = fetch_user_information($_SESSION['user_id']);
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
         }
 
-        .logo img:hover {
-            transform: scale(1.05) rotate(-3deg);
-            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
-        }
-
         .logo-text {
             font-size: 26px;
             font-weight: 700;
@@ -114,6 +116,15 @@ $user = fetch_user_information($_SESSION['user_id']);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: -0.5px;
+        }
+
+        .nav-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            margin: 20px 0 10px;
+            padding-left: 18px;
         }
 
         .sidebar a {
@@ -146,19 +157,12 @@ $user = fetch_user_information($_SESSION['user_id']);
             transition: var(--transition);
         }
 
-        .sidebar a:hover i {
-            transform: scale(1.1);
-            color: var(--secondary-color);
-        }
-
-        .submenu,
-        .sub-submenu,
-        .sub-sub-submenu {
+        .submenu {
             display: none;
-            flex-direction: column;
-            padding-left: 20px;
-            margin: 5px 0;
-            position: relative;
+            background-color: #f9f9f9;
+            border-left: 2px solid var(--accent-color);
+            margin-left: 10px;
+            padding-left: 10px;
         }
 
         .submenu::before {
@@ -172,9 +176,7 @@ $user = fetch_user_information($_SESSION['user_id']);
             border-radius: 1px;
         }
 
-        .submenu a,
-        .sub-submenu a,
-        .sub-sub-submenu a {
+        .submenu a {
             font-size: 0.95em;
             padding: 12px 16px;
             opacity: 0.9;
@@ -200,59 +202,39 @@ $user = fetch_user_information($_SESSION['user_id']);
             box-shadow: var(--shadow-md);
         }
 
-        .user-avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: var(--border-radius);
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2em;
-            color: var(--primary-color);
-            transition: var(--transition);
-            border: 2px solid var(--hover-color);
-            box-shadow: var(--shadow-sm);
-        }
-
+        /* Navbar Styles */
         .navbar {
+            position: fixed;
+            top: 0;
+            right: 0;
             width: calc(100% - 280px);
             height: var(--nav-height);
             background: white;
-            box-shadow: var(--shadow-lg);
-            padding: 0 24px;
             display: flex;
-            justify-content: flex-end;
             align-items: center;
-            position: fixed;
-            top: 0;
-            left: 280px;
-            right: 0;
-            z-index: 999;
+            justify-content: flex-end;
+            padding: 0 30px;
+            box-shadow: var(--shadow-sm);
+            z-index: 900;
         }
 
         .nav-icons {
             display: flex;
-            align-items: center;
-            gap: 16px;
+            gap: 20px;
         }
 
         .icon-wrapper {
             width: 40px;
             height: 40px;
-            border-radius: var(--border-radius);
             display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: 50%;
             cursor: pointer;
-            background: var(--hover-color);
             transition: var(--transition);
-            position: relative;
         }
 
         .icon-wrapper:hover {
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: var(--shadow-md);
             background: var(--hover-color);
         }
 
@@ -324,291 +306,6 @@ $user = fetch_user_information($_SESSION['user_id']);
             color: #64748b;
             font-size: 14px;
             padding: 20px;
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.4);
-            }
-
-            70% {
-                transform: scale(1.1);
-                box-shadow: 0 0 0 10px rgba(255, 51, 102, 0);
-            }
-
-            100% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(255, 51, 102, 0);
-            }
-        }
-
-        .content {
-            margin-top: var(--nav-height);
-            margin-left: 280px;
-            padding: 30px;
-            flex-grow: 1;
-            background: var(--bg-color);
-            min-height: calc(100vh - var(--nav-height));
-        }
-
-        /* Smooth slide animation for submenus */
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .submenu.show,
-        .sub-submenu.show,
-        .sub-sub-submenu.show {
-            animation: slideDown 0.3s ease forwards;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 80px;
-            }
-
-            .sidebar-header {
-                padding: 0 16px;
-            }
-
-            .sidebar-content {
-                padding: 16px;
-            }
-
-            .navbar {
-                left: 80px;
-                width: calc(100% - 80px);
-            }
-
-            .content {
-                margin-left: 80px;
-            }
-        }
-
-        /* Dark mode support */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-color: #1a1a1a;
-                --text-color: #e0e0e0;
-                --hover-color: #2a2a2a;
-            }
-        }
-
-        /* Remove search-related styles */
-        .nav-left,
-        .nav-right,
-        .nav-search {
-            display: none;
-        }
-
-        /* Base styles */
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: rgb(249, 250, 251);
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 48rem;
-            margin: 0 auto;
-            padding: 3rem 1rem;
-            min-height: 100vh;
-            /* تعيين الحد الأدنى للارتفاع ليشمل كامل النافذة */
-        }
-
-        .form-card {
-            background-color: white;
-            padding: 2rem 1.5rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-            min-height: 120vh;
-            /* Augmenter la hauteur minimale pour étendre la taille du formulaire */
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .title {
-            text-align: center;
-            /* Centrer le texte */
-            color: #124170;
-            /* Bleu foncé */
-            font-size: 28px;
-            /* Agrandir le texte */
-            font-weight: bold;
-            /* Texte en gras */
-            text-transform: uppercase;
-            /* Majuscules */
-            letter-spacing: 1px;
-            /* Espacement entre lettres */
-            margin-bottom: 20px;
-            /* Espacement sous le titre */
-            padding-bottom: 5px;
-            /* Espacement sous le titre */
-            display: block;
-            /* Empêcher toute ligne latérale */
-            width: fit-content;
-            /* Ajuster la largeur au texte */
-            margin-left: auto;
-            margin-right: auto;
-            /* Centrer le bloc */
-        }
-
-        .section {
-            margin-bottom: 2rem;
-        }
-
-        .section-title {
-            font-size: 1.125rem;
-            font-weight: 500;
-            color: #5c75ac;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group-row {
-            display: flex;
-            gap: 20px;
-            /* Espacement entre les champs */
-        }
-
-        .form-group-row .form-group {
-            flex: 1;
-            /* Permet aux champs de prendre un espace égal */
-        }
-
-        .form-label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 0.25rem;
-        }
-
-        .form-input {
-            width: 50%;
-            padding: 0.5rem 0.75rem;
-            padding-left: 2.5rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.375rem;
-            font-size: 0.875rem;
-            transition: border-color 0.15s ease-in-out;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        .success-message {
-            display: flex;
-            align-items: center;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            background-color: #ecfdf5;
-            color: #047857;
-            border-radius: 0.375rem;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .buttons-container {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            /* Espacement entre les boutons */
-            text-align: right;
-        }
-
-        .button-primary {
-            background-color: white;
-            /* Fond blanc */
-            color: #003366;
-            /* Texte bleu foncé */
-            font-size: 16px;
-            font-weight: bold;
-            padding: 12px 20px;
-            border: 2px solid #003366;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            /* Espacement entre l'icône et le texte */
-        }
-
-        .button-primary:hover {
-            background-color: #003366;
-            color: white;
-            transform: scale(1.05);
-        }
-
-        .button-primary:active {
-            background-color: #002244;
-            color: white;
-            transform: scale(0.98);
-        }
-
-        .button-secondary {
-            background-color: white;
-            color: #444;
-            font-size: 16px;
-            font-weight: bold;
-            padding: 12px 20px;
-            border: 2px solid #444;
-            border-radius: 5px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: background 0.3s ease, transform 0.2s ease;
-        }
-
-        .button-secondary:hover {
-            background-color: #444;
-            color: white;
-            transform: scale(1.05);
-        }
-
-        .button-secondary:active {
-            background-color: #222;
-            transform: scale(0.98);
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-0.5rem);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         /* Styles pour le menu déroulant de messagerie */
@@ -698,31 +395,39 @@ $user = fetch_user_information($_SESSION['user_id']);
             box-shadow: 0 0 0 2px rgba(0, 51, 102, 0.1);
         }
 
-        /* Styles pour le message "Aucun message" */
-        .no-messages {
-            text-align: center;
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 280px;
+            padding: 90px 30px 30px;
+            width: calc(100% - 280px);
+        }
+
+        /* Calendar Styles */
+        #calendar {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            color: #64748b;
-            font-size: 14px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
         }
 
-        .no-messages i {
-            font-size: 24px;
-            color: var(--accent-color);
+        .fc-daygrid-day-number {
+            color: #003366;
         }
 
-        .no-messages p {
-            margin: 0;
+        .fc-day-sat,
+        .fc-day-fri {
+            background-color: #e6f3ff !important;
+        }
+
+        .holiday {
+            background-color: #ffcccc !important;
         }
     </style>
 </head>
 
 <body>
-<div class="sidebar">
+    <!-- Navigation Sidebar -->
+    <div class="sidebar">
         <div class="sidebar-header">
             <div class="logo">
                 <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
@@ -855,153 +560,204 @@ $user = fetch_user_information($_SESSION['user_id']);
         </div>
     </div>
 
-    <div class="content">
-        <div class="container">
-            <div class="form-card">
-                <div class="header">
-                    <h1 class="title"> Support </h1>
-                </div>
-                <form action="<?= url('actions/demand.php') ?>" method="post" id="formConvocation">
-                    <input type="hidden" name="demand_type" value="support">
-                    <div class="section">
-                        <h3 class="section-title">Informations Personnelles</h3>
-                        <div class="form-group">
-                            <label class="form-label" for="matricule">Matricule</label>
-                            <input readonly value="<?= $user['matricule'] ?>" type="text" id="matricule" class="form-input" required>
-                        </div>
-                        <div class="form-group-row">
-                            <div class="form-group">
-                                <label class="form-label" for="nom">Nom</label>
-                                <input readonly value="<?= $user['nom'] ?>" type="text" id="nom" class="form-input" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="prenom">Prénom</label>
-                                <input readonly value="<?= $user['prenom'] ?>" type="text" id="prenom" class="form-input" required>
-                            </div>
-                        </div>
-
-                        <h3 class="section-title">Informations Professionnelles</h3>
-
-                        <div class="form-group">
-                            <label class="form-label" for=" Fonction"> Fonction</label>
-                            <input readonly value="<?= $user['role']['nom'] ?>" type="text" id=" Fonction" class="form-input" required>
-                        </div>
-                    </div>
-                    <div class="form-group-row">
-
-                    </div>
-                    <div class="section">
-                        <h3 class="section-title">Détails de problème</h3>
-                        <div class="form-group">
-                            <label class="form-label" for="type_de_probleme">Type de problème</label>
-                            <input name="type" type="text" id="type_de_probleme" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="description_de_probleme">Description de problème</label>
-                            <input name="message" type="text" id="description_de_probleme" class="form-input" required>
-                        </div>
-                    </div>
-                    <div class="buttons-container">
-                        <button type="submit" id="submitButton" class="button button-primary">
-                            <span id="submitText">Envoyer</span>
-                        </button>
-                    </div>
-
-
-                </form>
-            </div>
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1 class="text-center mb-4">Calendrier Employé</h1>
+        <div id="calendar"></div>
+        <div class="mt-4">
+            <h3>Jours de Repos Compensatoire (RC) :</h3>
+            <p id="rcDaysResult">Aucun jour de RC calculé pour le moment.</p>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/fr.min.js"></script>
+    
     <script>
-        document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
+        async function insertDateToDatabse(dateStr) {
+            let data = new FormData
+            data.append('date', dateStr)
+            data.append('action', 'add_work_day')
+            return await fetch("<?= url('actions/rc.php') ?>", {
+                method: 'POST',
+                body: data
+            })
+        }
+
+        async function removeDateFromDatabase(dateStr) {
+            let data = new FormData
+            data.append('date', dateStr)
+            data.append('action', 'remove_work_day')
+            return await fetch("<?= url('actions/rc.php') ?>", {
+                method: 'POST',
+                body: data
+            })
+        }
+    </script>
+    
+    <script>
+        const holidays = [
+            '2024-01-01',
+            '2024-05-01',
+            '2024-07-05',
+            '2024-12-25',
+        ];
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'fr',
+                selectable: true,
+                selectAllow: function (selectInfo) {
+                    const selectedDate = new Date(selectInfo.startStr);
+                    selectedDate.setHours(0, 0, 0, 0);
+
+                    if (selectedDate > today) {
+                        alert("Vous ne pouvez pas sélectionner un jour futur !");
+                        return false;
+                    }
+
+                    return true;
+                },
+                select: function (selectInfo) {
+                    const selectedDate = new Date(selectInfo.startStr);
+                    selectedDate.setHours(0, 0, 0, 0);
+                    const dateStr = selectInfo.startStr;
+                    const day = selectedDate.getDay();
+                    let message = '';
+
+                    if (holidays.includes(dateStr)) {
+                        message = `⚠ Vous avez travaillé un jour férié (${dateStr}).`;
+                    } else if (day === 5) {
+                        message = `✔ Vous avez travaillé un vendredi (${dateStr}).`;
+                    } else if (day === 6) {
+                        message = `✔ Vous avez travaillé un samedi (${dateStr}).`;
+                    }
+
+                    let dates = calendar.getEvents().map(e => e.startStr)
+
+                    if (dates.includes(dateStr)) {
+                        alert("Vous avez déjà travaillé ce jour.")
+                        return
+                    }
+
+                    insertDateToDatabse(dateStr)
+                        .then(res => res.json())
+                        .then(json => {
+                            if (json.success) {
+                                if (message) {
+                                    alert(message);
+                                }
+
+                                calendar.addEvent({
+                                    title: 'Jour travaillé',
+                                    start: dateStr,
+                                    backgroundColor: holidays.includes(dateStr) ? '#FF5733' : '#003366',
+                                    borderColor: holidays.includes(dateStr) ? '#FF5733' : '#003366',
+                                });
+                            } else {
+                                alert('some error occured please retry')
+                            }
+                        })
+
+                    if (message) {
+                        alert(message);
+                    }
+
+                    calculateRCDays();
+                },
+                eventClick: function (info) {
+                    if (confirm('Voulez-vous supprimer ce jour travaillé ?')) {
+                        
+                        if( info.event.title.includes('(B)') ){
+                            alert('you can not remove  date you benefited from')
+                            return
+                        }
+                        
+                        removeDateFromDatabase(info.event.startStr)
+                            .then(res => res.json())
+                            .then(json => {
+                                if (json.success) {
+                                    info.event.remove();
+                                } else {
+                                    alert('some error occured when trying to remove this day')
+                                }
+                            })
+                        calculateRCDays();
+                    }
+                },
+                dayCellDidMount: function (info) {
+                    const dateStr = info.date.toISOString().split('T')[0];
+                    if (holidays.includes(dateStr)) {
+                        info.el.classList.add('holiday');
+                    }
+                }
+            });
+
+            var work_days = JSON.parse(`<?= json_encode($work_days['data']) ?>`);
+
+            console.info('work', work_days)
+
+            work_days.forEach(day => {
+                calendar.addEvent({
+                    benefited : day.benefited,
+                    title: `Jour travaillé ${day.benefited ? '(B)' : ''}`,
+                    start: day.date,
+                    backgroundColor: holidays.includes(day.date) ? '#FF5733' : '#003366',
+                    borderColor: holidays.includes(day.date) ? '#FF5733' : '#003366',
+                });
+            })
+
+            calendar.render();
+
+            function calculateRCDays() {
+                const events = calendar.getEvents();
+                let rcDays = 0;
+
+                events.forEach(event => {
+                    const date = event.start;
+                    const day = date.getDay();
+
+                    if (day === 5) {
+                        rcDays += 2;
+                    } else if (day === 6) {
+                        rcDays += 1;
+                    }
+                });
+
+                document.getElementById('rcDaysResult').textContent = `Jours de RC accumulés : ${rcDays}`;
+            }
+        });
+
+        // Navigation menu toggle functions
+        document.getElementById('faireDemandeBtn').addEventListener('click', function (e) {
             e.preventDefault();
             const submenu = document.getElementById('demandeSubmenu');
-            if (submenu.style.display === 'none') {
-                submenu.style.display = 'block';
-            } else {
-                submenu.style.display = 'none';
-            }
+            submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
         });
-
-        document.getElementById('congeBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            const submenu = document.getElementById('congeSubmenu');
-            if (submenu.style.display === 'none') {
-                submenu.style.display = 'block';
-            } else {
-                submenu.style.display = 'none';
-            }
-        });
-
-        document.querySelector(".menu-toggle").addEventListener("click", function(e) {
-            e.preventDefault();
-            let submenu = document.querySelector(".submenu");
-            let icon = this.querySelector(".fa-chevron-right");
-
-            if (submenu.style.display === "flex") {
-                submenu.style.display = "none";
-                icon.style.transform = "rotate(0deg)";
-            } else {
-                submenu.style.display = "flex";
-                icon.style.transform = "rotate(90deg)";
-            }
-        });
-
-        document.querySelector(".sub-menu-toggle").addEventListener("click", function(e) {
-            e.preventDefault();
-            let subSubmenu = document.querySelector(".sub-submenu");
-            let icon = this.querySelector(".fa-chevron-right");
-
-            if (subSubmenu.style.display === "flex") {
-                subSubmenu.style.display = "none";
-                icon.style.transform = "rotate(0deg)";
-            } else {
-                subSubmenu.style.display = "flex";
-                icon.style.transform = "rotate(90deg)";
-            }
-        });
-
-        document.querySelector(".conges-toggle").addEventListener("click", function(e) {
-            e.preventDefault();
-            let subSubSubmenu = document.querySelector(".sub-sub-submenu");
-            let icon = this.querySelector(".fa-chevron-right");
-
-            if (subSubSubmenu.style.display === "flex") {
-                subSubSubmenu.style.display = "none";
-                icon.style.transform = "rotate(0deg)";
-            } else {
-                subSubSubmenu.style.display = "flex";
-                icon.style.transform = "rotate(90deg)";
-            }
-        });
-
-        function validateName(value) {
-            // Validation logic here
-        }
-
-        function validateDates(depart, retour) {
-            // Validation logic here
-        }
-
-        function showError(elementId, show) {
-            // Show error logic here
-        }
-
-        function handleSubmit(event) {
-            event.preventDefault();
-            // Form submission logic here
-        }
-
-        function handlePrint() {
-            // Print logic here
-        }
-        document.getElementById('printButton').addEventListener('click', function() {
-            window.print();
-        });
-        document.getElementById('logoutButton').addEventListener('click', function() {
+        document.getElementById('logoutButton').addEventListener('click', function () {
             window.location.href = 'loginAT1.html';
         });
+        document.getElementById('congeBtn').addEventListener('click', function (e) {
+            e.preventDefault();
+            const submenu = document.getElementById('congeSubmenu');
+            submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+        });
+
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function (e) {
+                if (this !== document.getElementById('faireDemandeBtn') && this !== document.getElementById('congeBtn')) {
+                    document.querySelectorAll('.submenu').forEach(sub => {
+                        sub.style.display = 'none';
+                    });
+                }
+            });
+        });
+
         // Fonction pour afficher/masquer les notifications
         function toggleNotifications() {
             const dropdown = document.getElementById('notificationDropdown');
@@ -1023,9 +779,11 @@ $user = fetch_user_information($_SESSION['user_id']);
                 noMessages.style.display = 'none'; // Masquer le message
             }
         }
-
+        document.getElementById('logoutButton').addEventListener('click', function () {
+            window.location.href = 'loginAT1.html';
+        });
         // Fermer les menus déroulants si on clique en dehors
-        document.addEventListener('click', function(event) {
+        document.addEventListener('click', function (event) {
             const notificationDropdown = document.getElementById('notificationDropdown');
             const messengerDropdown = document.getElementById('messengerDropdown');
             const notificationIcon = document.querySelector('.icon-wrapper[onclick="toggleNotifications()"]');
@@ -1039,6 +797,31 @@ $user = fetch_user_information($_SESSION['user_id']);
                 messengerDropdown.classList.remove('show');
             }
         });
+
+        // Consulter Demandes functions
+        function toggleDropdown(requestId) {
+            const dropdown = document.getElementById(`dropdown-${requestId}`);
+            dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+        }
+
+        function acceptRequest(requestId) {
+            const statusCell = document.querySelector(`#request-${requestId} .status`);
+            statusCell.textContent = "Accepté";
+            statusCell.style.color = "#28a745"; // Vert pour indiquer l'acceptation
+            closeDropdown(requestId);
+        }
+
+        function refuseRequest(requestId) {
+            const statusCell = document.querySelector(`#request-${requestId} .status`);
+            statusCell.textContent = "Refusé";
+            statusCell.style.color = "#dc3545"; // Rouge pour indiquer le refus
+            closeDropdown(requestId);
+        }
+
+        function closeDropdown(requestId) {
+            const dropdown = document.getElementById(`dropdown-${requestId}`);
+            dropdown.style.display = "none";
+        }
     </script>
 </body>
 

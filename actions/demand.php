@@ -87,13 +87,6 @@ switch ($demand_type) {
         $description = $_POST['description'] ?? null;
         $info['content'] = "no details";
 
-        $response = deduct_leave_days($_SESSION['user_id'], $duree);
-
-        if( !$response['success'] ){
-            $_SESSION['error'] = $response['message'];
-            redirect_back();
-        }
-
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'sucessfully demand send';

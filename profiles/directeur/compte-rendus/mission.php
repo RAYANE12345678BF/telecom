@@ -1,14 +1,20 @@
 <?php
 
-include __DIR__ . '/../../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
-if (! session_id()) {
+if (!session_id()) {
     session_start();
 }
 
 redirect_if_not_auth();
 
 $user = fetch_user_information($_SESSION['user_id']);
+
+if (empty($_GET['demand_id'])) {
+    throw new Exception('bad call to this page');
+}
+
+$demand = fetch_demand($_GET['demand_id']);
 
 ?>
 <!DOCTYPE html>
@@ -19,7 +25,6 @@ $user = fetch_user_information($_SESSION['user_id']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DjazairRH - Navigation</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -740,7 +745,8 @@ $user = fetch_user_information($_SESSION['user_id']);
 </head>
 
 <body>
-<div class="sidebar">
+    <!-- Navigation Sidebar -->
+    <div class="sidebar">
         <div class="sidebar-header">
             <div class="logo">
                 <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
@@ -750,13 +756,13 @@ $user = fetch_user_information($_SESSION['user_id']);
         <div class="sidebar-content">
             <div class="menu-items">
                 <div class="nav-title">Principal</div>
-                <a href="<?= url('/') ?>" class="menu-item active">
+                <a href="<?= url('/') ?>" class="menu-item">
                     <i class="fas fa-home"></i>
-                    <span>Accueil</span>
+                    <span class="menu-text">Accueil</span>
                 </a>
-                <a href="<?= url('profiles') ?>" class="menu-item">
+                <a href="<?= url('profiles/directeur/profile.php') ?>" class="menu-item active">
                     <i class="fas fa-user-circle"></i>
-                    <span>Mon Profil</span>
+                    <span class="menu-text">Mon Profil</span>
                 </a>
 
                 <div class="nav-title">Demandes</div>
@@ -765,72 +771,77 @@ $user = fetch_user_information($_SESSION['user_id']);
                         <i class="fas fa-file-alt"></i>
                         <span class="menu-text">Faire une demande</span>
                     </a>
-                    <div class="submenu" id="demandeSubmenu" style="display: none; padding-left: 20px;">
+                    <div class="submenu" id="demandeSubmenu" style="display: none;">
                         <div>
                             <a href="#" class="menu-item" id="congeBtn">
                                 <i class="fas fa-calendar-alt"></i>
                                 <span class="menu-text">Demande Congé</span>
                             </a>
-                            <div class="submenu" id="congeSubmenu" style="display: none; padding-left: 20px;">
-                                <a href="<?= url('profiles/employee/demands/conge/annual.php') ?>" class="menu-item">
+                            <div class="submenu" id="congeSubmenu" style="display: none;">
+                                <a href="<?= url('profiles/directeur/demands/conge/annual.php') ?>" class="menu-item">
                                     <i class="fas fa-sun"></i>
                                     <span class="menu-text">Congé Annuel</span>
                                 </a>
-                                <a href="<?= url('profiles/employee/demands/conge/malady.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/malady.php') ?>" class="menu-item">
                                     <i class="fas fa-hospital"></i>
                                     <span class="menu-text">Congé Maladie</span>
                                 </a>
-                                <a href="<?= url('profiles/employee/demands/conge/maternity.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/maternity.php') ?>" class="menu-item">
                                     <i class="fas fa-baby"></i>
                                     <span class="menu-text">Congé Maternité</span>
                                 </a>
-                                <a href="<?= url('profiles/employee/demands/conge/rc.php') ?>" class="menu-item">
+                                <a href="<?= url('profiles/directeur/demands/conge/rc.php') ?>" class="menu-item">
                                     <i class="fas fa-clock"></i>
                                     <span class="menu-text">Congé RC</span>
                                 </a>
                             </div>
                         </div>
-                        <a href="<?= url('profiles/employee/demands/formation') ?>" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/formation') ?>" class="menu-item">
                             <i class="fas fa-graduation-cap"></i>
                             <span class="menu-text">Demande Formation</span>
                         </a>
-                        <a href="<?= url('profiles/employee/demands/mission') ?>" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/mission') ?>" class="menu-item">
                             <i class="fas fa-plane"></i>
                             <span class="menu-text">Demande Ordre Mission</span>
                         </a>
-                        <a href="<?= url('profiles/employee/demands/deplacement') ?>" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/deplacement') ?>" class="menu-item">
                             <i class="fas fa-car"></i>
                             <span class="menu-text">Demande Déplacement</span>
                         </a>
-                        <a href="<?= url('profiles/employee/demands/leave') ?>" class="menu-item">
+                        <a href="<?= url('profiles/directeur/demands/leave') ?>" class="menu-item">
                             <i class="fas fa-door-open"></i>
                             <span class="menu-text">Demande Sortie</span>
                         </a>
                     </div>
-                    <a href="<?= url('profiles/employee/demands/list') ?>" class="menu-item">
+                    <a href="<?= url('profiles/directeur/demands/list.php') ?>" class="menu-item">
                         <i class="fas fa-tasks"></i>
                         <span class="menu-text">État de demande</span>
+                    </a>
+                    <a href="<?= url('profiles/directeur/demands/consulte.php') ?>" class="menu-item">
+                        <i class="fas fa-eye"></i>
+                        <span class="menu-text">Consulter Demande</span>
                     </a>
                 </div>
 
                 <div class="nav-title">Autres</div>
-                <a href="<?= url('profiles/employee/support') ?>" class="menu-item">
+                <a href="<?= url('profiles/directeur/support') ?>" class="menu-item">
                     <i class="fas fa-question-circle"></i>
                     <span class="menu-text">Support</span>
                 </a>
                 <!-- Nouveau bouton "Calendrier RC d'Employé" -->
-                <a href="<?= url('profiles/employee/calendrier') ?>" class="menu-item">
+                <a href="<?= url('profiles/directeur/calendrier') ?>" class="menu-item">
                     <i class="fas fa-calendar"></i>
                     <span class="menu-text">Calendrier RC d'Employé</span>
                 </a>
             </div>
         </div>
-        <div class="user-section" id="logoutButton">
+        <form action="<?= url('actions/auth.php') ?>" method="post" class="user-section">
+            <input type="hidden" value="logout" name="action" />
             <div class="user-avatar">
                 <i class="fas fa-sign-in-alt"></i>
             </div>
-            <span>Se déconnecter</span>
-        </div>
+            <button type="submit" style="border : none">Se déconnecter</button>
+        </form>
     </div>
 
     <!-- Top Navbar -->
@@ -875,104 +886,42 @@ $user = fetch_user_information($_SESSION['user_id']);
     </nav>
 
 
-
     <div class="content">
         <div class="container">
             <div class="form-card">
                 <div class="header">
-                    <h1 class="title"> Demande congé maladie </h1>
+                    <h1 class="title"> Compte rendue d'ordre mission </h1>
                 </div>
-                <form enctype="multipart/form-data" action="<?= url('actions/demand.php') ?>" method="post" id="formConvocation">
-                    <input type="hidden" name="demand_type" value="conge_malady">
+                <form id="formConvocation" action="<?= url('actions/compte_rendu.php') ?>" method="post">
+                    <input type="hidden" name="demand_id" value="<?= $_GET['demand_id'] ?>">
                     <div class="section">
-                        <h3 class="section-title">Informations Personnelles</h3>
+                        <h3 class="section-title">Nature et description des travaux effectués</h3>
                         <div class="form-group">
-                            <label class="form-label" for="matricule">Matricule</label>
-                            <input readonly value="<?= $user['matricule'] ?>" type="text" id="matricule" class="form-input" required>
+                            <label class="form-label" for="Nature">Nature</label>
+                            <input require name="nature" value="<?= $demand['compte_rendu']['info']['nature'] ?? '' ?>" type="text" id="Nature" class="form-input" required style="width: 90%; height: 40px;">
                         </div>
-                        <div class="form-group-row">
-                            <div class="form-group">
-                                <label class="form-label" for="nom">Nom</label>
-                                <input readonly value="<?= $user['nom'] ?>" type="text" id="nom" class="form-input" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="prenom">Prénom</label>
-                                <input readonly value="<?= $user['prenom'] ?>" type="text" id="prenom" class="form-input" required>
-                            </div>
-                        </div>
-
-                        <h3 class="section-title">Informations Professionnelles</h3>
 
                         <div class="form-group">
-                            <label class="form-label" for=" Fonction"> Fonction</label>
-                            <input readonly value="<?= $user['role']['nom'] ?>" type="text" id=" Fonction" class="form-input" required>
-                        </div>
-                    </div>
-                    <div class="section">
-                        <h3 class="section-title">Détails de congé</h3>
-                        <div class="form-group">
-                            <label class="form-label" for="durée">durée</label>
-                            <input name="duree" type="number" id="durée" class="form-input" required>
-                        </div>
-                        <div class="form-group-row">
-                            <div class="form-group">
-                                <label class="form-label" for="date-debut">Date début</label>
-                                <input name="start_date" type="date" id="date-debut" class="form-input" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="date-fin">Date de fin</label>
-                                <input name="end_date" type="date" id="date-fin" class="form-input" required>
-                            </div>
+                            <label class="form-label" for="Description">Description</label>
+                            <textarea require name="description" id="Description" class="form-input" required style="width: 90%; height: 100px;"><?= $demand['compte_rendu']['info']['description'] ?? '' ?></textarea>
                         </div>
 
-                    </div>
-                    <div class="section">
-                        <h3 class="section-title">Informations Complémentaires</h3>
-                        <h4 class="section-subtitle small-text"> ajoutez les papiers de la maladie ici s'il vous plait </h4>
-                        <div class="form-group">
-                            <label for="file-upload">Ou téléchargez un fichier (PDF ou image) :</label>
-                            <input name="info" type="file" id="file-upload" class="form-input" accept=".pdf, .jpg, .jpeg, .png">
+
+                        <div class="buttons-container" style="display: flex; justify-content: flex-end; gap: 10px;">
+                            <button type="button" id="printButton" class="button button-secondary">
+                                <i class="fas fa-print"></i> Imprimer
+                            </button>
+
+                            <button type="submit" id="submitButton" class="button button-primary">
+                                <span id="submitText">Soumettre</span>
+                            </button>
                         </div>
 
-                    </div>
-                    <div class="buttons-container" style="display: flex; justify-content: flex-end; gap: 10px;">
-                        <button type="button" id="printButton" class="button button-secondary">
-                            <i class="fas fa-print"></i> Imprimer
-                        </button>
-
-                        <button type="submit" id="submitButton" class="button button-primary">
-                            <span id="submitText">Soumettre</span>
-                        </button>
-                    </div>
-
-                    <script>
-                        const start_date = document.querySelector("input[name=start_date]")
-                        const end_date = document.querySelector("input[name=end_date]")
-                        const duree = document.querySelector('input[name=duree]')
-                        start_date.min = new Date().toISOString().split("T")[0];
-                        end_date.min = new Date().toISOString().split("T")[0];
-
-                        duree.min = 1
-
-                        duree.onchange = () => {
-                            if (+duree.value < 1) {
-                                duree.value = 1
-                            }
-                        }
-                        start_date.onchange = () => {
-                            if (start_date.value.trim() != "") {
-                                let date = new Date(start_date.value);
-                                date.setDate(date.getDate() + +duree.value)
-                                end_date.value = date.toISOString().split("T")[0]
-                            }
-                        }
-                    </script>
 
                 </form>
             </div>
         </div>
     </div>
-
     <script>
         document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
             e.preventDefault();
@@ -1051,7 +1000,6 @@ $user = fetch_user_information($_SESSION['user_id']);
         function handleSubmit(event) {
             event.preventDefault();
             // Form submission logic here
-            event.target.submit()
         }
 
         function handlePrint() {
@@ -1082,9 +1030,7 @@ $user = fetch_user_information($_SESSION['user_id']);
                 submenu.style.display = 'none';
             }
         });
-        document.getElementById('logoutButton').addEventListener('click', function() {
-            window.location.href = 'loginAT1.html';
-        });
+
         document.getElementById('congeBtn').addEventListener('click', function(e) {
             e.preventDefault();
             const submenu = document.getElementById('congeSubmenu');
@@ -1122,7 +1068,9 @@ $user = fetch_user_information($_SESSION['user_id']);
                 icon.style.transform = "rotate(90deg)";
             }
         });
-
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            window.location.href = 'loginAT1.html';
+        });
         document.querySelector(".conges-toggle").addEventListener("click", function(e) {
             e.preventDefault();
             let subSubSubmenu = document.querySelector(".sub-sub-submenu");
@@ -1200,17 +1148,11 @@ $user = fetch_user_information($_SESSION['user_id']);
         });
     </script>
 
-    <?php if (isset($_SESSION['error'])): ?>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<?php if(isset($_SESSION['status'])): ?>
         <script>
-            Swal.fire({
-                title: "demand no deposer!",
-                text: "<?= $_SESSION['error'] ?>",
-                icon: "error"
-            });
+            alert("<?= $_SESSION['status'] ?>")
         </script>
-    <?php unset($_SESSION['error']);
-    endif; ?>
+    <?php endif;unset($_SESSION['status']) ?>
 </body>
 
 </html>
