@@ -622,3 +622,33 @@ if( !function_exists('update_compte_rendu') ){
     }
 }
 
+if( !function_exists('handle_role') ){
+    function handle_role(callable $callback){
+        if( !session_id() ){
+            session_start();
+        }
+        $user = fetch_user_information($_SESSION['user_id'], false);
+
+        return $callback($user['role']['nom']);
+    }
+}
+
+if( !function_exists('profile_url') ){
+    function profile_url($uri, $prefix = 'profiles'){
+        return handle_role(function($role) use ($prefix, $uri){
+            switch($role){
+                case 'GRH':
+                    return url($prefix . '/drh/' . rtrim($uri));
+                    break;
+                case 'Directeur':
+                    return url($prefix . '/directeur/' . rtrim($uri));
+                    break;
+    
+                default:
+                return url($prefix . '/employee/' . rtrim($uri));
+                break;
+            }
+        });
+    }
+}
+

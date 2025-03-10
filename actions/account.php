@@ -46,7 +46,7 @@ switch($action){
         $superior_id = empty($_POST['superior_id']) ? null : $_POST['superior_id'];
         $start_date = empty($_POST['start_date']) ? null : $_POST['start_date'];
 
-        if( get_user_with('matricule', $matricule) ){
+        if( ($u = get_user_with('matricule', $matricule)) != null && $u['id'] != $_SESSION['user_id']  ){
             send_json_response([
                 'success' => false,
                 'message' => 'matricule already exists'

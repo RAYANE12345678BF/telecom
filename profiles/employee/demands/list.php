@@ -567,7 +567,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                             <span class="menu-text">Demande Sortie</span>
                         </a>
                     </div>
-                    <a href="<?= url('profiles/employee/demands/list') ?>" class="menu-item">
+                    <a href="<?= url('profiles/employee/demands/list.php') ?>" class="menu-item">
                         <i class="fas fa-tasks"></i>
                         <span class="menu-text">État de demande</span>
                     </a>
@@ -670,7 +670,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                         <td>
                             <?php if (in_array($demand['type'], ['mission', 'deplacement'])): ?>
                             <?php if ($demand['status'] == 'accepted'): ?>
-                                <a href="<?= url('profiles/drh/compte-rendus/' . $demand['type'] . '.php?demand_id=' . $demand['id']) ?>">
+                                <a href="<?= profile_url('compte-rendus/' . $demand['type'] . '.php?demand_id=' . $demand['id']) ?>">
                                     create/update compte rendu
                                 </a>
                                 <?php else: ?>

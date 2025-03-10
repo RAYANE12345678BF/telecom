@@ -494,7 +494,7 @@ $work_days = fetch_work_days($_SESSION['user_id']);
                             <span class="menu-text">Demande Sortie</span>
                         </a>
                     </div>
-                    <a href="<?= url('profiles/employee/demands/list') ?>" class="menu-item">
+                    <a href="<?= url('profiles/employee/demands/list.php') ?>" class="menu-item">
                         <i class="fas fa-tasks"></i>
                         <span class="menu-text">État de demande</span>
                     </a>
