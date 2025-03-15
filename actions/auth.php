@@ -74,7 +74,7 @@ switch ($action) {
             redirect_back();
         }
         save_user($user);
-        redirect(url('profiles'));
+        redirect(url('dashboard'));
         exit();
         break;
 

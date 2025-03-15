@@ -47,7 +47,7 @@ switch ($demand_type) {
         
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         
-        redirect(url('profiles'));
+        redirect(url('dashboard'));
         break;
 
     case 'conge_malady':
@@ -65,7 +65,7 @@ switch ($demand_type) {
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         
         $_SESSION['status'] = 'sucessfully demand send';
-        redirect(url('profiles'));
+        redirect(url('dashboard'));
         break;
 
     case 'conge_maternity':
@@ -80,7 +80,7 @@ switch ($demand_type) {
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'sucessfully demand send';
-        redirect(url('profiles'));
+        redirect(url('dashboard'));
         break;
 
     case 'conge_rc':
@@ -90,7 +90,7 @@ switch ($demand_type) {
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'sucessfully demand send';
-        redirect(url('profiles'));
+        redirect(url('dashboard'));
         break;
 
     case 'formation':
@@ -106,7 +106,7 @@ switch ($demand_type) {
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'sucessfully demand send';
-        redirect(url('profiles'));
+        redirect(url('dashboard'));
         break;
     case 'mission':
         $mission_data = [
@@ -125,7 +125,7 @@ switch ($demand_type) {
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'sucessfully demand send';
-        redirect(url('profiles'));
+        redirect(url('dashboard'));
         break;
     case 'deplacement':
         $mission_data = [
@@ -143,7 +143,7 @@ switch ($demand_type) {
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'sucessfully demand send';
-        redirect(url('profiles'));
+        redirect(url('dashboard'));
         break;
     case 'leave':
         $mission_data = [
@@ -161,7 +161,7 @@ switch ($demand_type) {
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'sucessfully demand send';
-        redirect(url('profiles'));
+        redirect(url('dashboard'));
         break;
 
     case 'support':
@@ -171,7 +171,7 @@ switch ($demand_type) {
         $demand_id = insert_support($_SESSION['user_id'], $message, $type); 
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'sucessfully support send';
-        redirect(url('profiles'));
+        redirect(url('dashboard'));
         break;
 
     default:

@@ -194,11 +194,11 @@ if (!function_exists('fetch_user_information')) {
         $result->execute([$user_id]);
         $user = $result->fetch(PDO::FETCH_ASSOC);
 
-
-        if( $user['role_id'] != "5" && $check && (empty($user['matricule']) || empty($user['superior_id'])) && !str_ends_with($_SERVER['REQUEST_URI'], "profile.php") ){
+/* 
+        if( $user['role_id'] != "5" && $check && (empty($user['matricule']) || empty($user['superior_id'])) && (!str_ends_with($_SERVER['REQUEST_URI'], "dashboard") ||!str_ends_with($_SERVER['REQUEST_URI'], "dashboard/index.php")) ){
             $_SESSION['error'] = "must define matricule and superior employee";
-            redirect(url('profiles/'));
-        }
+            redirect_back(-1);
+        } */
 
 
         $user['role'] = get_role($user['role_id']);

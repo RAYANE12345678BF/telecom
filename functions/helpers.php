@@ -102,7 +102,9 @@ if (!function_exists('send_json_response')) {
 if (! function_exists('redirect_back')) {
     function redirect_back(int $status_code = 302)
     {
-        http_response_code($status_code);
+        if( $status_code != -1 ){
+            http_response_code($status_code);
+        }
         header('Location:' . $_SERVER['HTTP_REFERER']);
         exit();
     }
@@ -652,3 +654,27 @@ if( !function_exists('profile_url') ){
     }
 }
 
+if( !function_exists('if_user_is') ){
+    function if_user_is(string|array $role, ?callable $callback){
+        if( !session_id() ){
+            session_start();
+        }
+
+        if( is_string($role) ){
+            $role = [$role];
+        }
+        $user = fetch_user_information($_SESSION['user_id'], false);
+
+        foreach($role as $r){
+            if( $user['role']['nom'] == $r ){
+                if( $callback ){
+                    return $callback();
+                }
+    
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
