@@ -8,12 +8,12 @@ if (! session_id()) {
 
 redirect_if_not_auth();
 
-$user = $_SESSION['user'];
-
 $services = get_services();
 $departments = get_departments();
 $employees = get_all_users();
 $roles = get_roles();
+
+
 
 
 $notifications = get_notifications($_SESSION['user_id']);
@@ -25,7 +25,8 @@ $redPin = count(array_filter($notifications, function ($v, $i) {
 }, ARRAY_FILTER_USE_BOTH)) > 0;
 
 $user = fetch_user_information($_SESSION['user_id']);
-$_SESSION['user'] = $user;
+$_SESSION['user'] = get_user($_SESSION['user_id']);
+
 
 $user_demands = get_user_demands($_SESSION['user_id']);
 
@@ -1050,7 +1051,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                                             <option value="" disabled selected>Sélectionner</option>
                                             <?php foreach ($employees as $employee): ?>
                                                 <?php if ($employee['id'] != $user['id']): ?>
-                                                    <option <?php echo $user['superior']['id'] ?? -1 == $employee['id'] ? 'selected' : '' ?> value="<?php echo $employee['id'] ?>"><?php echo $employee['nom'] . ' ' . $employee['prenom'] ?></option>
+                                                    <option <?php echo ($user['superior']['id'] ?? -1) == $employee['id'] ? 'selected' : '' ?> value="<?php echo $employee['id'] ?>"><?php echo $employee['nom'] . ' ' . $employee['prenom'] ?></option>
                                                 <?php endif; ?>
                                             <?php endforeach; ?>
                                         </select>
