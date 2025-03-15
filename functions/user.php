@@ -7,7 +7,7 @@ if (! function_exists('get_user_demands')) {
     {
         $db = load_db();
 
-        $sql = "SELECT * FROM `demands` WHERE `employee_id` = ?";
+        $sql = "SELECT `id` FROM `demands` WHERE `employee_id` = ?";
 
         $stmt = $db->prepare($sql);
 
@@ -22,7 +22,15 @@ if (! function_exists('get_user_demands')) {
             return [];
         }
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $demands = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $demands_w = [];
+
+        foreach($demands as $demand){
+            $demands_w[] = get_demand_with_lifecycle($demand['id']);
+        }
+
+        return $demands_w;
     }
 }
 

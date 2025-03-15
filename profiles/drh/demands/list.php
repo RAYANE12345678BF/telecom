@@ -653,6 +653,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                     <th>Type de demande</th>
                     <th>Date de demande</th>
                     <th>Statut</th>
+                    <th>decisions</th>
                     <th>
                         compte_rendu
                     </th>
@@ -676,11 +677,20 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                             <?= $demand['status'] ?>
                         </td>
                         <td>
+                            <ul>
+                                <?php foreach ($demand['lifecycle'] as $step): $superior = fetch_user_information($step['superior_id']); ?>
+                                    <li>
+                                        <?= sprintf("%s (%s) :", $superior['nom'], $superior['role']['nom']) ?> <?= $step['decision'] ?>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </td>
+                        <td>
                             <?php if (in_array($demand['type'], ['mission', 'deplacement'])): ?>
-                            <?php if ($demand['status'] == 'accepted'): ?>
-                                <a href="<?= url('profiles/drh/compte-rendus/' . $demand['type'] . '.php?demand_id=' . $demand['id']) ?>">
-                                    create/update compte rendu
-                                </a>
+                                <?php if ($demand['status'] == 'accepted'): ?>
+                                    <a href="<?= url('profiles/drh/compte-rendus/' . $demand['type'] . '.php?demand_id=' . $demand['id']) ?>">
+                                        create/update compte rendu
+                                    </a>
                                 <?php else: ?>
                                     wait untill accept
                                 <?php endif; ?>

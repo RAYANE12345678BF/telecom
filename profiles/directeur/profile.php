@@ -1032,19 +1032,6 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                                     </select>
                                 </div>
                             </div>
-                            <div class="info-field">
-                                <div class="field-label">superior director</div>
-                                <div class="field-value">
-                                    <select name="superior_id">
-                                        <option value="" disabled selected>Sélectionner</option>
-                                        <?php foreach ($employees as $employee): ?>
-                                            <?php if ($employee['id'] != $user['id']): ?>
-                                                <option <?php echo $user['superior']['id'] ?? -1 == $employee['id'] ? 'selected' : '' ?> value="<?php echo $employee['id'] ?>"><?php echo $employee['nom'] . ' ' . $employee['prenom'] ?></option>
-                                            <?php endif; ?>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>

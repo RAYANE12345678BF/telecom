@@ -857,12 +857,13 @@ $rc_days = calculate_rc_days($user['id']);
                 </a>
             </div>
         </div>
-        <div class="user-section" id="logoutButton">
+        <form action="<?= url('actions/auth.php') ?>" method="post" class="user-section">
+            <input type="hidden" value="logout" name="action" />
             <div class="user-avatar">
                 <i class="fas fa-sign-in-alt"></i>
             </div>
-            <span>Se déconnecter</span>
-        </div>
+            <button type="submit" style="border : none">Se déconnecter</button>
+        </form>
     </div>
 
     <!-- Top Navbar -->

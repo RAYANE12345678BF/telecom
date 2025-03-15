@@ -837,12 +837,13 @@ $user = fetch_user_information($_SESSION['user_id']);
                 </a>
             </div>
         </div>
-        <div class="user-section" id="logoutButton">
+        <form action="<?= url('actions/auth.php') ?>" method="post" class="user-section">
+            <input type="hidden" value="logout" name="action" />
             <div class="user-avatar">
                 <i class="fas fa-sign-in-alt"></i>
             </div>
-            <span>Se déconnecter</span>
-        </div>
+            <button type="submit" style="border : none">Se déconnecter</button>
+        </form>
     </div>
 
     <!-- Top Navbar -->
@@ -934,11 +935,11 @@ $user = fetch_user_information($_SESSION['user_id']);
                         <div class="form-group-row">
                             <div class="form-group">
                                 <label class="form-label" for="heur-sortie">heur de sortie</label>
-                                <input name="leave_hour" type="date" id="heur-sortie" class="form-input" required>
+                                <input name="leave_hour" type="time" id="heur-sortie" class="form-input" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="heur-entrée">heur d'entrée</label>
-                                <input name="come_hour" type="date" id="heur-entrée" class="form-input" required>
+                                <input name="come_hour" type="time" id="heur-entrée" class="form-input" required>
                             </div>
                         </div>
 

@@ -314,8 +314,8 @@ if (!function_exists('insert_support')) {
 if (!function_exists('get_demand_with_lifecycle')) {
     function get_demand_with_lifecycle($demand_id)
     {
-        global $pdo;
 
+        $pdo = load_db();
         // Get the demand details
         $stmt = $pdo->prepare("SELECT * FROM demands WHERE id = ?");
         $stmt->execute([$demand_id]);
@@ -327,14 +327,14 @@ if (!function_exists('get_demand_with_lifecycle')) {
         }
 
         // Get the lifecycle details
-        $stmt = $pdo->prepare("SELECT * FROM `demand_lifecycle` WHERE demand_id = ? ORDER BY performed_at ASC");
+        $stmt = $pdo->prepare("SELECT * FROM `demand_lifecycle` WHERE demand_id = ?");
         $stmt->execute([$demand_id]);
         $lifecycle = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         // Add lifecycle to the demand array
         $demand['lifecycle'] = $lifecycle;
 
-        send_json_response(["success" => true, "data" => $demand]);
+        return $demand;
     }
 }
 
