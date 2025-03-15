@@ -748,7 +748,7 @@ $user = fetch_user_information($_SESSION['user_id']);
 </head>
 
 <body>
-    <div class="sidebar">
+<div class="sidebar">
         <div class="sidebar-header">
             <div class="logo">
                 <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
@@ -819,10 +819,21 @@ $user = fetch_user_information($_SESSION['user_id']);
                         <i class="fas fa-tasks"></i>
                         <span class="menu-text">État de demande</span>
                     </a>
-                    <a href="<?= url('dashboard/demands/consulte.php') ?>" class="menu-item">
-                        <i class="fas fa-eye"></i>
-                        <span class="menu-text">Consulter Demande</span>
+                    <?php if (!if_user_is('Employé', null)): ?>
+                        <a href="<?= url('dashboard/demands/consulte.php') ?>" class="menu-item">
+                            <i class="fas fa-eye"></i>
+                            <span class="menu-text">Consulter Demande</span>
+                        </a>
+                    <?php endif ?>
+
+                    <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
+                    <a href="#" class="menu-item" onclick="Swal.fire({title : 'information', text : 'comming soon!', icon : 'info'})">
+                        <i class="fas fa-clock"></i>
+                        <span class="menu-text">Voir Pointage</span>
                     </a>
+                    <?php endif ?>
+
+                    
                 </div>
 
                 <div class="nav-title">Autres</div>
