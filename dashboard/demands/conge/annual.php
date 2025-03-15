@@ -1044,7 +1044,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                             
                             if (start_date.value.trim() != "") {
                                 let date = new Date(start_date.value);
-                                date.setDate(date.getDate() + +duree.value)
+                                date.setDate(date.getDate() + +duree.value  + 1)
 
                                 console.log(date, duree)
                                 end_date.value = date.toISOString().split("T")[0]
