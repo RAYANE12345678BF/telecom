@@ -25,6 +25,7 @@ $redPin = count(array_filter($notifications, function ($v, $i) {
 }, ARRAY_FILTER_USE_BOTH)) > 0;
 
 $user = fetch_user_information($_SESSION['user_id']);
+$_SESSION['user'] = $user;
 
 $user_demands = get_user_demands($_SESSION['user_id']);
 
