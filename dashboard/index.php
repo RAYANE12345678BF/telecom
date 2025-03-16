@@ -1157,12 +1157,12 @@ $user_demands = get_user_demands($_SESSION['user_id']);
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             Swal.fire({
-                title: "demand deposé!",
-                text: "le demand deposé avec succes!",
-                icon: "success"
+                title: "information!",
+                text: "<?= $_SESSION['status'] ?>",
+                icon: "<?= $_SESSION['status_icon'] ?? "success" ?>"
             });
         </script>
-    <?php unset($_SESSION['status']);
+    <?php unset($_SESSION['status']);unset($_SESSION['status_icon']);
     endif; ?>
 
     <script>

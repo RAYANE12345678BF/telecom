@@ -683,7 +683,7 @@ if( !function_exists('can_do_conge') ){
     function can_do_conge($user_id, string $conge_type){
         $pdo = load_db();
 
-        $sql = "SELECT * FROM `demands` WHERE `employee_id`=? AND `type`=? AND (`status`=? OR (`status`=? AND `end_date`<=NOW()))";
+        $sql = "SELECT * FROM `demands` WHERE `employee_id`=? AND `type`=? AND (`status`=? OR (`status`=? AND `date_fin`<=NOW()))";
 
         $stmt = $pdo->prepare($sql);
 
