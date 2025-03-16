@@ -793,7 +793,7 @@ $user_demands = array_filter($user_demands, function ($demand) use ($user) {
             Swal.fire({
                 title: "vous etes sure?",
                 showDenyButton: true,
-                confirmButtonText: "ouy",
+                confirmButtonText: "oui",
                 denyButtonText: `annuler`
             }).then((result) => {
                 /* Read more about isConfirmed, isDenied below */
@@ -1011,10 +1011,10 @@ $user_demands = array_filter($user_demands, function ($demand) use ($user) {
                         </td>
                         <td>
                             <button onclick="accept('<?= $demand['id'] ?>')" style="border-radius:10px;padding : 5px 10px;border:1px solid white;background:green;color:white">
-                                accept
+                                accepter
                             </button>
                             <button onclick="reject('<?= $demand['id'] ?>')" style="border-radius:10px;padding : 5px 10px;border:1px solid white;background:red;color:white">
-                                reject
+                                rejecter
                             </button>
                         </td>
                     </tr>
