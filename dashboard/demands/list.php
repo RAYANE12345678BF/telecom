@@ -689,7 +689,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                             <ul>
                                 <?php foreach ($demand['lifecycle'] as $step): $superior = fetch_user_information($step['superior_id']); ?>
                                     <li>
-                                        <?= sprintf("%s (%s) :", $superior['nom'], $superior['role']['nom']) ?> <?= $step['decision'] ?>
+                                        <?= sprintf("%s (%s) :", $superior['nom'], $superior['role']['nom']) ?> <?= $step['decision'] == 'accepted' ? 'accepté' : 'rejeté' ?>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>
