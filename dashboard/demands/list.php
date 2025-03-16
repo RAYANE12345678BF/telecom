@@ -577,13 +577,13 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                     <?php endif ?>
 
                     <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
-                    <a href="#" class="menu-item" onclick="Swal.fire({title : 'information', text : 'comming soon!', icon : 'info'})">
-                        <i class="fas fa-clock"></i>
-                        <span class="menu-text">Voir Pointage</span>
-                    </a>
+                        <a href="#" class="menu-item" onclick="Swal.fire({title : 'information', text : 'comming soon!', icon : 'info'})">
+                            <i class="fas fa-clock"></i>
+                            <span class="menu-text">Voir Pointage</span>
+                        </a>
                     <?php endif ?>
 
-                    
+
                 </div>
 
                 <div class="nav-title">Autres</div>
@@ -709,27 +709,21 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                         </td>
                         <td>
                             <?php if ($info['type'] == 'text'): ?>
-                        <td>
-                            <?= $info['content'] ?>
+                                <?= $info['content'] ?>
+                            <?php elseif ($info['type'] == 'keys'): ?>
+                                <ul>
+                                    <?php foreach ($info['content'] as $key => $value): ?>
+                                        <li>
+                                            <?= $key ?> : <?= $value ?>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php else: ?>
+                                <a href="<?= url('storage/' . $info['content']) ?>" download="file.pdf">
+                                    download
+                                </a>
+                            <?php endif; ?>
                         </td>
-                    <?php elseif ($info['type'] == 'keys'): ?>
-                        <td>
-                            <ul>
-                                <?php foreach ($info['content'] as $key => $value): ?>
-                                    <li>
-                                        <?= $key ?> : <?= $value ?>
-                                    </li>
-                                <?php endforeach; ?>
-                            </ul>
-                        </td>
-                    <?php else: ?>
-                        <td>
-                            <a href="<?= url('storage/' . $info['content']) ?>" download="file.pdf">
-                                download
-                            </a>
-                        </td>
-                    <?php endif; ?>
-                    </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

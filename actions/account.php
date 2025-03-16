@@ -32,7 +32,8 @@ switch($action){
     if( $user ){
         $_SESSION['user'] = fetch_user_information($_SESSION['user_id'], false);
         send_json_response([
-            'message' => "informations updated successfully"
+            'message' => "les informations ont été mises à jour avec succès",
+            'success' => true
         ]);
     }else{
         throw new Exception('error was occured');
@@ -49,7 +50,7 @@ switch($action){
         if( ($u = get_user_with('matricule', $matricule)) != null && $u['id'] != $_SESSION['user_id']  ){
             send_json_response([
                 'success' => false,
-                'message' => 'matricule already exists'
+                'message' => 'matricule deja existant'
             ]);
         }
 
@@ -63,7 +64,7 @@ switch($action){
             $_SESSION['user'] = fetch_user_information($_SESSION['user_id'], false);
             send_json_response([
                 'success' => true,
-                'message' => "informations updated successfully"
+                'message' => "les informations ont été mises à jour avec succès"
             ]);
         }else{
             throw new Exception('error was occured');
@@ -80,7 +81,7 @@ switch($action){
         if( !$actual_password || !$new_password || !$password_confirmation ){
             send_json_response([
                 'success' => false,
-                'message' => 'please fill all the required fields'
+                'message' => 'tous les champs sont obligatoires'
             ]);
         }
 

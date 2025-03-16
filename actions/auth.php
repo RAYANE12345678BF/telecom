@@ -47,7 +47,7 @@ switch ($action) {
         }else{
             $grh_id = get_grh_id();
             push_user_creation_notification($grh_id);
-            $_SESSION['info'] = "a notification has sent to the grh, and he will review ur account soon";
+            $_SESSION['info'] = "Votre compte a été créé avec succès, veuillez attendre l'activation de votre compte par le GRH";
             redirect_back();
         }
 
@@ -58,12 +58,12 @@ switch ($action) {
 
 
         if(empty($email) || empty($password)) {
-            $_SESSION['error'] = 'you forgot password or email is empty';
+            $_SESSION['error'] = "l'email et le mot de passe sont requis";
             redirect_back();
         }
 
         if(!$email){
-            $_SESSION['error'] = 'invalid email';
+            $_SESSION['error'] = 'email invalide';
             redirect_back();
         }
 

@@ -14,5 +14,6 @@ handleAccount($type, $id);
 
 
 send_json_response([
-    'message' => 'successfully changed'
+    'message' => 'les informations ont été mises à jour avec succès',
+    'success' => true
 ]);

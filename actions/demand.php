@@ -12,7 +12,7 @@ if ($action == 'change_status') {
     set_decision($_POST['demand_id'], $_SESSION['user_id'], $_POST['status']);
     send_json_response([
         'status' => 'ok',
-        'message' => 'updated successfully'
+        'message' => 'la modification a été effectuée avec succès'
     ]);
     exit();
 }
@@ -43,7 +43,7 @@ switch ($demand_type) {
         $info['content'] = $_POST['info'] ?? null;
 
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
-        $_SESSION['status'] = 'sucessfully demand send';
+        $_SESSION['status'] = 'la demande a été envoyée avec succès';
         
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         
@@ -56,7 +56,7 @@ switch ($demand_type) {
         $info['content'] = uploadPdf('info', '/employees/conge');
 
         if( $info['content'] == false ){
-            $_SESSION['error'] = 'unable to save the file';
+            $_SESSION['error'] = 'le fichier n\'a pas pu être enregistré';
             redirect_back();
         }
 
@@ -64,7 +64,7 @@ switch ($demand_type) {
         
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         
-        $_SESSION['status'] = 'sucessfully demand send';
+        $_SESSION['status'] = 'la demande a été envoyée avec succès';
         redirect(url('dashboard'));
         break;
 
@@ -73,13 +73,13 @@ switch ($demand_type) {
         $description = $_POST['description'] ?? null;
         $info['content'] = uploadPdf('info', '/employees/conge');
         if (!$info['content']) {
-            $_SESSION['error'] = "verify if the file is a pdf file";
+            $_SESSION['error'] = "le fichier n'a pas pu être enregistré";
             redirect_back();
         }
 
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
-        $_SESSION['status'] = 'sucessfully demand send';
+        $_SESSION['status'] = 'la demande a été envoyée avec succès';
         redirect(url('dashboard'));
         break;
 
@@ -89,7 +89,7 @@ switch ($demand_type) {
 
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
-        $_SESSION['status'] = 'sucessfully demand send';
+        $_SESSION['status'] = 'la demande a été envoyée avec succès';
         redirect(url('dashboard'));
         break;
 
@@ -105,7 +105,7 @@ switch ($demand_type) {
 
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
-        $_SESSION['status'] = 'sucessfully demand send';
+        $_SESSION['status'] = 'la demande a été envoyée avec succès';
         redirect(url('dashboard'));
         break;
     case 'mission':
@@ -124,7 +124,7 @@ switch ($demand_type) {
 
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
-        $_SESSION['status'] = 'sucessfully demand send';
+        $_SESSION['status'] = 'la demande a été envoyée avec succès';
         redirect(url('dashboard'));
         break;
     case 'deplacement':
@@ -142,7 +142,7 @@ switch ($demand_type) {
 
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
-        $_SESSION['status'] = 'sucessfully demand send';
+        $_SESSION['status'] = 'la demande a été envoyée avec succès';
         redirect(url('dashboard'));
         break;
     case 'leave':
@@ -160,7 +160,7 @@ switch ($demand_type) {
 
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
-        $_SESSION['status'] = 'sucessfully demand send';
+        $_SESSION['status'] = 'la demande a été envoyée avec succès';
         redirect(url('dashboard'));
         break;
 
@@ -170,7 +170,7 @@ switch ($demand_type) {
 
         $demand_id = insert_support($_SESSION['user_id'], $message, $type); 
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
-        $_SESSION['status'] = 'sucessfully support send';
+        $_SESSION['status'] = 'la demande a été envoyée avec succès';
         redirect(url('dashboard'));
         break;
 

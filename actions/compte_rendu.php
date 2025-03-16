@@ -34,5 +34,5 @@ if( !$demand['compte_rendu'] ){
 }else{
     update_compte_rendu($demand_id, $info);
 }
-$_SESSION['status'] = "updated / created successfully";
+$_SESSION['status'] = "la demande a été traitée avec succès";
 redirect_back();
