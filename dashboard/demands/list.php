@@ -683,7 +683,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                             <?= $demand['date_depose'] ?>
                         </td>
                         <td>
-                            <?= $demand['status'] == 'accepted' ? 'accepté' : 'rejecté'; ?>
+                            <?= $demand['status'] == 'accepted' ? 'accepté' : 'rejecé'; ?>
                         </td>
                         <td>
                             <ul>
