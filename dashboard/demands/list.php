@@ -683,7 +683,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                             <?= $demand['date_depose'] ?>
                         </td>
                         <td>
-                            <?= $demand['status'] ?>
+                            <?= $demand['status'] == 'accepted' ? 'accepté' : 'rejecté'; ?>
                         </td>
                         <td>
                             <ul>
@@ -698,13 +698,13 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                             <?php if (in_array($demand['type'], ['mission', 'deplacement'])): ?>
                                 <?php if ($demand['status'] == 'accepted'): ?>
                                     <a href="<?= url('dashboard/compte-rendus/' . $demand['type'] . '.php?demand_id=' . $demand['id']) ?>">
-                                        create/update compte rendu
+                                        cree/modifié compte rendu
                                     </a>
                                 <?php else: ?>
-                                    wait untill accept
+                                    en attent d'accepter
                                 <?php endif; ?>
                             <?php else: ?>
-                                no compte rendu
+                                /
                             <?php endif; ?>
                         </td>
                         <td>
