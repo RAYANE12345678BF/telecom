@@ -583,7 +583,7 @@ $requests = fetch_creation_demands();
                                     <i class="fas fa-hospital"></i>
                                     <span class="menu-text">Congé Maladie</span>
                                 </a>
-                                <a href="<?= url('pdashboard/demands/conge/maternity.php') ?>" class="menu-item">
+                                <a href="<?= url('dashboard/demands/conge/maternity.php') ?>" class="menu-item">
                                     <i class="fas fa-baby"></i>
                                     <span class="menu-text">Congé Maternité</span>
                                 </a>
