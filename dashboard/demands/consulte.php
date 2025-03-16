@@ -791,11 +791,10 @@ $user_demands = array_filter($user_demands, function ($demand) use ($user) {
 
         function reject(id) {
             Swal.fire({
-                title: "Do you want to save the changes?",
+                title: "vous etes sure?",
                 showDenyButton: true,
-                showCancelButton: true,
-                confirmButtonText: "Save",
-                denyButtonText: `Don't save`
+                confirmButtonText: "ouy",
+                denyButtonText: `annuler`
             }).then((result) => {
                 /* Read more about isConfirmed, isDenied below */
                 if (result.isConfirmed) {
@@ -808,14 +807,14 @@ $user_demands = array_filter($user_demands, function ($demand) use ($user) {
                             body: data
                         }).then(res => res.json())
                         .then(js => {
-                            Swal.fire("Saved!", "", "success");
+                            Swal.fire("enregistre!", "", "success");
                             window.location.reload()
                         }).catch(err => {
                             alert(err)
                         })
 
                 } else if (result.isDenied) {
-                    Swal.fire("Changes are not saved", "", "info");
+                    Swal.fire("annulation succes", "", "info");
                 }
             });
 
@@ -904,7 +903,7 @@ $user_demands = array_filter($user_demands, function ($demand) use ($user) {
                     <?php endif ?>
 
                     <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
-                    <a href="#" class="menu-item" onclick="Swal.fire({title : 'information', text : 'comming soon!', icon : 'info'})">
+                    <a href="#" class="menu-item" onclick="Swal.fire({title : 'information', text : 'en train de developper!', icon : 'info'})">
                         <i class="fas fa-clock"></i>
                         <span class="menu-text">Voir Pointage</span>
                     </a>

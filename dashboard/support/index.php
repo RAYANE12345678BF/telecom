@@ -768,7 +768,7 @@
                     <?php endif ?>
 
                     <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
-                    <a href="#" class="menu-item" onclick="Swal.fire({title : 'information', text : 'comming soon!', icon : 'info'})">
+                    <a href="#" class="menu-item" onclick="Swal.fire({title : 'information', text : 'en train de developper!', icon : 'info'})">
                         <i class="fas fa-clock"></i>
                         <span class="menu-text">Voir Pointage</span>
                     </a>

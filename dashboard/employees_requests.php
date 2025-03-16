@@ -33,7 +33,7 @@ $requests = fetch_creation_demands();
         function handleAccount(type, id) {
 
             Swal.fire({
-                title: `do you want to ${type} this account?`,
+                title: `vous etes sure de ${type} ce compte?`,
                 showDenyButton: true,
                 showCancelButton: true,
                 confirmButtonText: "confirm",
@@ -51,7 +51,7 @@ $requests = fetch_creation_demands();
                         .then(js => {
                             Swal.fire({
                                 title: 'done!',
-                                text: `account ${type}ed successfully`,
+                                text: `compte ${type}ed avec success`,
                                 icon: 'success',
                                 timer: 2000
                             })
@@ -60,12 +60,12 @@ $requests = fetch_creation_demands();
                         }).catch(err => {
                             Swal.fire({
                                 title: 'error!',
-                                text: 'account not activated due to some error',
+                                text: 'n\'est pat enregistrer',
                                 icon: 'error'
                             })
                         })
                 } else if (result.isDenied) {
-                    Swal.fire("Changes are not saved", "", "info");
+                    Swal.fire("les enregistrements success", "", "info");
                 }
             });
 
@@ -622,7 +622,7 @@ $requests = fetch_creation_demands();
                     <?php endif ?>
 
                     <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
-                    <a href="#" class="menu-item" onclick="Swal.fire({title : 'information', text : 'comming soon!', icon : 'info'})">
+                    <a href="#" class="menu-item" onclick="Swal.fire({title : 'information', text : 'en train de developper!', icon : 'info'})">
                         <i class="fas fa-clock"></i>
                         <span class="menu-text">Voir Pointage</span>
                     </a>
