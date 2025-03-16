@@ -9,6 +9,7 @@ if (! session_id()) {
 redirect_if_not_auth();
 
 if( !can_do_conge($_SESSION['user_id'], 'leave') ){
+    $_SESSION['status_icon'] = 'info';
     $_SESSION['status'] = "vous ne pouvez pas faire cette action car vous avez conger deja";
     redirect(url('dashboard'));
 }
