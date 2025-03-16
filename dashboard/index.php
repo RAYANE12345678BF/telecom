@@ -934,7 +934,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                             <h2 class="card-title">Informations Personnelles</h2>
                             <button id="saveBtn" class="edit-button">
                                 <i class="fas fa-floppy-disk"></i>
-                                Save Changes
+                                Enregistrer
                             </button>
                         </div>
                         <div class="info-grid">
@@ -995,7 +995,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                             <h2 class="card-title">Informations Professionnelles</h2>
                             <button id="saveProfissionel" class="edit-button">
                                 <i class="fas fa-floppy-disk"></i>
-                                save changes
+                                Enregistrer
                             </button>
                         </div>
                         <div class="info-grid">
