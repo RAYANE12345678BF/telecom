@@ -702,7 +702,7 @@ $requests = fetch_creation_demands();
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>employee name</th>
+                    <th>nom d'employee</th>
                     <th>email</th>
                     <th>position</th>
                     <th>action</th>
