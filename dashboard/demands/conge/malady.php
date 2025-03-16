@@ -963,17 +963,19 @@ $user = fetch_user_information($_SESSION['user_id']);
                         start_date.min = new Date().toISOString().split("T")[0];
                         end_date.min = new Date().toISOString().split("T")[0];
 
-                        duree.min = 1
+                        start_date.onchange = () => {
+                            var duree = document.querySelector('input[name=duree]') || document.querySelector('select[name=duree]')
 
-                        duree.onchange = () => {
-                            if (+duree.value < 1) {
+                            duree.min = 1
+                            if( +duree.value < 1 ){
                                 duree.value = 1
                             }
-                        }
-                        start_date.onchange = () => {
+                            
                             if (start_date.value.trim() != "") {
                                 let date = new Date(start_date.value);
-                                date.setDate(date.getDate() + +duree.value)
+                                date.setDate(date.getDate() + +duree.value  + 1)
+
+                                console.log(date, duree)
                                 end_date.value = date.toISOString().split("T")[0]
                             }
                         }
