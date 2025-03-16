@@ -678,3 +678,17 @@ if( !function_exists('if_user_is') ){
         return false;
     }
 }
+
+if( !function_exists('can_do_conge') ){
+    function can_do_conge($user_id, string $conge_type){
+        $pdo = load_db();
+
+        $sql = "SELECT * FROM `demands` WHERE `employee_id`=? AND `type`=? AND (`status`=? OR (`status`=? AND `end_date`<=NOW()))";
+
+        $stmt = $pdo->prepare($sql);
+
+        $stmt->execute([$user_id, $conge_type, 'waiting', 'accepted']);
+
+        return $stmt->rowCount() < 1;
+    }
+}

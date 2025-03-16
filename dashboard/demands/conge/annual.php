@@ -8,6 +8,11 @@ if (! session_id()) {
 
 redirect_if_not_auth();
 
+if( !can_do_conge($_SESSION['user_id'], 'conge_annual') ){
+    $_SESSION['status'] = "vous ne pouvez pas faire cette action car vous avez conger deja";
+    redirect(url('dashboard'));
+}
+
 $user = $_SESSION['user'];
 
 

@@ -1,3 +1,17 @@
+<?php
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+if (!session_id()) {
+    session_start();
+}
+
+redirect_if_not_auth();
+
+$user = fetch_user_information($_SESSION['user_id']);
+
+
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -689,7 +703,7 @@
 </head>
 
 <body>
-<div class="sidebar">
+    <div class="sidebar">
         <div class="sidebar-header">
             <div class="logo">
                 <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
@@ -768,13 +782,13 @@
                     <?php endif ?>
 
                     <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
-                    <a href="#" class="menu-item" onclick="Swal.fire({title : 'information', text : 'en train de developper!', icon : 'info'})">
-                        <i class="fas fa-clock"></i>
-                        <span class="menu-text">Voir Pointage</span>
-                    </a>
+                        <a href="#" class="menu-item" onclick="Swal.fire({title : 'information', text : 'en train de developper!', icon : 'info'})">
+                            <i class="fas fa-clock"></i>
+                            <span class="menu-text">Voir Pointage</span>
+                        </a>
                     <?php endif ?>
 
-                    
+
                 </div>
 
                 <div class="nav-title">Autres</div>
@@ -844,54 +858,41 @@
                 <div class="header">
                     <h1 class="title"> Support </h1>
                 </div>
-                <form id="formConvocation" onsubmit="handleSubmit(event)">
+                <form id="formConvocation" action="<?= url('actions/demand.php') ?>">
+                    <input type="hidden" value="support" name="demand_type">
                     <div class="section">
                         <h3 class="section-title">Informations Personnelles</h3>
                         <div class="form-group">
                             <label class="form-label" for="matricule">Matricule</label>
-                            <input type="text" id="matricule" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="Adresse email">Adresse email</label>
-                            <input type="text" id="Adresse email" class="form-input" required>
+                            <input readonly value="<?= $user['matricule'] ?>" type="text" id="matricule" class="form-input" required>
                         </div>
                         <div class="form-group-row">
                             <div class="form-group">
                                 <label class="form-label" for="nom">Nom</label>
-                                <input type="text" id="nom" class="form-input" required>
+                                <input readonly value="<?= $user['nom'] ?>" type="text" id="nom" class="form-input" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="prenom">Prénom</label>
-                                <input type="text" id="prenom" class="form-input" required>
+                                <input readonly value="<?= $user['prenom'] ?>" type="text" id="prenom" class="form-input" required>
                             </div>
                         </div>
 
                         <h3 class="section-title">Informations Professionnelles</h3>
 
                         <div class="form-group">
-                            <label class="form-label" for="Fonction">Fonction</label>
-                            <input type="text" id="Fonction" class="form-input" required>
-                        </div>
-                    </div>
-                    <div class="form-group-row">
-                        <div class="form-group">
-                            <label class="form-label" for="Service">Service</label>
-                            <input type="text" id="Service" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="Département">Département</label>
-                            <input type="text" id="Département" class="form-input" required>
+                            <label class="form-label" for=" Fonction"> Fonction</label>
+                            <input readonly value="<?= $user['role']['nom'] ?>" type="text" id=" Fonction" class="form-input" required>
                         </div>
                     </div>
                     <div class="section">
                         <h3 class="section-title">Détails de problème</h3>
                         <div class="form-group">
                             <label class="form-label" for="type_de_probleme">Type de problème</label>
-                            <input type="text" id="type_de_probleme" class="form-input" required>
+                            <input name="type" type="text" id="type_de_probleme" class="form-input" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="description_de_probleme">Description de problème</label>
-                            <input type="text" id="description_de_probleme" class="form-input" required>
+                            <input name="message" type="text" id="description_de_probleme" class="form-input" required>
                         </div>
                     </div>
                     <div class="buttons-container">

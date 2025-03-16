@@ -8,20 +8,16 @@ if (! session_id()) {
 
 redirect_if_not_auth();
 
+if( !can_do_conge($_SESSION['user_id'], 'conge_rc') ){
+    $_SESSION['status'] = "vous ne pouvez pas faire cette action car vous avez conger deja";
+    redirect(url('dashboard'));
+}
 
 
 $user = fetch_user_information($_SESSION['user_id']);
 
 $demands = get_user_demands($user['id']);
 
-$waiting_demands = array_filter($demands, function($value){
-    return $value['type'] == 'conge_rc' && $value['status'] == 'waiting';
-});
-
-if( count($waiting_demands) > 0 ){
-    $_SESSION['error'] = "you can not do that, because you have already demand";
-    redirect(url('profiles'));
-}
 
 $successfull_demands = array_filter($demands, function($value){
     if( $value['type'] != 'conge_rc' ){
