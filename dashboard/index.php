@@ -1103,7 +1103,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
     </script>
 
     <script>
-        const warnInfo = (text = "to unlock all the sections you need to fill all the information in the profile") => {
+        const warnInfo = (text = "complete vous informations pour bien utuliser votre compte") => {
             Swal.fire({
                 title: "warning",
                 text,
