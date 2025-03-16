@@ -1088,7 +1088,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                 }).then(res => res.json())
                 .then(js => {
                     Swal.fire({
-                        title: 'done!',
+                        title: 'effectué!',
                         text: 'les enregistrement effectué avec success',
                         icon: 'success'
                     })
@@ -1139,13 +1139,13 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                 }).then(res => res.json())
                 .then(js => {
                     Swal.fire({
-                        title: 'done!',
+                        title: 'effectué!',
                         text: 'les enregistrement effectué avec success',
                         icon: 'success'
                     })
                 }).catch(err => {
                     Swal.fire({
-                        title: 'error!',
+                        title: 'erreur!',
                         text: err,
                         icon: 'error'
                     })
