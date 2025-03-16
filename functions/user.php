@@ -145,14 +145,14 @@ if (!function_exists('push_user_creation_notification')) {
         $db = load_db();
 
         $title = 'creation demand';
-        $description = 'some one created an account, please review it';
+        $description = 'il y a une nouvelle demande de creation de compte';
 
         $sql = "INSERT INTO `notifications` (`employee_id`, `title`, `description`,`url` ) VALUES (?, ?, ?, ?)";
 
         $stmt = $db->prepare($sql);
 
         try {
-            $stmt->execute([$user_id, $title, $description, url('profiles/drh/employees_requests.php')]);
+            $stmt->execute([$user_id, $title, $description, url('dashboard/employees_requests.php')]);
         } catch (PDOException $e) {
             throw new Exception($e->getMessage());
         }
