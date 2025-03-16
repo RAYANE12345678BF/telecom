@@ -717,10 +717,10 @@ $requests = fetch_creation_demands();
                         <td><?= "{$user_info['department']['nom']},{$user_info['service']['nom']}, {$user_info['role']['nom']}" ?></td>
                         <td class="gap-2 flex">
                             <button onclick="handleAccount('activate', '<?= $demand['id'] ?>')" class="p-1 rounded text-white bg-green-400 hover:bg-green-500 duration-300 ease-in-out">
-                                validate
+                                accepter
                             </button>
                             <button onclick="handleAccount('reject', '<?= $demand['id'] ?>')" class="p-1 rounded text-white bg-red-400 hover:bg-red-500 duration-300 ease-in-out">
-                                reject
+                                rejeter
                             </button>
                         </td>
                     </tr>
