@@ -749,3 +749,12 @@ if( !function_exists('getUserWithDemands') ){
         return $user;
     }
 }
+
+
+if( !function_exists('storage_path') ){
+    function storage_path(string $path = '/', bool $url = false){
+        if( !$path )
+            throw new \Exception('error in path to storage');
+        return $url ? url('storage/' . $path) : __DIR__ . '/../storage/' . $path;
+    }
+}

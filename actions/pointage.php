@@ -1,10 +1,8 @@
 <?php
-// Include the necessary PhpSpreadsheet files
+
 require __DIR__ . '/../vendor/autoload.php';
 
-use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Date;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Exception;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
@@ -60,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
                     } else {
                         $user = getUserWithDemands($user_no, 'accepted');
                         if( !$user ){
-                            $cell->current()->setValue('user not found');
+                            $cell->current()->setValue('no justifié');
                             continue;
                         }
                         $users[$user_no] = $user;
@@ -77,11 +75,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
                             $cell->current()->setValue($active_demands[0]['type']);
                         } else {
                             // Set the cell value to 'NOK' if user found but date is not between start and end date
-                            $cell->current()->setValue('NOK');
+                            $cell->current()->setValue('no justifié');
                         }
                     } else {
                         // Set the cell value to 'NOK' if user not found
-                        $cell->current()->setValue('NOK');
+                        $cell->current()->setValue('no justifié');
                     }
                 } catch (Exception $e) {
                     // Handle exception if the cell is not found or any other issue
@@ -91,15 +89,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
 
 
             // Save the modified file
-            $outputFilePath = 'modified_' . $uploadedFile['name'];
+            $outputFilePath = 'files/' . 'modified_' . $uploadedFile['name'];
             $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-            $writer->save($outputFilePath);
+            $writer->save(storage_path($outputFilePath));
 
             $file_name = $outputFilePath;
             $file_url =  url('actions/' . $file_name);
 
-
-            echo "File uploaded and processed successfully! <a href='{$outputFilePath}'>Download the modified file</a>";
+            print_r(json_encode([
+                'success' => true,
+                'message' => 'file processed successfully',
+                'file_url' => storage_path($outputFilePath, true)
+            ]));
         } catch (Exception $e) {
             echo 'Error: ' . $e->getMessage();
         }
