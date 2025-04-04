@@ -36,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
             $targetColumnIndex = array_search($targetColumn, $headerValues) + 1; // 1-based index
             $dateColumnIndex = array_search('Date', $headerValues) + 1;
 
-            echo sprintf("%d - %d\n", $targetColumnIndex, $dateColumnIndex);
 
 
             if ($targetColumnIndex === false) {
@@ -77,12 +76,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
                             // Set the cell value to 'OK' if user found and date is between start and end date
                             $cell->current()->setValue($active_demands[0]['type']);
                         } else {
-                            echo 'not changed';
                             // Set the cell value to 'NOK' if user found but date is not between start and end date
                             $cell->current()->setValue('NOK');
                         }
                     } else {
-                        echo 'not changed';
                         // Set the cell value to 'NOK' if user not found
                         $cell->current()->setValue('NOK');
                     }
