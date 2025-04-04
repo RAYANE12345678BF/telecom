@@ -516,7 +516,6 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                     <i class="fas fa-user-circle"></i>
                     <span class="menu-text">Mon Profil</span>
                 </a>
-
                 <div class="nav-title">Demandes</div>
                 <div class="request-section">
                     <a href="#" class="menu-item" id="faireDemandeBtn">
@@ -582,8 +581,6 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                             <span class="menu-text">Voir Pointage</span>
                         </a>
                     <?php endif ?>
-
-
                 </div>
 
                 <div class="nav-title">Autres</div>
@@ -689,7 +686,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                             <ul>
                                 <?php foreach ($demand['lifecycle'] as $step): $superior = fetch_user_information($step['superior_id']); ?>
                                     <li>
-                                        <?= sprintf("%s (%s) :", $superior['nom'], $superior['role']['nom']) ?> <?= $step['decision'] == 'accepted' ? 'accepté' : 'rejeté' ?>
+                                        <?= sprintf("%s (%s) :", $superior['nom'], $superior['role']['nom']) ?> <?= $step['decision'] == 'accepted' ? 'accepté' : ( $step['decision'] == 'waiting' ? 'en attent' : 'rejeté' ) ?>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>

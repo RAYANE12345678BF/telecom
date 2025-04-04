@@ -39,9 +39,9 @@ if (!function_exists('load_db')) {
 if (!function_exists('redirect')) {
     function redirect($location, int $status_code = 302)
     {
-       if( http_response_code() != 302 ){
+        if (http_response_code() != 302) {
             http_response_code($status_code);
-       }
+        }
         header('Location:' . $location);
         exit();
     }
@@ -102,7 +102,7 @@ if (!function_exists('send_json_response')) {
 if (! function_exists('redirect_back')) {
     function redirect_back(int $status_code = 302)
     {
-        if( $status_code != -1 ){
+        if ($status_code != -1) {
             http_response_code($status_code);
         }
         header('Location:' . $_SERVER['HTTP_REFERER']);
@@ -153,7 +153,6 @@ if (!function_exists('get_address')) {
         return $result->fetch(PDO::FETCH_ASSOC) ?? [];
     }
 }
-
 
 if (!function_exists('redirect_if_not_auth')) {
     function redirect_if_not_auth()
@@ -341,7 +340,8 @@ if (!function_exists('get_demand_with_lifecycle')) {
 }
 
 if (!function_exists('get_all_demands_with_lifecycle')) {
-    function get_all_demands_with_lifecycle($user_id=null) {
+    function get_all_demands_with_lifecycle($user_id = null)
+    {
 
         $pdo = load_db();
         // Step 1: Fetch all demands
@@ -382,7 +382,8 @@ if (!function_exists('add_lifecycle_entry')) {
 }
 
 if (!function_exists('set_decision')) {
-    function set_decision($demand_id, $superior_id, $decision){
+    function set_decision($demand_id, $superior_id, $decision)
+    {
         $pdo = load_db();
 
         $demand = fetch_demand($demand_id);
@@ -394,22 +395,21 @@ if (!function_exists('set_decision')) {
         // Execute the query
         if ($stmt->execute([$decision, $demand_id, $superior_id])) {
             //add it to the up worker or if is the director just this is the final decision
-            if( fetch_user_information($superior_id)['role']['nom'] == 'Directeur' ){
+            if (fetch_user_information($superior_id)['role']['nom'] == 'Directeur') {
                 $sql = "UPDATE `demands` SET `status`=? WHERE `id`=?";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([$decision, $demand_id]);
 
 
-                if( $demand['type'] == 'conge_rc' && $decision == 'accepted' ){
-                    
-                    $response = deduct_leave_days($demand['employee_id'], $demand['duree'] );
+                if ($demand['type'] == 'conge_rc' && $decision == 'accepted') {
+
+                    $response = deduct_leave_days($demand['employee_id'], $demand['duree']);
                     //die(var_dump($response));
-                    if( !$response['success'] ){
+                    if (!$response['success']) {
                         return ["success" => false, "message" => $response['message']];
                     }
-                
                 }
-            }else{
+            } else {
                 $superior_id = fetch_user_information($superior_id)['superior_id'];
                 add_lifecycle_entry($demand_id, $superior_id);
             }
@@ -417,23 +417,22 @@ if (!function_exists('set_decision')) {
         } else {
             return ["success" => false, "message" => "Failed to add lifecycle entry"];
         }
-        
     }
 }
 
-
-if( !function_exists('add_work_day') ){
-    function add_work_day($employee_id, $date, $benefited) {
+if (!function_exists('add_work_day')) {
+    function add_work_day($employee_id, $date, $benefited)
+    {
 
         $pdo = load_db();
         // Ensure the date is in YYYY-MM-DD format
         $formatted_date = date('Y-m-d', strtotime($date));
-    
+
         // Prepare SQL statement
         $stmt = $pdo->prepare("INSERT INTO work_days (employee_id, date, benefited) VALUES (?, ?, ?)");
-    
+
         // Execute the query
-        if ($stmt->execute([$employee_id, $formatted_date, $benefited?1:0])) {
+        if ($stmt->execute([$employee_id, $formatted_date, $benefited ? 1 : 0])) {
             return ["success" => true, "message" => "Work day entry added"];
         } else {
             return ["success" => false, "message" => "Failed to add work day entry"];
@@ -441,9 +440,9 @@ if( !function_exists('add_work_day') ){
     }
 }
 
-
 if (!function_exists('remove_work_day')) {
-    function remove_work_day($employee_id, $date) {
+    function remove_work_day($employee_id, $date)
+    {
         $pdo = load_db();
         // Ensure the date is in YYYY-MM-DD format
         $formatted_date = date('Y-m-d', strtotime($date));
@@ -465,7 +464,8 @@ if (!function_exists('remove_work_day')) {
 }
 
 if (!function_exists('fetch_work_days')) {
-    function fetch_work_days($employee_id) {
+    function fetch_work_days($employee_id)
+    {
 
         $pdo = load_db();
         // Prepare SQL statement
@@ -481,14 +481,15 @@ if (!function_exists('fetch_work_days')) {
 }
 
 if (!function_exists('calculate_rc_days')) {
-    function calculate_rc_days($employee_id) {
-        
+    function calculate_rc_days($employee_id)
+    {
+
         $pdo = load_db();
         // Prepare SQL statement to fetch work days
         $stmt = $pdo->prepare("SELECT date, benefited FROM work_days WHERE employee_id = ?");
         $stmt->execute([$employee_id]);
         $work_days = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
+
         $rc_days = 0;
 
         foreach ($work_days as $day) {
@@ -512,7 +513,8 @@ if (!function_exists('calculate_rc_days')) {
 }
 
 if (!function_exists('deduct_leave_days')) {
-    function deduct_leave_days($employee_id, $requested_days) {
+    function deduct_leave_days($employee_id, $requested_days)
+    {
         $pdo = load_db();
 
         // Step 1: Calculate available RC days
@@ -540,12 +542,12 @@ if (!function_exists('deduct_leave_days')) {
             $date = $day['date'];
             $day_of_week = date('w', strtotime($date)); // 5 = Friday, 6 = Saturday
 
-            if ($day_of_week == 5 && $days_deducted + 2 <= $requested_days) { 
+            if ($day_of_week == 5 && $days_deducted + 2 <= $requested_days) {
                 // Friday, deduct 2 days if possible
                 $update_stmt = $pdo->prepare("UPDATE work_days SET benefited = 1 WHERE employee_id = ? AND date = ?");
                 $update_stmt->execute([$employee_id, $date]);
                 $days_deducted += 2;
-            } elseif ($day_of_week == 6 && $days_deducted + 1 <= $requested_days) { 
+            } elseif ($day_of_week == 6 && $days_deducted + 1 <= $requested_days) {
                 // Saturday, deduct 1 day
                 $update_stmt = $pdo->prepare("UPDATE work_days SET benefited = 1 WHERE employee_id = ? AND date = ?");
                 $update_stmt->execute([$employee_id, $date]);
@@ -561,8 +563,9 @@ if (!function_exists('deduct_leave_days')) {
     }
 }
 
-if( !function_exists('fetch_compte_rendu') ){
-    function fetch_compte_rendu($demand_id){
+if (!function_exists('fetch_compte_rendu')) {
+    function fetch_compte_rendu($demand_id)
+    {
         $db = load_db();
 
         $sql = "SELECT * FROM `compte_rendus` WHERE `demand_id`=?";
@@ -571,7 +574,7 @@ if( !function_exists('fetch_compte_rendu') ){
 
         $stmt->execute([$demand_id]);
 
-        if( $stmt->rowCount() < 1 ){
+        if ($stmt->rowCount() < 1) {
             return null;
         }
 
@@ -579,8 +582,9 @@ if( !function_exists('fetch_compte_rendu') ){
     }
 }
 
-if( !function_exists('fetch_demand') ){
-    function fetch_demand($demand_id){
+if (!function_exists('fetch_demand')) {
+    function fetch_demand($demand_id)
+    {
         $db = load_db();
 
         $sql = "SELECT * FROM `demands` WHERE `id`=?";
@@ -592,7 +596,7 @@ if( !function_exists('fetch_demand') ){
         $demand = $stmt->fetch(PDO::FETCH_ASSOC);
 
         $demand['compte_rendu'] = fetch_compte_rendu($demand_id);
-        if(  $demand['compte_rendu'] ){
+        if ($demand['compte_rendu']) {
             $demand['compte_rendu']['info'] = json_decode($demand['compte_rendu']['info'], true);
         }
 
@@ -600,8 +604,9 @@ if( !function_exists('fetch_demand') ){
     }
 }
 
-if( !function_exists('create_compte_rendu') ){
-    function create_compte_rendu($demand_id, $info){
+if (!function_exists('create_compte_rendu')) {
+    function create_compte_rendu($demand_id, $info)
+    {
         $db = load_db();
 
         $sql = "INSERT INTO `compte_rendus` (`demand_id`, `info`, `created_at`, `updated_at`) VALUES (?, ?, NOW(), NOW())";
@@ -612,8 +617,9 @@ if( !function_exists('create_compte_rendu') ){
     }
 }
 
-if( !function_exists('update_compte_rendu') ){
-    function update_compte_rendu($demand_id, $info){
+if (!function_exists('update_compte_rendu')) {
+    function update_compte_rendu($demand_id, $info)
+    {
         $db = load_db();
 
         $sql = "UPDATE `compte_rendus` SET `info` = ?, `updated_at` = NOW() WHERE `demand_id` = ?";
@@ -624,9 +630,10 @@ if( !function_exists('update_compte_rendu') ){
     }
 }
 
-if( !function_exists('handle_role') ){
-    function handle_role(callable $callback){
-        if( !session_id() ){
+if (!function_exists('handle_role')) {
+    function handle_role(callable $callback)
+    {
+        if (!session_id()) {
             session_start();
         }
         $user = fetch_user_information($_SESSION['user_id'], false);
@@ -635,42 +642,30 @@ if( !function_exists('handle_role') ){
     }
 }
 
-if( !function_exists('profile_url') ){
-    function profile_url($uri, $prefix = 'profiles'){
-        return handle_role(function($role) use ($prefix, $uri){
-            switch($role){
-                case 'GRH':
-                    return url($prefix . '/drh/' . rtrim($uri));
-                    break;
-                case 'Directeur':
-                    return url($prefix . '/directeur/' . rtrim($uri));
-                    break;
-    
-                default:
-                return url($prefix . '/employee/' . rtrim($uri));
-                break;
-            }
-        });
+if (!function_exists('dashboard_url')) {
+    function dashboard_url($uri, $prefix = 'dashboard')
+    {
+        return url(rtrim($prefix) . '/' . rtrim($uri));
     }
 }
 
-if( !function_exists('if_user_is') ){
-    function if_user_is(string|array $role, ?callable $callback){
-        if( !session_id() ){
+if (!function_exists('if_user_is')) {
+    function if_user_is(string|array $role, ?callable $callback)
+    {
+        if (!session_id()) {
             session_start();
         }
 
-        if( is_string($role) ){
+        if (is_string($role)) {
             $role = [$role];
         }
         $user = fetch_user_information($_SESSION['user_id'], false);
-
-        foreach($role as $r){
-            if( $user['role']['nom'] == $r ){
-                if( $callback ){
+        foreach ($role as $r) {
+            if ($user['role']['nom'] == $r) {
+                if ($callback) {
                     return $callback();
                 }
-    
+
                 return true;
             }
         }
@@ -679,8 +674,9 @@ if( !function_exists('if_user_is') ){
     }
 }
 
-if( !function_exists('can_do_conge') ){
-    function can_do_conge($user_id, string $conge_type){
+if (!function_exists('can_do_conge')) {
+    function can_do_conge($user_id, string $conge_type)
+    {
         $pdo = load_db();
 
         $sql = "SELECT * FROM `demands` WHERE `employee_id`=? AND `type`=? AND (`status`=? OR (`status`=? AND  `date_fin`<=NOW()))";
@@ -690,5 +686,66 @@ if( !function_exists('can_do_conge') ){
         $stmt->execute([$user_id, $conge_type, 'waiting', 'accepted']);
 
         return $stmt->rowCount() < 1;
+    }
+}
+
+if (!function_exists('convertToAscii')) {
+    function convertToAscii($column)
+    {
+        $ascii = 0;
+        for ($i = 0; $i < strlen($column); $i++) {
+            $ascii = $ascii * 26 + (ord($column[$i]) - ord('A') + 1);
+        }
+        return $ascii;
+    }
+}
+
+if (!function_exists('convertFromAscii')) {
+    // convert to A from it's ascci number
+    function convertFromAscii($number)
+    {
+        $column = '';
+        while ($number > 0) {
+            $number--;
+            $column = chr($number % 26 + ord('A')) . $column;
+            $number = (int)($number / 26);
+        }
+        return $column;
+    }
+}
+
+if( !function_exists('getUserWithDemands') ){
+    function getUserWithDemands($user_no, $status = 'waiting'){
+        $db = load_db();
+
+        //get user id with nom
+        $sql = "SELECT `id` FROM `employees` WHERE `matricule`=?";
+
+        $stmt = $db->prepare($sql);
+
+        $stmt->execute([$user_no]);
+
+        if( $stmt->rowCount() < 1 ){
+            return null;
+        }
+
+        $user_id = $stmt->fetch(PDO::FETCH_ASSOC)['id'];
+
+        $sql = "SELECT * FROM `demands` WHERE `employee_id`=? AND `status`=?";
+
+        $stmt = $db->prepare($sql);
+
+        $stmt->execute([$user_id, $status]);
+
+        if ($stmt->rowCount() < 1) {
+            return null;
+        }
+
+        $user = [
+            'user_id' => $user_id,
+            'demands' => $stmt->fetchAll(PDO::FETCH_ASSOC)
+        ];
+
+        return $user;
     }
 }

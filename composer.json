@@ -17,6 +17,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "symfony/string": "7.3.x-dev"
+        "symfony/string": "7.3.x-dev",
+        "phpoffice/phpspreadsheet": "dev-master"
     }
 }

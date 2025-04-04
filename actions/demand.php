@@ -117,6 +117,8 @@ switch ($demand_type) {
             'come hour' => $_POST['come_hour'] ?? null,
             'motif' => $_POST['motif'] ?? null,
         ];
+        $start_date = $mission_data['leave date'];
+        $end_date = $mission_data['come date'];
 
         $duree = $_POST['duree'] ?? 4;
         $info['content'] = $mission_data;
@@ -136,6 +138,9 @@ switch ($demand_type) {
             'motif' => $_POST['motif'] ?? null,
         ];
 
+        $start_date = $mission_data['leave date'];
+        $end_date = $mission_data['come date'];
+
         $duree = $_POST['duree'] ?? 4;
         $info['content'] = $mission_data;
         $info['type'] = 'keys';
@@ -153,6 +158,9 @@ switch ($demand_type) {
             'come hour' => $_POST['come_hour'] ?? null,
             'motif' => $_POST['motif'] ?? null,
         ];
+
+        $start_date = $mission_data['leave date'];
+        $end_date = $mission_data['come date'];
 
         $duree = $_POST['duree'] ?? 4;
         $info['content'] = $mission_data;

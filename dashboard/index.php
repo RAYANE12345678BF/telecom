@@ -26,10 +26,6 @@ $redPin = count(array_filter($notifications, function ($v, $i) {
 
 $user = fetch_user_information($_SESSION['user_id']);
 $_SESSION['user'] = get_user($_SESSION['user_id']);
-
-
-$user_demands = get_user_demands($_SESSION['user_id']);
-
 ?>
 
 <!DOCTYPE html>
@@ -38,7 +34,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DjazairRH - Profil Directeur</title>
+    <title>DjazairRH - Profil <?= $user['role']['nom'] ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -794,17 +790,18 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                         </a>
                     <?php endif ?>
 
-                    <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
-                    <a href="#" class="menu-item" onclick="Swal.fire({title : 'information', text : 'en train de developper!', icon : 'info'})">
-                        <i class="fas fa-clock"></i>
-                        <span class="menu-text">Voir Pointage</span>
-                    </a>
-                    <?php endif ?>
 
-                    
+
+
                 </div>
 
                 <div class="nav-title">Autres</div>
+                <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
+                    <a href="<?= dashboard_url('pointage') ?>" class="menu-item">
+                        <i class="fas fa-clock"></i>
+                        <span class="menu-text">Voir Pointage</span>
+                    </a>
+                <?php endif ?>
                 <a href="<?= url('dashboard/support') ?>" class="menu-item">
                     <i class="fas fa-question-circle"></i>
                     <span class="menu-text">Support</span>
@@ -1162,7 +1159,8 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                 icon: "<?= $_SESSION['status_icon'] ?? "success" ?>"
             });
         </script>
-    <?php unset($_SESSION['status']);unset($_SESSION['status_icon']);
+    <?php unset($_SESSION['status']);
+        unset($_SESSION['status_icon']);
     endif; ?>
 
     <script>
