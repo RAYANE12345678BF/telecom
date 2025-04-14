@@ -807,64 +807,6 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
         const dataTable = document.getElementById('dataTable');
         const alertBox = document.getElementById('alertBox');
 
-        fileInput.addEventListener('click', function(e){
-            let file = e.target.files[0]
-
-            if( !file )
-                return
-
-            e.preventDefault()
-
-            Swal.fire({
-                text: `vous etes sur vous voulez upload cette ficheie : ${file.name} ?`,
-                title: 'Confirmer',
-                icon: 'question',
-                showDenyButton: true,
-                showCancelButton: true,
-                confirmButtonText: "upload",
-                denyButtonText: `annuler`,
-                showCancelButton: false
-            }).then(function (result) {
-                if(!result.isConfirmed)
-                    return
-
-                let data = new FormData
-                data.append('file', file)
-                document.getElementsByClassName('fa-spinner')[0].classList.remove('hidden')
-                fetch("<?= url('actions/pointage.php') ?>", {
-                    body : data,
-                    method: 'POST'
-                }).then(res => res.json())
-                .then(json => {
-                    if(!result.isConfirmed)
-                    return
-
-                let data = new FormData
-                data.append('file', file)
-                document.getElementsByClassName('fa-spinner')[0].classList.remove('hidden')
-                document.getElementsByClassName('fa-upload')[0].classList.add('hidden')
-
-                fetch("<?= url('actions/pointage.php') ?>", {
-                    body : data,
-                    method: 'POST'
-                }).then(res => res.json())
-                .then(json => {
-                    document.getElementsByClassName('fa-spinner')[0].classList.add('hidden')
-                    document.getElementsByClassName('fa-upload')[0].classList.remove('hidden')
-
-                    window.open(json.file_url)
-                }).catch(err => {
-                    document.getElementsByClassName('fa-spinner')[0].classList.add('hidden')
-                    document.getElementsByClassName('fa-upload')[0].classList.remove('hidden')
-                    alert('failed :' + err)
-                })
-                }).catch(err => {
-                    alert('failed')
-                    document.getElementsByClassName('fa-spinner')[0].classList.add('hidden')
-                })
-            })
-        })
-
         fileInput.addEventListener('change', function (e) {
             const file = e.target.files[0];
             if (!file) return;
