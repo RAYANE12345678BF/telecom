@@ -3,6 +3,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+
 if( !session_id() ){
     session_start();
 }
@@ -18,10 +19,17 @@ switch($action){
  case 'save':
     $phone = $_POST['phone'] ?? null;
     $birth_day = empty($_POST['birth_day']) ? null : $_POST['birth_day'];
-    $birth_place = $_POST['birth_place'] ?? null;
-    $etat_civil = $_POST['etat_cevil'] ?? null;
-    $nom = $_POST['nom'] ?? null;
-    $prenom = $_POST['prenom'] ?? null;
+    $birth_place = empty($_POST['birth_place']) ? null : $_POST['birth_place'];
+    $etat_civil = empty($_POST['etat_cevil']) ? null : $_POST['etat_cevil'];
+    $nom = empty($_POST['nom']) ? null : $_POST['nom'];
+    $prenom = empty($_POST['prenom']) ? null : $_POST['prenom'];
+
+    if( !$phone || !$birth_day || !$birth_place || !$etat_civil || !$nom || !$prenom ){
+        send_json_response([
+            'success' => false,
+            'message' => 'tous les champs sont obligatoires'
+        ]);
+    }
 
     $user_id = $_SESSION['user_id'];
 

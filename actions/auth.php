@@ -46,7 +46,9 @@ switch ($action) {
             redirect_back();
         }else{
             $grh_id = get_grh_id();
-            push_user_creation_notification($grh_id);
+            if( $grh_id ){
+                push_user_creation_notification($grh_id);
+            }
             $_SESSION['info'] = "Votre compte a été créé avec succès, veuillez attendre l'activation de votre compte par le GRH";
             redirect_back();
         }

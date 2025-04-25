@@ -160,7 +160,7 @@ if (!function_exists('push_user_creation_notification')) {
 }
 
 if (!function_exists('get_grh_id')) {
-    function get_grh_id()
+    function get_grh_id(): mixed
     {
         $db = load_db();
 

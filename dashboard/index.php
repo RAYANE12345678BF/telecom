@@ -1084,11 +1084,19 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
                     body: data
                 }).then(res => res.json())
                 .then(js => {
-                    Swal.fire({
-                        title: 'effectué!',
-                        text: 'les enregistrement effectué avec success',
-                        icon: 'success'
-                    })
+                    if (js.success) {
+                        Swal.fire({
+                            title: 'effectué!',
+                            text: 'les enregistrement effectué avec success',
+                            icon: 'success'
+                        })
+                    } else {
+                        Swal.fire({
+                            title: 'erreur!',
+                            text: js.message,
+                            icon: 'error'
+                        })
+                    }
                 }).catch(err => {
                     Swal.fire({
                         title: 'error!',
@@ -1120,7 +1128,7 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
             let data = new FormData
             data.append('action', 'save')
 
-            let keys = ["phone", "nom", "prenom", "birth_day", "birth_place", "etat_cevil"]
+            let keys = ["phone", "nom", "prenom", "birth_day", "birth_place", "etat_cevil", "matricule"]
 
 
             keys.forEach(e => {
@@ -1135,11 +1143,19 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
                     body: data
                 }).then(res => res.json())
                 .then(js => {
-                    Swal.fire({
-                        title: 'effectué!',
-                        text: 'les enregistrement effectué avec success',
-                        icon: 'success'
-                    })
+                    if (js.success) {
+                        Swal.fire({
+                            title: 'effectué!',
+                            text: 'les enregistrement effectué avec success',
+                            icon: 'success'
+                        })
+                    } else {
+                        Swal.fire({
+                            title: 'erreur!',
+                            text: js.message,
+                            icon: 'error'
+                        })
+                    }
                 }).catch(err => {
                     Swal.fire({
                         title: 'erreur!',
