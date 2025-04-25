@@ -21,8 +21,8 @@ $notifications = get_notifications($_SESSION['user_id']);
 $user_requests = fetch_creation_demands();
 
 $redPin = count(array_filter($notifications, function ($v, $i) {
-        return $v['read_state'] == 0;
-    }, ARRAY_FILTER_USE_BOTH)) > 0;
+    return $v['read_state'] == 0;
+}, ARRAY_FILTER_USE_BOTH)) > 0;
 
 $user = fetch_user_information($_SESSION['user_id']);
 $_SESSION['user'] = get_user($_SESSION['user_id']);
@@ -679,18 +679,18 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
                         <span class="menu-text">État de demande</span>
                     </a>
                     <?php if (!if_user_is('Employé', null)): ?>
-                    <a href="<?= url('dashboard/demands/consulte.php') ?>" class="menu-item">
-                        <i class="fas fa-eye"></i>
-                        <span class="menu-text">Consulter Demande</span>
-                    </a>
+                        <a href="<?= url('dashboard/demands/consulte.php') ?>" class="menu-item">
+                            <i class="fas fa-eye"></i>
+                            <span class="menu-text">Consulter Demande</span>
+                        </a>
                     <?php endif ?>
 
                     <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
-                    <a href="#" class="menu-item"
-                        onclick="Swal.fire({title : 'information', text : 'en train de developper!', icon : 'info'})">
-                        <i class="fas fa-clock"></i>
-                        <span class="menu-text">Voir Pointage</span>
-                    </a>
+                        <a href="#" class="menu-item"
+                            onclick="Swal.fire({title : 'information', text : 'en train de developper!', icon : 'info'})">
+                            <i class="fas fa-clock"></i>
+                            <span class="menu-text">Voir Pointage</span>
+                        </a>
                     <?php endif ?>
 
 
@@ -789,13 +789,13 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
 
     <script>
         // Navigation menu toggle functions
-        document.getElementById('faireDemandeBtn').addEventListener('click', function (e) {
+        document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
             e.preventDefault();
             const submenu = document.getElementById('demandeSubmenu');
             submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
         });
 
-        document.getElementById('congeBtn').addEventListener('click', function (e) {
+        document.getElementById('congeBtn').addEventListener('click', function(e) {
             e.preventDefault();
             const submenu = document.getElementById('congeSubmenu');
             submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
@@ -807,7 +807,7 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
         const dataTable = document.getElementById('dataTable');
         const alertBox = document.getElementById('alertBox');
 
-        fileInput.addEventListener('change', function (e) {
+        fileInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
 
@@ -820,8 +820,8 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
                 confirmButtonText: "upload",
                 denyButtonText: `annuler`,
                 showCancelButton: false
-            }).then(function (result) {
-                if(!result.isConfirmed)
+            }).then(function(result) {
+                if (!result.isConfirmed)
                     return
 
                 let data = new FormData
@@ -830,19 +830,45 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
                 document.getElementsByClassName('fa-upload')[0].classList.add('hidden')
 
                 fetch("<?= url('actions/pointage.php') ?>", {
-                    body : data,
-                    method: 'POST'
-                }).then(res => res.json())
-                .then(json => {
-                    document.getElementsByClassName('fa-spinner')[0].classList.add('hidden')
-                    document.getElementsByClassName('fa-upload')[0].classList.remove('hidden')
+                        body: data,
+                        method: 'POST'
+                    }).then(res => res.json())
+                    .then(json => {
+                        document.getElementsByClassName('fa-spinner')[0].classList.add('hidden')
+                        document.getElementsByClassName('fa-upload')[0].classList.remove('hidden')
 
-                    window.open(json.file_url)
-                }).catch(err => {
-                    document.getElementsByClassName('fa-spinner')[0].classList.add('hidden')
-                    document.getElementsByClassName('fa-upload')[0].classList.remove('hidden')
-                    alert('failed :' + err)
-                })
+                        window.open(json.file_url)
+
+                        const reader = new FileReader();
+
+                        reader.onload = function(e) {
+                            try {
+                                const data = new Uint8Array(e.target.result);
+                                const workbook = XLSX.read(data, {
+                                    type: 'array'
+                                });
+                                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                                const jsonData = XLSX.utils.sheet_to_json(firstSheet, {
+                                    header: 1
+                                });
+
+                                displayData(jsonData);
+                                showAlert('Fichier importé avec succès!', 'dirli-success');
+
+                            } catch (error) {
+                                console.error("Erreur d'importation:", error);
+                                showAlert("Erreur d'importation: " + error.message, 'dirli-error');
+                            }
+                        };
+
+                        fetch(json.file_url).then(res => res.blob()).then(b => {
+                            reader.readAsArrayBuffer(b);
+                        })
+                    }).catch(err => {
+                        document.getElementsByClassName('fa-spinner')[0].classList.add('hidden')
+                        document.getElementsByClassName('fa-upload')[0].classList.remove('hidden')
+                        alert('failed :' + err)
+                    })
 
             })
 
@@ -896,7 +922,7 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
             });
         }
 
-        exportBtn.addEventListener('click', function () {
+        exportBtn.addEventListener('click', function() {
             try {
                 const wb = XLSX.utils.table_to_book(dataTable);
                 XLSX.writeFile(wb, 'export_pointage.xlsx');
@@ -940,7 +966,7 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
         }
 
         // Fermer les menus déroulants si on clique en dehors
-        document.addEventListener('click', function (event) {
+        document.addEventListener('click', function(event) {
             const notificationDropdown = document.getElementById('notificationDropdown');
             const messengerDropdown = document.getElementById('messengerDropdown');
             const notificationIcon = document.querySelector('.icon-wrapper[onclick="toggleNotifications()"]');
@@ -956,4 +982,5 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
         });
     </script>
 </body>
+
 </html>
