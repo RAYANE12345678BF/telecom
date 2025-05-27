@@ -1052,7 +1052,7 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
 
                             <?php if ($user['role']['nom'] != 'Directeur'): ?>
                                 <div class="info-field">
-                                    <div class="field-label">superior director</div>
+                                    <div class="field-label">superieur directeur</div>
                                     <div class="field-value">
                                         <select name="superior_id">
                                             <option value="" disabled selected>Sélectionner</option>

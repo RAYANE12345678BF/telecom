@@ -1050,7 +1050,7 @@ $leaves_count = count($leaves);
                     </div>
 
                     <!-- Nouvelle ligne pour RC et Sorties -->
-                    <!-- <div class="row mt-3">
+                    <div class="row mt-3">
                         <div class="col-md-3">
                             <div class="card stat-card">
                                 <div class="card-body">
@@ -1076,7 +1076,7 @@ $leaves_count = count($leaves);
                                 </div>
                             </div>
                         </div>
-                    </div> -->
+                    </div>
                     
                     <!-- Détails des absences avec recherche -->
                     <div class="row mt-4">
