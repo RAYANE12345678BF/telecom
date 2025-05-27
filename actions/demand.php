@@ -180,5 +180,4 @@ switch ($demand_type) {
 }
 
 push_demand_creation_notification($demand_id);
-dd('dde');
 redirect(url('dashboard'));
