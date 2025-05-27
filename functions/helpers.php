@@ -688,6 +688,8 @@ if (!function_exists('fetch_demand')) {
 
         $demand = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        $demand['info'] = json_decode($demand['info'], true);
+
         $demand['compte_rendu'] = fetch_compte_rendu($demand_id);
         if ($demand['compte_rendu']) {
             $demand['compte_rendu']['info'] = json_decode($demand['compte_rendu']['info'], true);
@@ -896,11 +898,17 @@ if( !function_exists('push_demand_creation_notification') ){
             return $value['decision'] == 'waiting';
         });
 
-        $current_life = is_array($current_life) && count($current_life) > 0 ? $current_life[0] : null;
+        $current_life = array_filter($demand['lifecycle'], function($value){
+            return $value['decision'] == 'waiting';
+        });
 
-        if( !$current_life ){
-            return ;
+        $key = array_keys($current_life)[0] ?? null;
+        if(!$key){
+            return null;
         }
+        $current_life = $current_life[$key];
+
+        $current_life = $current_life[$key];
 
         $target_user_id = $current_life['superior_id'];
 

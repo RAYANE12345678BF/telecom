@@ -18,6 +18,11 @@ if( $demand_id === None ){
 }
 
 $demand = fetch_demand($demand_id);
+
+if( $demand['type'] != 'conge_annual' ){
+    throw new Exception('this feature is for conge annual');
+}
+
 $demand_user = fetch_user_information($demand['employee_id'], false);
 
 
@@ -28,55 +33,27 @@ $pdf->SetTitle('Demand Request');
 $pdf->SetMargins(15, 15, 15);
 $pdf->AddPage();
 
+$data = [
+    'matricule' => $demand_user['matricule'] ,
+    'nom' => $demand_user['nom'],
+    'prenom' => $demand_user['prenom'],
+    'role' => $demand_user['role']['nom'],
+    'description' => $demand['description'],
+    'duree' => $demand['duree'],
+    'date_debut' => $demand['date_debut'],
+    'date_fin' => $demand['date_fin'],
+    'extra_information' => $demand['info']['content'],
+    'status' => $demand['status'],
+];
+
+
+
 $fullname = $demand_user['nom']. " ". $demand_user['prenom'];
 // Build HTML content
-$html = <<<HTML
-<h2 style="text-align: center;">Demand Request Summary</h2>
-<p><strong>Date:</strong> {date}</p>
+$html = file_get_contents(__DIR__ . "/../prints/template.html");
 
-<table cellspacing="0" cellpadding="5" border="1">
-    <tr>
-        <td><strong>Employee Name:</strong> { $fullname }</td>
-        <td><strong>Matricule:</strong> {$demand_user['matricule']}</td>
-    </tr>
-    <tr>
-        <td><strong>Email:</strong> {$demand_user['email_professionnel']}</td>
-        <td><strong>Department:</strong> {$demand_user['department']['nom']}</td>
-    </tr>
-</table>
+foreach($data as $key => $value){
+    $html = str_replace("{{ $key }}", $value, $html);
+}
 
-<br>
-
-<table cellspacing="0" cellpadding="5" border="1">
-    <thead>
-        <tr style="background-color: #f2f2f2;">
-            <th>Demand Type</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Duration (days)</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>{$demand['type']}</td>
-            <td>{$demand['date_debut']}</td>
-            <td>{$demand['date_fin']}</td>
-            <td>{$demand['duree']}</td>
-            <td>{$demand['status']}</td>
-        </tr>
-    </tbody>
-</table>
-
-<br>
-<p style="text-align: right;">Generated on: {gen_date}</p>
-HTML;
-
-$html = str_replace(
-    ['{date}', '{gen_date}'],
-    [date('Y-m-d'), date('Y-m-d H:i')],
-    $html
-);
-
-$pdf->writeHTML($html, true, false, true, false, '');
-$pdf->Output('demand_request.pdf', 'I'); // Output to browser
+echo $html;
