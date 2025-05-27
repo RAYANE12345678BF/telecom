@@ -18,6 +18,8 @@
     "minimum-stability": "dev",
     "require": {
         "symfony/string": "7.3.x-dev",
-        "phpoffice/phpspreadsheet": "dev-master"
+        "phpoffice/phpspreadsheet": "dev-master",
+        "dompdf/dompdf": "dev-master",
+        "tecnickcom/tcpdf": "dev-main"
     }
 }

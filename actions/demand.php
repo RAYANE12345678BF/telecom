@@ -14,6 +14,7 @@ if ($action == 'change_status') {
         'status' => 'ok',
         'message' => 'la modification a été effectuée avec succès'
     ]);
+
     exit();
 }
 
@@ -46,8 +47,6 @@ switch ($demand_type) {
         $_SESSION['status'] = 'la demande a été envoyée avec succès';
         
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
-        
-        redirect(url('dashboard'));
         break;
 
     case 'conge_malady':
@@ -65,11 +64,9 @@ switch ($demand_type) {
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         
         $_SESSION['status'] = 'la demande a été envoyée avec succès';
-        redirect(url('dashboard'));
         break;
 
     case 'conge_maternity':
-
         $description = $_POST['description'] ?? null;
         $info['content'] = uploadPdf('info', '/employees/conge');
         if (!$info['content']) {
@@ -80,9 +77,8 @@ switch ($demand_type) {
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'la demande a été envoyée avec succès';
-        redirect(url('dashboard'));
         break;
-
+        
     case 'conge_rc':
         $description = $_POST['description'] ?? null;
         $info['content'] = "no details";
@@ -106,7 +102,6 @@ switch ($demand_type) {
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'la demande a été envoyée avec succès';
-        redirect(url('dashboard'));
         break;
     case 'mission':
         $mission_data = [
@@ -127,7 +122,6 @@ switch ($demand_type) {
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'la demande a été envoyée avec succès';
-        redirect(url('dashboard'));
         break;
     case 'deplacement':
         $mission_data = [
@@ -148,7 +142,6 @@ switch ($demand_type) {
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'la demande a été envoyée avec succès';
-        redirect(url('dashboard'));
         break;
     case 'leave':
         $mission_data = [
@@ -169,7 +162,6 @@ switch ($demand_type) {
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'la demande a été envoyée avec succès';
-        redirect(url('dashboard'));
         break;
 
     case 'support':
@@ -179,7 +171,6 @@ switch ($demand_type) {
         $demand_id = insert_support($_SESSION['user_id'], $message, $type); 
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'la demande a été envoyée avec succès';
-        redirect(url('dashboard'));
         break;
 
     default:
@@ -187,3 +178,7 @@ switch ($demand_type) {
         die("dsds");
         redirect_back();
 }
+
+push_demand_creation_notification($demand_id);
+dd('dde');
+redirect(url('dashboard'));

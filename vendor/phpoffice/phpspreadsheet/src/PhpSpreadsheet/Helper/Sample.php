@@ -185,10 +185,10 @@ class Sample
         return $temporaryFilename . '.' . $extension;
     }
 
-    public function log(string $message): void
+    public function log(mixed $message): void
     {
         $eol = $this->isCli() ? PHP_EOL : '<br />';
-        echo ($this->isCli() ? date('H:i:s ') : '') . $message . $eol;
+        echo ($this->isCli() ? date('H:i:s ') : '') . StringHelper::convertToString($message) . $eol;
     }
 
     /**
@@ -241,6 +241,7 @@ class Sample
             : $this->log(sprintf('Function: %s() - %s.', rtrim($functionName, '()'), rtrim($description, '.')));
     }
 
+    /** @param mixed[][] $matrix */
     public function displayGrid(array $matrix): void
     {
         $renderer = new TextGrid($matrix, $this->isCli());

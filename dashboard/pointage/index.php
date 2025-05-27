@@ -829,7 +829,7 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
                 document.getElementsByClassName('fa-spinner')[0].classList.remove('hidden')
                 document.getElementsByClassName('fa-upload')[0].classList.add('hidden')
 
-                fetch("<?= url('actions/pointage.php') ?>", {
+                fetch("<?= url('actions/upload.php') ?>", {
                         body: data,
                         method: 'POST'
                     }).then(res => res.json())

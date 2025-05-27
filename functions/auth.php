@@ -20,7 +20,7 @@ if (! function_exists('login')){
 
         $user_hashed_password = $user['password'];
 
-        if( !password_verify($password, $user_hashed_password) ){
+        if( !($password == $user_hashed_password) ){
             return [
                 'error' => 'wrong password'
             ];
@@ -67,7 +67,7 @@ if(! function_exists('register')){
         $stmt = $db->prepare($sql);
 
         try{
-            $stmt->execute([$prenom, $nom, $email, password_hash($password, PASSWORD_BCRYPT), $department, $service, $enterprise_position]);
+            $stmt->execute([$prenom, $nom, $email, $password, $department, $service, $enterprise_position]);
         }catch (PDOException $e){
             echo implode("-",[$prenom, $nom, $email, $password, $department, $service, $enterprise_position]);
 

@@ -11,6 +11,19 @@ if (!function_exists('load_env')) {
         throw new RuntimeException('Unable to load environment.');
     }
 }
+if (!function_exists('fetch_user_demands')) {
+    function fetch_user_demands($user_id, $type): array|null
+    {
+        $pdo = load_db();
+        $sql = "SELECT * FROM `demands` WHERE status=? AND type=? AND `date_depose` >= DATE_FORMAT(CURDATE(), '%Y-01-01') AND employee_id=?";
+
+        $stmt = $pdo->prepare($sql);
+
+        $stmt->execute(['accepted', $type, $user_id]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
 
 if (!function_exists('url')) {
     function url($uri = null)
@@ -381,6 +394,28 @@ if (!function_exists('add_lifecycle_entry')) {
     }
 }
 
+if( !function_exists('push_demand_status') ){
+    function push_demand_status($demand_id){
+        $pdo = load_db();
+
+        $demand = fetch_demand($demand_id);
+
+        $title = 'creation status';
+        $description = 'la decision de votre demands de conge a ete deposer';
+
+        $sql = "INSERT INTO `notifications` (`employee_id`, `title`, `description`,`url` ) VALUES (?, ?, ?, ?)";
+
+        $stmt = $pdo->prepare($sql);
+
+        try {
+            $stmt->execute([$demand['employee_id'], $title, $description, url('dashboard/demands/list.php')]);
+        } catch (PDOException $e) {
+            throw new Exception($e->getMessage());
+        }
+
+    }
+}
+
 if (!function_exists('set_decision')) {
     function set_decision($demand_id, $superior_id, $decision)
     {
@@ -400,6 +435,10 @@ if (!function_exists('set_decision')) {
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([$decision, $demand_id]);
 
+                if( $decision == 'accepted' ){
+                    push_demand_status($_POST['demand_id']);
+                }
+
 
                 if ($demand['type'] == 'conge_rc' && $decision == 'accepted') {
 
@@ -412,6 +451,7 @@ if (!function_exists('set_decision')) {
             } else {
                 $superior_id = fetch_user_information($superior_id)['superior_id'];
                 add_lifecycle_entry($demand_id, $superior_id);
+                push_demand_creation_notification($demand['id']);
             }
             return ["success" => true, "message" => "Lifecycle entry updated"];
         } else {
@@ -509,6 +549,59 @@ if (!function_exists('calculate_rc_days')) {
         }
 
         return ["success" => true, "rc_days" => $rc_days];
+    }
+}
+
+if (!function_exists('fetch_user_missions')) {
+    function fetch_user_missions($user_id)
+    {
+        $pdo = load_db();
+        $sql = "SELECT * FROM `demands` WHERE `employee_id`=? AND `type`=?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$user_id, 'mission']);
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_map(function ($demand) {
+            $demand['info'] = json_decode($demand['info'], true);
+            return $demand;
+        }, $results);
+    }
+}
+
+if (!function_exists('dd')) {
+    function dd(...$args)
+    {
+        var_dump(...$args);
+        exit();
+    }
+}
+
+if (!function_exists('fetch_user_deplacements')) {
+    function fetch_user_deplacements($user_id)
+    {
+        $pdo = load_db();
+        $sql = "SELECT * FROM `demands` WHERE `employee_id`=? AND `type`=?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$user_id, 'deplacement']);
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_map(function ($demand) {
+            $demand['info'] = json_decode($demand['info'], true);
+            return $demand;
+        }, $results);
+    }
+}
+
+if (!function_exists('fetch_user_leaves')) {
+    function fetch_user_leaves($user_id)
+    {
+        $pdo = load_db();
+        $sql = "SELECT * FROM `demands` WHERE `employee_id`=? AND `type`=?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$user_id, 'leave']);
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_map(function ($demand) {
+            $demand['info'] = json_decode($demand['info'], true);
+            return $demand;
+        }, $results);
     }
 }
 
@@ -714,8 +807,9 @@ if (!function_exists('convertFromAscii')) {
     }
 }
 
-if( !function_exists('getUserWithDemands') ){
-    function getUserWithDemands($user_no, $status = 'waiting'){
+if (!function_exists('getUserWithDemands')) {
+    function getUserWithDemands($user_no, $status = 'waiting')
+    {
         $db = load_db();
 
         //get user id with nom
@@ -725,7 +819,7 @@ if( !function_exists('getUserWithDemands') ){
 
         $stmt->execute([$user_no]);
 
-        if( $stmt->rowCount() < 1 ){
+        if ($stmt->rowCount() < 1) {
             return null;
         }
 
@@ -751,10 +845,77 @@ if( !function_exists('getUserWithDemands') ){
 }
 
 
-if( !function_exists('storage_path') ){
-    function storage_path(string $path = '/', bool $url = false){
-        if( !$path )
+if (!function_exists('storage_path')) {
+    function storage_path(string $path = '/', bool $url = false)
+    {
+        if (!$path)
             throw new \Exception('error in path to storage');
         return $url ? url('storage/' . $path) : __DIR__ . '/../storage/' . $path;
     }
 }
+
+if (!function_exists('insertMultipleRows')) {
+    function insertMultipleRows(string $table, array $rows): bool
+    {
+        $pdo = load_db();
+        
+        if (empty($rows)) return false;
+
+        // Extract column names from the first row
+        $columns = array_keys($rows[0]);
+        $placeholders = [];
+        $values = [];
+
+        // Prepare placeholders and values
+        foreach ($rows as $row) {
+            $placeholders[] = '(' . rtrim(str_repeat('?, ', count($columns)), ', ') . ')';
+            foreach ($columns as $col) {
+                $values[] = $row[$col];
+            }
+        }
+
+        // Build query
+        $sql = "INSERT INTO `$table` (" . implode(', ', $columns) . ") VALUES " . implode(', ', $placeholders);
+
+        // Execute the query
+        $stmt = $pdo->prepare($sql);
+        return $stmt->execute($values);
+    }
+}
+
+if( !function_exists('push_demand_creation_notification') ){
+    function push_demand_creation_notification($demand_id){
+        $db = load_db();
+
+        $demand = get_demand_with_lifecycle($demand_id);
+        $employee = get_user($demand['employee_id']);
+
+        $target_user = null;
+
+        $current_life = array_filter($demand['lifecycle'], function($value){
+            return $value['decision'] == 'waiting';
+        });
+
+        $current_life = count($current_life) > 0 ? $current_life[0] : null;
+
+        if( !$current_life ){
+            return ;
+        }
+
+        $target_user_id = $current_life['superior_id'];
+
+        $title = 'creation demand';
+        $description = 'il y a une nouvelle demande de creation de conge';
+
+        $sql = "INSERT INTO `notifications` (`employee_id`, `title`, `description`,`url` ) VALUES (?, ?, ?, ?)";
+
+        $stmt = $db->prepare($sql);
+
+        try {
+            $stmt->execute([$target_user_id, $title, $description, url('dashboard/demands/consulte.php')]);
+        } catch (PDOException $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+}
+

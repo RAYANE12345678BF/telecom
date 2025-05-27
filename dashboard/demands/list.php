@@ -663,6 +663,9 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                     <th>
                         compte rendus
                     </th>
+                    <th>
+                        actions
+                    </th>
                     <th>Détails</th>
                 </tr>
             </thead>
@@ -686,7 +689,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                             <ul>
                                 <?php foreach ($demand['lifecycle'] as $step): $superior = fetch_user_information($step['superior_id']); ?>
                                     <li>
-                                        <?= sprintf("%s (%s) :", $superior['nom'], $superior['role']['nom']) ?> <?= $step['decision'] == 'accepted' ? 'accepté' : ( $step['decision'] == 'waiting' ? 'en attent' : 'rejeté' ) ?>
+                                        <?= sprintf("%s (%s) :", $superior['nom'], $superior['role']['nom']) ?> <?= $step['decision'] == 'accepted' ? 'accepté' : ($step['decision'] == 'waiting' ? 'en attent' : 'rejeté') ?>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>
@@ -704,6 +707,17 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                                 /
                             <?php endif; ?>
                         </td>
+                        <td>
+                            <?php if ($demand['status'] == 'accepted'): ?>
+                                <a href="<?= url('actions/print.php?demand=' . $demand['id']) ?>">
+                                    imprimé
+                                </a>
+                            <?php else: ?>
+                                /
+                            <?php endif ?>
+
+                        </td>
+
                         <td>
                             <?php if ($info['type'] == 'text'): ?>
                                 <?= $info['content'] ?>

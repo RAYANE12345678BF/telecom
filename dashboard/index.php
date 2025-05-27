@@ -731,6 +731,16 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
                     <span class="menu-text">Mon Profil</span>
                 </a>
 
+                <a href="<?= url('dashboard/droits') ?>" class="menu-item">
+                    <i class="fas fa-chart-simple"></i>
+                    <span class="menu-text">statistics</span>
+                </a>
+
+                <a href="<?= url('dashboard/droits') ?>" class="menu-item">
+                    <i class="fas fa-list"></i>
+                    <span class="menu-text">my droirs</span>
+                </a>
+
                 <div class="nav-title">Demandes</div>
                 <div class="request-section">
                     <a href="#" class="menu-item" id="faireDemandeBtn">

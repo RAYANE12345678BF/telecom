@@ -333,3 +333,22 @@ if( !function_exists('get_user_with') ){
         return $stmt->rowCount() > 0 ? $stmt->fetch(PDO::FETCH_ASSOC) : null;
     }
 }
+
+
+if( !function_exists('fetch_absenses') ){
+    function fetch_absenses($user_id, $grouped=false) : array|null {
+        $pdo = load_db();
+
+        $user = get_user($user_id);
+
+        $matricule = $user['matricule'];
+
+        $sql = "SELECT * FROM `absenses` WHERE employee_matricule=?";
+
+        $stmt = $pdo->prepare($sql);
+
+        $stmt->execute([$matricule]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
