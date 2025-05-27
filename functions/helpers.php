@@ -896,7 +896,7 @@ if( !function_exists('push_demand_creation_notification') ){
             return $value['decision'] == 'waiting';
         });
 
-        $current_life = count($current_life) > 0 ? $current_life[0] : null;
+        $current_life = is_array($current_life) && count($current_life) > 0 ? $current_life[0] : null;
 
         if( !$current_life ){
             return ;
