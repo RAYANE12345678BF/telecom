@@ -1,6 +1,6 @@
 <?php
 
-include __DIR__ . '/../../../vendor/autoload.php';
+include __DIR__ . '/../../vendor/autoload.php';
 
 if (! session_id()) {
     session_start();
@@ -8,20 +8,8 @@ if (! session_id()) {
 
 redirect_if_not_auth();
 
-if (isset($_GET['demand_id'])) {
-    $action = 'view';
-    $demand = fetch_demand($_GET['demand_id']);
-} else {
-    $action = 'create';
-}
+$user = fetch_user_information($_GET['id'] ?? 1);
 
-if ($action == 'create' && !can_do_conge($_SESSION['user_id'], 'conge_annual')) {
-    $_SESSION['status_icon'] = 'info';
-    $_SESSION['status'] = "vous ne pouvez pas faire cette action car vous avez conger deja";
-    redirect(url('dashboard'));
-}
-
-$user = $_SESSION['user'];
 
 
 $notifications = get_notifications($_SESSION['user_id']);
@@ -33,23 +21,25 @@ $redPin = count(array_filter($notifications, function ($v, $i) {
 }, ARRAY_FILTER_USE_BOTH)) > 0;
 
 $user = fetch_user_information($_SESSION['user_id']);
-
-$user_demands = get_user_demands($_SESSION['user_id']);
+$_SESSION['user'] = get_user($_SESSION['user_id']);
 
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DjazairRH - Navigation</title>
+    <title>DjazairRH - Profil <?= $user['role']['nom'] ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         function setNotificationToRead(el) {
             let id = el.dataset.id
@@ -70,6 +60,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             }
         }
     </script>
+
     <style>
         :root {
             --primary-color: #003366;
@@ -80,7 +71,8 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             --hover-color: #f0f4f8;
             --border-radius: 12px;
             --nav-height: 70px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.3s ease;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
@@ -95,11 +87,13 @@ $user_demands = get_user_demands($_SESSION['user_id']);
 
         body {
             display: flex;
-            height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+            min-height: 100vh;
+            background: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
         }
 
+        /* Navigation Styles */
         .sidebar {
             width: 280px;
             background: white;
@@ -150,11 +144,6 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
         }
 
-        .logo img:hover {
-            transform: scale(1.05) rotate(-3deg);
-            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
-        }
-
         .logo-text {
             font-size: 26px;
             font-weight: 700;
@@ -162,6 +151,15 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: -0.5px;
+        }
+
+        .nav-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            margin: 20px 0 10px;
+            padding-left: 18px;
         }
 
         .sidebar a {
@@ -194,14 +192,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             transition: var(--transition);
         }
 
-        .sidebar a:hover i {
-            transform: scale(1.1);
-            color: var(--secondary-color);
-        }
-
-        .submenu,
-        .sub-submenu,
-        .sub-sub-submenu {
+        .submenu {
             display: none;
             flex-direction: column;
             padding-left: 20px;
@@ -220,9 +211,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             border-radius: 1px;
         }
 
-        .submenu a,
-        .sub-submenu a,
-        .sub-sub-submenu a {
+        .submenu a {
             font-size: 0.95em;
             padding: 12px 16px;
             opacity: 0.9;
@@ -248,68 +237,39 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             box-shadow: var(--shadow-md);
         }
 
-        .user-avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: var(--border-radius);
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2em;
-            color: var(--primary-color);
-            transition: var(--transition);
-            border: 2px solid var(--hover-color);
-            box-shadow: var(--shadow-sm);
-        }
-
+        /* Navbar Styles */
         .navbar {
+            position: fixed;
+            top: 0;
+            right: 0;
             width: calc(100% - 280px);
             height: var(--nav-height);
             background: white;
-            box-shadow: var(--shadow-lg);
-            padding: 0 24px;
             display: flex;
-            justify-content: flex-end;
             align-items: center;
-            position: fixed;
-            top: 0;
-            left: 280px;
-            right: 0;
-            z-index: 999;
+            justify-content: flex-end;
+            padding: 0 30px;
+            box-shadow: var(--shadow-sm);
+            z-index: 900;
         }
 
         .nav-icons {
             display: flex;
-            align-items: center;
-            gap: 16px;
+            gap: 20px;
         }
 
         .icon-wrapper {
             width: 40px;
             height: 40px;
-            border-radius: var(--border-radius);
             display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: 50%;
             cursor: pointer;
-            background: var(--hover-color);
             transition: var(--transition);
-            position: relative;
-        }
-
-        .small-text {
-            font-size: 14px;
-            /* Réduit la taille de la police */
-            font-weight: normal;
-            /* Évite qu'il soit en gras */
-            color: #555;
-            /* Optionnel : une couleur plus douce */
         }
 
         .icon-wrapper:hover {
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: var(--shadow-md);
             background: var(--hover-color);
         }
 
@@ -383,297 +343,257 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             padding: 20px;
         }
 
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.4);
-            }
-
-            70% {
-                transform: scale(1.1);
-                box-shadow: 0 0 0 10px rgba(255, 51, 102, 0);
-            }
-
-            100% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(255, 51, 102, 0);
-            }
-        }
-
-        .content {
-            margin-top: var(--nav-height);
+        /* Main Content Styles */
+        .main-content {
             margin-left: 280px;
+            padding: 90px 30px 30px;
+            width: calc(100% - 280px);
+        }
+
+        /* Profile Styles */
+        :root {
+            --primary-color: #003366;
+            --secondary-color: #0066cc;
+            --accent-color: #e6f3ff;
+            --success-color: #10b981;
+            --text-color: #2c3e50;
+            --bg-color: #f8f9fa;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+        }
+
+        /* Profile Sidebar */
+        .profile-sidebar {
+            background: white;
+            border-radius: var(--border-radius);
             padding: 30px;
-            flex-grow: 1;
-            background: var(--bg-color);
-            min-height: calc(100vh - var(--nav-height));
+            box-shadow: var(--shadow);
+            height: fit-content;
         }
 
-        /* Smooth slide animation for submenus */
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .profile-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            background: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            color: var(--primary-color);
+            position: relative;
         }
 
-        .submenu.show,
-        .sub-submenu.show,
-        .sub-sub-submenu.show {
-            animation: slideDown 0.3s ease forwards;
+        .edit-photo {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: var(--primary-color);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
         }
 
-        /* Responsive Design */
+        .edit-photo:hover {
+            transform: scale(1.1);
+        }
+
+        .profile-name {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .profile-title {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        .profile-info {
+            margin-top: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .info-item i {
+            width: 20px;
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        .info-item input {
+            flex: 1;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+        }
+
+        .info-item input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 51, 102, 0.1);
+        }
+
+        /* Main Content */
+        .profile-content {
+            display: grid;
+            gap: 25px;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .edit-button {
+            background: var(--accent-color);
+            color: var(--primary-color);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .edit-button:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .info-field {
+            margin-bottom: 15px;
+        }
+
+        .field-label {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 5px;
+        }
+
+        .field-value {
+            font-size: 16px;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .field-value input,
+        .field-value select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-top: 5px;
+            background-color: white;
+        }
+
+        .field-value input:focus,
+        .field-value select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 51, 102, 0.1);
+        }
+
         @media (max-width: 1024px) {
             .sidebar {
                 width: 80px;
             }
 
-            .sidebar-header {
-                padding: 0 16px;
+            .logo-text,
+            .menu-text {
+                display: none;
             }
 
-            .sidebar-content {
-                padding: 16px;
-            }
-
-            .navbar {
-                left: 80px;
+            .main-content {
+                margin-left: 80px;
                 width: calc(100% - 80px);
             }
 
-            .content {
-                margin-left: 80px;
+            .navbar {
+                width: calc(100% - 80px);
+            }
+
+            .profile-grid {
+                grid-template-columns: 1fr;
             }
         }
 
-        /* Dark mode support */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-color: #1a1a1a;
-                --text-color: #e0e0e0;
-                --hover-color: #2a2a2a;
-            }
-        }
-
-        /* Remove search-related styles */
-        .nav-left,
-        .nav-right,
-        .nav-search {
-            display: none;
-        }
-
-        /* Base styles */
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: rgb(249, 250, 251);
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 48rem;
-            margin: 0 auto;
-            padding: 3rem 1rem;
-        }
-
-        .form-card {
-            background-color: white;
-            padding: 2rem 1.5rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .title {
-            text-align: center;
-            /* Centrer le texte */
-            color: #124170;
-            /* Bleu foncé */
-            font-size: 28px;
-            /* Agrandir le texte */
-            font-weight: bold;
-            /* Texte en gras */
-            text-transform: uppercase;
-            /* Majuscules */
-            letter-spacing: 1px;
-            /* Espacement entre lettres */
-            margin-bottom: 20px;
-            /* Espacement sous le titre */
-            padding-bottom: 5px;
-            /* Espacement sous le titre */
-            display: block;
-            /* Empêcher toute ligne latérale */
-            width: fit-content;
-            /* Ajuster la largeur au texte */
-            margin-left: auto;
-            margin-right: auto;
-            /* Centrer le bloc */
-        }
-
-
-
-        .section {
-            margin-bottom: 2rem;
-        }
-
-        .section-title {
-            font-size: 1.125rem;
-            font-weight: 500;
-            color: #5c75ac;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group-row {
-            display: flex;
-            gap: 20px;
-            /* Espacement entre les champs */
-        }
-
-        .form-group-row .form-group {
-            flex: 1;
-            /* Permet aux champs de prendre un espace égal */
-        }
-
-        .form-group-row {
-            display: flex;
-            gap: 20px;
-            /* Espacement entre les champs */
-        }
-
-        .form-group-row .form-group {
-            flex: 1;
-            /* Permet aux champs de prendre un espace égal */
-        }
-
-        .form-label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 0.25rem;
-        }
-
-        .form-input {
-            width: 50%;
-            padding: 0.5rem 0.75rem;
-            padding-left: 2.5rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.375rem;
-            font-size: 0.875rem;
-            transition: border-color 0.15s ease-in-out;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        .success-message {
-            display: flex;
-            align-items: center;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            background-color: #ecfdf5;
-            color: #047857;
-            border-radius: 0.375rem;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .buttons-container {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            /* Espacement entre les boutons */
-        }
-
-        .button-primary {
-            background-color: white;
-            /* Fond blanc */
-            color: #003366;
-            /* Texte bleu foncé */
-            font-size: 16px;
-            font-weight: bold;
-            padding: 12px 20px;
-            border: 2px solid #003366;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            /* Espacement entre l'icône et le texte */
-        }
-
-        .button-primary:hover {
-            background-color: #003366;
-            color: white;
-            transform: scale(1.05);
-        }
-
-        .button-primary:active {
-            background-color: #002244;
-            color: white;
-            transform: scale(0.98);
-        }
-
-        .button-secondary {
-            background-color: white;
-            color: #444;
-            font-size: 16px;
-            font-weight: bold;
-            padding: 12px 20px;
-            border: 2px solid #444;
-            border-radius: 5px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: background 0.3s ease, transform 0.2s ease;
-        }
-
-        .button-secondary:hover {
-            background-color: #444;
-            color: white;
-            transform: scale(1.05);
-        }
-
-        .button-secondary:active {
-            background-color: #222;
-            transform: scale(0.98);
-        }
-
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-0.5rem);
+        @media (max-width: 768px) {
+            .profile-grid {
+                grid-template-columns: 1fr;
             }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
+            .info-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -788,6 +708,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
 </head>
 
 <body x-data="body">
+    <!-- Navigation Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
             <div class="logo">
@@ -805,6 +726,16 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                 <a href="<?= url('dashboard') ?>" class="menu-item active">
                     <i class="fas fa-user-circle"></i>
                     <span class="menu-text">Mon Profil</span>
+                </a>
+
+                <a href="<?= url('dashboard/droits') ?>" class="menu-item">
+                    <i class="fas fa-chart-simple"></i>
+                    <span class="menu-text">statistics</span>
+                </a>
+
+                <a href="<?= url('dashboard/droits') ?>" class="menu-item">
+                    <i class="fas fa-list"></i>
+                    <span class="menu-text">my droirs</span>
                 </a>
 
                 <div class="nav-title">Demandes</div>
@@ -866,17 +797,18 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                         </a>
                     <?php endif ?>
 
-                    <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
-                        <a href="#" class="menu-item" onclick="Swal.fire({title : 'information', text : 'en train de developper!', icon : 'info'})">
-                            <i class="fas fa-clock"></i>
-                            <span class="menu-text">Voir Pointage</span>
-                        </a>
-                    <?php endif ?>
+
 
 
                 </div>
 
                 <div class="nav-title">Autres</div>
+                <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
+                    <a href="<?= dashboard_url('pointage') ?>" class="menu-item">
+                        <i class="fas fa-clock"></i>
+                        <span class="menu-text">Voir Pointage</span>
+                    </a>
+                <?php endif ?>
                 <a href="<?= url('dashboard/support') ?>" class="menu-item">
                     <i class="fas fa-question-circle"></i>
                     <span class="menu-text">Support</span>
@@ -900,10 +832,11 @@ $user_demands = get_user_demands($_SESSION['user_id']);
     <!-- Top Navbar -->
     <nav class="navbar">
         <div class="nav-icons">
-            <div class="icon-wrapper" onclick="toggleNotifications()">
+            <div class="icon-wrapper relative" onclick="toggleNotifications()">
                 <i class="fa-solid fa-bell"></i>
                 <!-- Badge pour les notifications non lues -->
                 <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                <span id="redPin" class="w-1 h-1 rounded-full bg-red-500 top-3 right-3 absolute <?= !$redPin ? 'hidden' : '' ?>"></span>
             </div>
             <div class="icon-wrapper" onclick="toggleMessenger()">
                 <i class="fa-brands fa-facebook-messenger"></i>
@@ -916,7 +849,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
         <!-- <div class="no-notifications">
         Aucune notification pour le moment.
         </div> -->
-        <div class="w-full flex flex-col space-y-1" id="notifications-container">
+        <div class="w-full flex flex-col-reverse space-y-1" id="notifications-container">
             <!-- start a notification with two actions (accept/reject) -->
             <template x-if="notifications.length > 0">
                 <template x-for="notification in notifications">
@@ -965,155 +898,248 @@ $user_demands = get_user_demands($_SESSION['user_id']);
         </div>
     </div>
     </nav>
-    <div class="content">
-        <div class="container" >
-            <div class="form-card" id="print">
-                <div class="header">
-                    <h1 class="title"> demande congé Annuel </h1>
+
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div id="page-content" class="container">
+            <div class="profile-grid">
+                <!-- Profile Sidebar -->
+                <div class="profile-sidebar">
+                    <div class="profile-photo">
+                        <i class="fas fa-user"></i>
+                        <div class="edit-photo">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div>
+                    <h2 class="profile-name"><?= htmlspecialchars($user['nom'] . ' ' . $user['prenom']) ?></h2>
+                    <p class="profile-title"><?= htmlspecialchars($user['role']['nom']) ?></p>
+                    
+                    <div class="profile-info">
+                        <div class="info-item">
+                            <i class="fas fa-envelope"></i>
+                            <span><?= htmlspecialchars($user['email_professionnel']) ?></span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-phone"></i>
+                            <span><?= htmlspecialchars($user['phone'] ?? 'Non spécifié') ?></span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-building"></i>
+                            <span><?= htmlspecialchars($user['department']['nom'] ?? 'Non spécifié') ?></span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>Date d'embauche: <?= htmlspecialchars($user['start_date'] ?? 'Non spécifié') ?></span>
+                        </div>
+                    </div>
                 </div>
-                <form action="<?= url('actions/demand.php') ?>" method="post" id="formConvocation">
-                    <input type="hidden" name="demand_type" value="conge_annual">
-                    <div class="section">
-                        <h3 class="section-title">Informations Personnelles</h3>
-                        <div class="form-group">
-                            <label class="form-label" for="matricule">Matricule</label>
-                            <input readonly value="<?= $user['matricule'] ?>" type="text" id="matricule" class="form-input" required>
-                        </div>
-                        <div class="form-group-row">
-                            <div class="form-group">
-                                <label class="form-label" for="nom">Nom</label>
-                                <input readonly value="<?= $user['nom'] ?>" type="text" id="nom" class="form-input" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="prenom">Prénom</label>
-                                <input readonly value="<?= $user['prenom'] ?>" type="text" id="prenom" class="form-input" required>
-                            </div>
-                        </div>
 
-                        <h3 class="section-title">Informations Professionnelles</h3>
-
-                        <div class="form-group">
-                            <label class="form-label" for=" Fonction"> Fonction</label>
-                            <input readonly value="<?= $user['role']['nom'] ?>" type="text" id=" Fonction" class="form-input" required>
+                <!-- Main Content -->
+                <div class="profile-content">
+                    <!-- Personal Information -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-user-circle me-2"></i>Informations Personnelles</h3>
+                            <!-- <button class="btn btn-primary btn-sm">
+                                <i class="fas fa-edit me-1"></i>Modifier
+                            </button> -->
                         </div>
-                    </div>
-                    <div class="section">
-                        <h3 class="section-title">Détails de congé</h3>
-                        <div class="form-group">
-                            <label class="form-label" for=" demande ">Description</label>
-                            <input value="<?= $demand['description'] ?>" name="description" type="text" id="demande" class="form-input" required>
-                        </div>
-                        <div x-data="{duree : 30}" class="form-group">
-                            <label class="form-label" for="duree">Durée</label>
-                            <select :value="<?= $demand['duree'] ?>" x-init="$watch('duree', (e) => $el.value=e)" :name="duree!=-1 ? 'duree' : 'duree2'" @change="duree = $el.value" id="duree-select" class="form-input" <?= $action == 'view' ? 'disabled' : ''; ?>>
-                                <option value="30" selected>1 mois</option>
-                                <option value="15">15 jours</option>
-                                <option value="-1">Autre</option>
-                            </select>
-                            <input :name="duree==-1 ? 'duree' : 'duree2'" min="1" x-show="duree == -1" type="number" id="duree-input" class="form-input" placeholder="Entrez la durée en jours" style="display: none; margin-top: 10px;" min="1" max="30">
-                        </div>
-                        <div class="form-group-row">
-                            <div class="form-group">
-                                <label class="form-label" for="date-debut">Date début</label>
-                                <input value="<?= $demand['date_debut'] ?>" name="start_date" type="date" id="date-debut" class="form-input" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="date-fin">Date de fin</label>
-                                <input value="<?= $demand['date_fin'] ?>" readonly name="end_date" type="date" id="date-fin" class="form-input" required>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Nom</label>
+                                    <input type="text" class="form-control" value="<?= htmlspecialchars($user['nom']) ?>" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Prénom</label>
+                                    <input type="text" class="form-control" value="<?= htmlspecialchars($user['prenom']) ?>" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" value="<?= htmlspecialchars($user['email_professionnel']) ?>" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Téléphone</label>
+                                    <input type="tel" class="form-control" value="<?= htmlspecialchars($user['phone'] ?? '') ?>" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">État Civil</label>
+                                    <input type="text" class="form-control" value="<?= htmlspecialchars($user['etat_civil'] ?? 'Non spécifié') ?>" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Date de Naissance</label>
+                                    <input type="text" class="form-control" value="<?= htmlspecialchars($user['birth_day'] ?? 'Non spécifié') ?>" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Lieu de Naissance</label>
+                                    <input type="text" class="form-control" value="<?= htmlspecialchars($user['birth_place'] ?? 'Non spécifié') ?>" readonly>
+                                </div>
                             </div>
                         </div>
-
                     </div>
-                    <div class="section">
-                        <h3 class="section-title">Informations Complémentaires</h3>
-                        <h4 class="section-subtitle small-text">pour en jouir a l'adresse suivante </h4>
-                        <div class="form-group">
-                            <textarea name="info" id="info-complementaire" class="form-input" rows="4" placeholder="Entrez vos informations complémentaires ici..."><?= $demand['info']['content'] ?></textarea>
+
+                    <!-- Professional Information -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-briefcase me-2"></i>Informations Professionnelles</h3>
+                            <!-- <button class="btn btn-primary btn-sm">
+                                <i class="fas fa-edit me-1"></i>Modifier
+                            </button> -->
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Département</label>
+                                    <input type="text" class="form-control" value="<?= htmlspecialchars($user['department']['nom'] ?? 'Non spécifié') ?>" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Poste</label>
+                                    <input type="text" class="form-control" value="<?= htmlspecialchars($user['role']['nom']) ?>" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Date d'embauche</label>
+                                    <input type="text" class="form-control" value="<?= htmlspecialchars($user['start_date'] ?? 'Non spécifié') ?>" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Statut</label>
+                                    <input type="text" class="form-control" value="<?= htmlspecialchars($user['statut'] ?? 'Actif') ?>" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Salaire de Base</label>
+                                    <input type="text" class="form-control" value="<?= htmlspecialchars($user['base_payment'] ?? 'Non spécifié') ?> DZD" readonly>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="buttons-container" style="display: flex; justify-content: flex-end; gap: 10px;">
-
-                        <?php if ($action == 'view'): ?>
-                            <button @click="handlePrintButton" type="button" id="printButton" class="button button-secondary">
-                                <i class="fas fa-print"></i> Imprimer
-                            </button>
-                        <?php endif ?>
-
-                        <?php if ($action == 'create'): ?>
-                            <button type="submit" id="submitButton" class="button button-primary">
-                                <span id="submitText">Soumettre</span>
-                            </button>
-                        <?php endif ?>
-                    </div>
-                    <script>
-                        const start_date = document.querySelector("input[name=start_date]")
-                        const end_date = document.querySelector("input[name=end_date]")
-                        const duree = document.querySelector('input[name=duree]')
-                        start_date.min = new Date().toISOString().split("T")[0];
-                        end_date.min = new Date().toISOString().split("T")[0];
-
-                        start_date.onchange = () => {
-                            var duree = document.querySelector('input[name=duree]') || document.querySelector('select[name=duree]')
-
-                            duree.min = 1
-                            if (+duree.value < 1) {
-                                duree.value = 1
-                            }
-
-                            if (start_date.value.trim() != "") {
-                                let date = new Date(start_date.value);
-                                date.setDate(date.getDate() + +duree.value + 1)
-
-                                console.log(date, duree)
-                                end_date.value = date.toISOString().split("T")[0]
-                            }
-                        }
-                    </script>
-
-                    <script>
-                        function handlePrintButton(e) {
-                            let styles = document.getElementsByTagName('style')[0].innerText
-                            let divToPrint = document.getElementById('print')
-                            divToPrint.style.width = '100%'
-
-                            let button = divToPrint.getElementsByTagName('button')[0]
-                            let status = "<?= $action == 'view' ? $demand['status'] : '' ?>"
-                            let btnHtml = button.parentElement.innerHTML
-                            button.parentElement.innerHTML = `
-                                Status : ${status}
-                            `
-                            let printWindow = window.open('', '', 'height=500, width=500');
-                            printWindow.document.open();
-                            printWindow.document.write(`
-                <html>
-                <head>
-                    <title>Print Div Content</title>
-                    <style>
-                        ${styles}
-                    </style>
-                </head>
-                <body>
-                    ${divToPrint.parentElement.innerHTML}
-                </body>
-                </html>
-            `);
-                            printWindow.document.close();
-                            printWindow.print();
-
-                            button.parentElement.innerHTML = btnHtml
-                        }
-                    </script>
-
-                </form>
+                </div>
             </div>
         </div>
     </div>
+
+
+    <script>
+        const btn = document.querySelector('#saveProfissionel')
+        btn.onclick = () => {
+            let data = new FormData
+            data.append('action', 'save_prof')
+
+            let keys = ["matricule", "role_id", "department_id", "start_date", "service_id", "superior_id"]
+
+
+            keys.forEach(e => {
+                try {
+                    data.append(e, (document.querySelector(`input[name=${e}]`) || document.querySelector(`select[name=${e}]`)).value)
+                } catch (err) {
+                    console.log(e, err)
+                }
+            })
+            fetch('<?= url('actions/account.php') ?>', {
+                    method: "post",
+                    body: data
+                }).then(res => res.json())
+                .then(js => {
+                    if (js.success) {
+                        Swal.fire({
+                            title: 'effectué!',
+                            text: 'les enregistrement effectué avec success',
+                            icon: 'success'
+                        })
+                    } else {
+                        Swal.fire({
+                            title: 'erreur!',
+                            text: js.message,
+                            icon: 'error'
+                        })
+                    }
+                }).catch(err => {
+                    Swal.fire({
+                        title: 'error!',
+                        text: err,
+                        icon: 'error'
+                    })
+                })
+        }
+    </script>
+
+    <script>
+        const warnInfo = (text = "complete vous informations pour bien utuliser votre compte") => {
+            Swal.fire({
+                title: "warning",
+                text,
+                icon: "warning"
+            });
+        }
+
+        <?php if (($l = isProfileComplete($user)) !== true): ?>
+            warnInfo()
+        <?php endif; ?>
+    </script>
+
+    <script>
+        const saveBtn = document.querySelector('#saveBtn')
+
+        saveBtn.onclick = () => {
+            let data = new FormData
+            data.append('action', 'save')
+
+            let keys = ["phone", "nom", "prenom", "birth_day", "birth_place", "etat_cevil", "matricule"]
+
+
+            keys.forEach(e => {
+                try {
+                    data.append(e, (document.querySelector(`input[name=${e}]`) || document.querySelector(`select[name=${e}]`)).value)
+                } catch (err) {
+                    console.log(e, err)
+                }
+            })
+            fetch('<?= url('actions/account.php') ?>', {
+                    method: "post",
+                    body: data
+                }).then(res => res.json())
+                .then(js => {
+                    if (js.success) {
+                        Swal.fire({
+                            title: 'effectué!',
+                            text: 'les enregistrement effectué avec success',
+                            icon: 'success'
+                        })
+                    } else {
+                        Swal.fire({
+                            title: 'erreur!',
+                            text: js.message,
+                            icon: 'error'
+                        })
+                    }
+                }).catch(err => {
+                    Swal.fire({
+                        title: 'erreur!',
+                        text: err,
+                        icon: 'error'
+                    })
+                })
+        }
+    </script>
+
+    <?php if (isset($_SESSION['status'])): ?>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            Swal.fire({
+                title: "information!",
+                text: "<?= $_SESSION['status'] ?>",
+                icon: "<?= $_SESSION['status_icon'] ?? "success" ?>"
+            });
+        </script>
+    <?php unset($_SESSION['status']);
+        unset($_SESSION['status_icon']);
+    endif; ?>
+
     <script>
         // Navigation menu toggle functions
         document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
             e.preventDefault();
             const submenu = document.getElementById('demandeSubmenu');
-            submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+            submenu.style.display = submenu.style.display == 'none' ? 'block' : 'none';
         });
 
         document.getElementById('congeBtn').addEventListener('click', function(e) {
@@ -1121,13 +1147,10 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             const submenu = document.getElementById('congeSubmenu');
             submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
         });
-        // Navigation menu toggle functions
-        document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            const submenu = document.getElementById('demandeSubmenu');
-            submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
-        });
 
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            window.location.href = 'loginAT1.html';
+        });
         document.getElementById('congeBtn').addEventListener('click', function(e) {
             e.preventDefault();
             const submenu = document.getElementById('congeSubmenu');
@@ -1180,9 +1203,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                 icon.style.transform = "rotate(90deg)";
             }
         });
-        document.getElementById('logoutButton').addEventListener('click', function() {
-            window.location.href = 'loginAT1.html';
-        });
+
         document.querySelector(".conges-toggle").addEventListener("click", function(e) {
             e.preventDefault();
             let subSubSubmenu = document.querySelector(".sub-sub-submenu");
@@ -1217,7 +1238,9 @@ $user_demands = get_user_demands($_SESSION['user_id']);
         function handlePrint() {
             // Print logic here
         }
-
+        document.getElementById('printButton').addEventListener('click', function() {
+            window.print();
+        });
 
         // Fonction pour afficher/masquer les notifications
         function toggleNotifications() {
@@ -1257,6 +1280,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             }
         });
     </script>
+
     <script defer>
         const notifyContainer = document.querySelector('#notifications-container');
         const poll_interval = 4000; // 10 seconds
@@ -1264,8 +1288,21 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             fetch('<?= url('actions/notifications.php') ?>')
                 .then(response => response.json())
                 .then(data => {
+                    let redPin = data.filter(value => {
+                        return +value.read_state === 0
+                    })
+
+                    console.log('pin', redPin)
+
+                    if (redPin.length > 0) {
+                        document.querySelector('#redPin').classList.remove('hidden')
+                    }
                     console.log(data)
                     $data.notifications = data
+
+
+
+
 
                 });
         }
@@ -1284,11 +1321,23 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                                 return v
                             })
                         }
+
+                        let redPin = data.notifications.filter(value => {
+                            return +value.read_state === 0
+                        })
+
+
+                        if (redPin.length <= 0) {
+                            document.querySelector('#redPin').classList.add('hidden')
+                        }
+                    },
+                    init() {
+                        m = setInterval(() => pollNotifications(this), poll_interval);
                     }
                 }
             })
 
-            m = setInterval(() => pollNotifications(Alpine.data('body')), poll_interval);
+
         })
     </script>
 </body>

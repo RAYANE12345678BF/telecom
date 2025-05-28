@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
 
                         if (count($active_demands) > 0) {
                             // Set the cell value to 'OK' if user found and date is between start and end date
-                            $cell->current()->setValue($active_demands[0]['type']);
+                            $cell->current()->setValue($active_demands[0]['type'] ?? 'conge_rc');
                         } else {
                             // Set the cell value to 'NOK' if user found but date is not between start and end date
                             $cell->current()->setValue('no justifié');

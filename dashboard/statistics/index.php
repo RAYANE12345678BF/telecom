@@ -30,12 +30,13 @@ foreach($absenses as $absense){
 
 $count = count($grouped);
 
+
 $absenseAsArray = array_map(function($absense, $key) use ($count){
     return [
         'id' => rand(1, $count),
         'date' => $key,
-        'type' => $absense['morning'] == 'no' ? 'Non Justifieé' : $absense['morning'],
-        'statut' => $absense['morning'] == 'no' ? 'Non Justifieé' : 'Justifieé',
+        'type' => !isset($absense['morning']) || $absense['morning'] == 'no' ? 'Non Justifieé' : $absense['morning'],
+        'statut' => !isset($absense['morning']) || $absense['morning'] == 'no' ? 'Non Justifieé' : 'Justifieé',
         'jours' =>(int)  date('d', strtotime($key)),
         'mois' => date('m', strtotime($key)),
         'annee' => date('Y', strtotime($key)),
@@ -103,6 +104,49 @@ $deplacements = array_filter($deplacements, function($deplacement){
 $leaves = array_filter($leaves, function($leave){
     return $leave['status'] == 'accepted' && date('m', strtotime($leave['date_debut'])) == date('m');
 });
+
+$rc_conges = get_all_conges($id?:$_SESSION['user_id'], 'conge_rc', 'accepted');
+
+$m = date('m');
+
+$rcs = array_filter($rc_conges, function($e) use ($m){
+    return ( $m === date('m', strtotime($e['date_debut'])) ) ||
+           ( $m === date('m', strtotime($e['date_fin'])) ) ||
+           ( date('m', strtotime($e['date_debut'])) < $m && date('m', strtotime($e['date_fin'])) > $m );
+});
+
+$sum = 0;
+
+foreach($rcs as $e){
+    if( $m === date('m', strtotime($e['date_debut'])) ){
+        if($m === date('m', strtotime($e['date_fin']))){
+            $sum += (int) (date('d', strtotime($e['date_fin'])) - date('d', strtotime($e['date_debut'])));
+        }
+        $sum += (int) (30 - date('d', strtotime($e['date_debut'])));
+    }
+
+    if( $m === date('m', strtotime($e['date_fin'])) ){
+        $sum += (int)(date('d', strtotime($e['date_fin'])));
+    }
+
+    if( date('m', strtotime($e['date_debut'])) < $m && date('m', strtotime($e['date_fin'])) > $m ){
+        $sum += 30;
+    }
+}
+
+
+$missions_months = [];
+$leaves_months = [];
+$rc_months = [];
+$deplacements_months  = [];
+
+
+for( $i = 1; $i <= 12; $i++ ){
+    $missions_months[] = count(array_filter($missions, fn($e) => date('m', strtotime($e['date_debut'])) == $i));
+    $leaves_months[] = count(array_filter($leaves, fn($e) => date('m', strtotime($e['date_debut'])) == $i));
+    $rc_months[] = count(array_filter($rc_conges, fn($e) => date('m', strtotime($e['date_debut'])) == $i));
+    $deplacements_months[] = count(array_filter($deplacements, fn($e) => date('m', strtotime($e['date_debut'])) == $i));
+}
 
 // count the number of missions
 $missions_count = count($missions);
@@ -1058,7 +1102,7 @@ $leaves_count = count($leaves);
                                         <span class="stat-icon">⏳</span>
                                         Repos Compensateur
                                     </h5>
-                                    <p class="display-6 text-center" style="color: var(--rc-color);">12 heures</p>
+                                    <p class="display-6 text-center" style="color: var(--rc-color);"><?= $sum ?> jours</p>
                                     <p class="text-muted text-center">Acquis ce mois</p>
                                 </div>
                             </div>
@@ -1688,7 +1732,7 @@ $leaves_count = count($leaves);
                 datasets: [
                     {
                         label: 'Missions',
-                        data: [1, 0, 1, 1, 2, 0, 0, 0, 0, 0, 1, 0],
+                        data: JSON.parse("<?= json_encode($missions_months) ?>"),
                         fill: false,
                         backgroundColor: '#3498db',
                         borderColor: '#3498db',
@@ -1696,15 +1740,15 @@ $leaves_count = count($leaves);
                     },
                     {
                         label: 'Déplacements',
-                        data: [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+                        data: JSON.parse("<?= json_encode($deplacements_months) ?>"),
                         fill: false,
                         backgroundColor: '#2ecc71',
                         borderColor: '#2ecc71',
                         tension: 0.1
                     },
                     {
-                        label: 'RC (heures)',
-                        data: [0, 3, 6, 8, 4, 0, 0, 0, 0, 0, 0, 0],
+                        label: 'RC (jours)',
+                        data: JSON.parse("<?= json_encode($rc_months) ?>"),
                         fill: false,
                         backgroundColor: '#9b59b6',
                         borderColor: '#9b59b6',
@@ -1712,7 +1756,7 @@ $leaves_count = count($leaves);
                     },
                     {
                         label: 'Sorties',
-                        data: [1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0],
+                        data: JSON.parse("<?= json_encode($leaves_months) ?>"),
                         fill: false,
                         backgroundColor: '#1abc9c',
                         borderColor: '#1abc9c',

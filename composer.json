@@ -7,7 +7,7 @@
         "psr-4": {
             "Rayan\\Dzgrh\\": "src/"
         },
-        "files" : ["functions/helpers.php", "functions/auth.php", "functions/user.php"]
+        "files" : ["functions/helpers.php", "functions/auth.php", "functions/user.php", "functions/validation.php"]
     },
     "authors": [
         {
@@ -19,7 +19,6 @@
     "require": {
         "symfony/string": "7.3.x-dev",
         "phpoffice/phpspreadsheet": "dev-master",
-        "dompdf/dompdf": "dev-master",
-        "tecnickcom/tcpdf": "dev-main"
+        "phpmailer/phpmailer": "dev-master"
     }
 }

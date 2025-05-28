@@ -31,6 +31,25 @@ switch($action){
         ]);
     }
 
+    $errors = validate($_POST, [
+        'phone' => ['required', 'phone'],
+        'birth_day' => ['required'],
+        'birth_place' => ['required', 'alpha'],
+        'etat_cevil' => ['required'],
+        'nom' => ['required', 'alpha'],
+        'prenom' => ['required', 'alpha']
+    ]);
+
+    if( is_array($errors) ){
+        $fields = array_keys($errors);
+        send_json_response([
+            'success' => false,
+            'message' => $errors[$fields[0]]
+        ]);
+    }
+
+
+
     $user_id = $_SESSION['user_id'];
 
     $data = compact('phone', 'birth_day', 'birth_place', 'etat_civil', 'nom', 'prenom');
@@ -61,6 +80,14 @@ switch($action){
                 'message' => 'matricule deja existant'
             ]);
         }
+
+        $errors = validate($_POST, [
+            'matricule' => ['required'],
+            'department_id' => ['required'],
+            'service_id' => ['required'],
+            'superior_id' => ['required'],
+            'start_date' => ['required'],
+        ]);
 
         $user_id = $_SESSION['user_id'];
     

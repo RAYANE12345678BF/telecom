@@ -121,8 +121,12 @@ if( !function_exists('get_all_users') ){
         if( $stmt->rowCount() > 0 ){
             $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            foreach( $users as $user ){
+            foreach( $users as &$user ){
                 unset($user['password']);
+                $user['superior'] = $user['superior_id'] ?  get_user($user['superior_id']) : null ;
+                $user['role'] = get_role($user['role_id']);
+                $user['department'] = get_department($user['departement_id']);
+                $user['service'] = get_service($user['service_id']);
             }
 
             return $users;

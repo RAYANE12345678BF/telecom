@@ -898,16 +898,10 @@ if( !function_exists('push_demand_creation_notification') ){
             return $value['decision'] == 'waiting';
         });
 
-        $current_life = array_filter($demand['lifecycle'], function($value){
-            return $value['decision'] == 'waiting';
-        });
-
         $key = array_keys($current_life)[0] ?? null;
         if(!$key){
             return null;
         }
-        $current_life = $current_life[$key];
-
         $current_life = $current_life[$key];
 
         $target_user_id = $current_life['superior_id'];
@@ -927,3 +921,56 @@ if( !function_exists('push_demand_creation_notification') ){
     }
 }
 
+if( !function_exists('get_absences') ){
+    function get_absences($employee_id, $year = null, $month = null) {
+        $db = load_db();
+        
+        $query = "SELECT a.* FROM absenses a 
+                  INNER JOIN employees e ON a.employee_matricule = e.matricule 
+                  WHERE e.id = ?";
+        
+        $params = [$employee_id];
+        
+        if ($year && $month) {
+            $query .= " AND YEAR(a.date) = ? AND MONTH(a.date) = ?";
+            $params[] = $year;
+            $params[] = $month;
+        }
+        
+        $query .= " ORDER BY a.date DESC";
+        
+        $stmt = $db->prepare($query);
+        $stmt->execute($params);
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
+
+
+
+
+
+function countDaysInMonthBetweenDates(string $startDate, string $endDate, int $targetMonth): int
+{
+    $start = DateTime::createFromFormat('m-d-Y', $startDate);
+    $end = DateTime::createFromFormat('m-d-Y', $endDate);
+
+    if (!$start || !$end || $start > $end || $targetMonth < 1 || $targetMonth > 12) {
+        return 0;
+    }
+
+    $year = $start->format('Y');
+
+    // Define the first and last day of the target month
+    $monthStart = DateTime::createFromFormat('Y-m-d', "$year-" . str_pad($targetMonth, 2, '0', STR_PAD_LEFT) . "-01");
+    $monthEnd = clone $monthStart;
+    $monthEnd->modify('last day of this month');
+
+    // Check if the entire month is within the range
+    if ($monthStart >= $start && $monthEnd <= $end) {
+        return (int)$monthEnd->format('j'); // number of days in the month
+    }
+
+    // Otherwise, no full month coverage
+    return 0;
+}

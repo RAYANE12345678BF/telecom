@@ -352,3 +352,16 @@ if( !function_exists('fetch_absenses') ){
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
+
+if( !function_exists('get_all_conges') ){
+    function get_all_conges($user_id, $type, $status){
+        $db = load_db();
+        $sql = "SELECT * FROM `demands` WHERE type=? AND status=? AND employee_id=?";
+
+        $stmt = $db->prepare($sql);
+
+        $stmt->execute([$type, $status, $user_id]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
