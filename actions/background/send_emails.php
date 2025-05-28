@@ -10,7 +10,7 @@ $mailer = new PHPMailer(true);
 
 // Gmail SMTP settings
 $gmail_user = 'karimaouaouda.officiel@gmail.com';
-$gmail_app_password = 'ekynrjqagwppcsac'; // use app-specific password
+$gmail_app_password = ; // use app-specific password
 
 try {
     $stmt = $pdo->prepare("SELECT ej.*, e.email_professionnel 

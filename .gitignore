@@ -1,2 +1,4 @@
 /storage/files
 /vendor
+/.env
+.env
