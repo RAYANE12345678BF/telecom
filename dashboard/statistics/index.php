@@ -120,16 +120,15 @@ $sum = 0;
 foreach($rcs as $e){
     if( $m === date('m', strtotime($e['date_debut'])) ){
         if($m === date('m', strtotime($e['date_fin']))){
-            $sum += (int) (date('d', strtotime($e['date_fin'])) - date('d', strtotime($e['date_debut'])));
+
+            $sum += date('d', strtotime($e['date_fin'])) - date('d', strtotime($e['date_debut']));
+        }else{
+            $sum += (int) (30 - date('d', strtotime($e['date_debut'])));
         }
-        $sum += (int) (30 - date('d', strtotime($e['date_debut'])));
-    }
-
-    if( $m === date('m', strtotime($e['date_fin'])) ){
+        
+    }elseif( $m === date('m', strtotime($e['date_fin'])) ){
         $sum += (int)(date('d', strtotime($e['date_fin'])));
-    }
-
-    if( date('m', strtotime($e['date_debut'])) < $m && date('m', strtotime($e['date_fin'])) > $m ){
+    }elseif( date('m', strtotime($e['date_debut'])) < $m && date('m', strtotime($e['date_fin'])) > $m ){
         $sum += 30;
     }
 }
