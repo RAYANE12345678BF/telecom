@@ -20,8 +20,8 @@ $redPin = count(array_filter($notifications, function ($v, $i) {
     return $v['read_state'] == 0;
 }, ARRAY_FILTER_USE_BOTH)) > 0;
 
-$user = fetch_user_information($_SESSION['user_id']);
-$_SESSION['user'] = get_user($_SESSION['user_id']);
+$current_user = fetch_user_information($_SESSION['user_id']);
+$_SESSION['user'] = get_user($current_user['id']);
 
 ?>
 
