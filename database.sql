@@ -29,9 +29,9 @@ CREATE TABLE IF NOT EXISTS `absenses` (
   PRIMARY KEY (`id`),
   KEY `FK_absenses_employees_2` (`employee_matricule`),
   CONSTRAINT `FK_absenses_employees_2` FOREIGN KEY (`employee_matricule`) REFERENCES `employees` (`matricule`)
-) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table rayane.absenses: ~0 rows (approximately)
+-- Dumping data for table rayane.absenses: ~88 rows (approximately)
 DELETE FROM `absenses`;
 INSERT INTO `absenses` (`id`, `date`, `day_part`, `justify`, `employee_matricule`) VALUES
 	(1, '2024-12-31 23:00:00', 'morning', 'no', 153),
@@ -77,7 +77,51 @@ INSERT INTO `absenses` (`id`, `date`, `day_part`, `justify`, `employee_matricule
 	(41, '2025-01-28 23:00:00', 'morning', 'no', 153),
 	(42, '2025-01-28 23:00:00', 'evening', 'no', 153),
 	(43, '2025-01-29 23:00:00', 'morning', 'no', 153),
-	(44, '2025-01-29 23:00:00', 'evening', 'no', 153);
+	(44, '2025-01-29 23:00:00', 'evening', 'no', 153),
+	(45, '2024-12-31 23:00:00', 'morning', 'no', 17),
+	(46, '2024-12-31 23:00:00', 'evening', 'no', 17),
+	(47, '2025-01-01 23:00:00', 'morning', 'no', 17),
+	(48, '2025-01-01 23:00:00', 'evening', 'no', 17),
+	(49, '2025-01-04 23:00:00', 'morning', 'conge_rc', 17),
+	(50, '2025-01-04 23:00:00', 'evening', 'conge_rc', 17),
+	(51, '2025-01-05 23:00:00', 'morning', 'conge_rc', 17),
+	(52, '2025-01-05 23:00:00', 'evening', 'conge_rc', 17),
+	(53, '2025-01-06 23:00:00', 'morning', 'conge_rc', 17),
+	(54, '2025-01-06 23:00:00', 'evening', 'conge_rc', 17),
+	(55, '2025-01-07 23:00:00', 'morning', 'conge_rc', 17),
+	(56, '2025-01-07 23:00:00', 'evening', 'conge_rc', 17),
+	(57, '2025-01-08 23:00:00', 'morning', 'conge_rc', 17),
+	(58, '2025-01-08 23:00:00', 'evening', 'conge_rc', 17),
+	(59, '2025-01-11 23:00:00', 'morning', 'conge_annual', 17),
+	(60, '2025-01-11 23:00:00', 'evening', 'conge_annual', 17),
+	(61, '2025-01-12 23:00:00', 'morning', 'conge_annual', 17),
+	(62, '2025-01-12 23:00:00', 'evening', 'conge_annual', 17),
+	(63, '2025-01-13 23:00:00', 'morning', 'conge_annual', 17),
+	(64, '2025-01-13 23:00:00', 'evening', 'conge_annual', 17),
+	(65, '2025-01-14 23:00:00', 'morning', 'conge_annual', 17),
+	(66, '2025-01-14 23:00:00', 'evening', 'conge_annual', 17),
+	(67, '2025-01-15 23:00:00', 'morning', 'conge_annual', 17),
+	(68, '2025-01-15 23:00:00', 'evening', 'conge_annual', 17),
+	(69, '2025-01-18 23:00:00', 'morning', 'conge_annual', 17),
+	(70, '2025-01-18 23:00:00', 'evening', 'conge_annual', 17),
+	(71, '2025-01-19 23:00:00', 'morning', 'conge_annual', 17),
+	(72, '2025-01-19 23:00:00', 'evening', 'conge_annual', 17),
+	(73, '2025-01-20 23:00:00', 'morning', 'conge_annual', 17),
+	(74, '2025-01-20 23:00:00', 'evening', 'conge_annual', 17),
+	(75, '2025-01-21 23:00:00', 'morning', 'conge_annual', 17),
+	(76, '2025-01-21 23:00:00', 'evening', 'conge_annual', 17),
+	(77, '2025-01-22 23:00:00', 'morning', 'conge_annual', 17),
+	(78, '2025-01-22 23:00:00', 'evening', 'conge_annual', 17),
+	(79, '2025-01-25 23:00:00', 'morning', 'conge_annual', 17),
+	(80, '2025-01-25 23:00:00', 'evening', 'conge_annual', 17),
+	(81, '2025-01-26 23:00:00', 'morning', 'conge_annual', 17),
+	(82, '2025-01-26 23:00:00', 'evening', 'conge_annual', 17),
+	(83, '2025-01-27 23:00:00', 'morning', 'conge_annual', 17),
+	(84, '2025-01-27 23:00:00', 'evening', 'conge_annual', 17),
+	(85, '2025-01-28 23:00:00', 'morning', 'conge_annual', 17),
+	(86, '2025-01-28 23:00:00', 'evening', 'conge_annual', 17),
+	(87, '2025-01-29 23:00:00', 'morning', 'conge_annual', 17),
+	(88, '2025-01-29 23:00:00', 'evening', 'conge_annual', 17);
 
 -- Dumping structure for table rayane.addresses
 CREATE TABLE IF NOT EXISTS `addresses` (
@@ -104,14 +148,19 @@ CREATE TABLE IF NOT EXISTS `appointment_files` (
   PRIMARY KEY (`id`),
   KEY `admin_id` (`admin_id`),
   CONSTRAINT `appointment_files_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `employees` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table rayane.appointment_files: ~0 rows (approximately)
+-- Dumping data for table rayane.appointment_files: ~3 rows (approximately)
 DELETE FROM `appointment_files`;
 INSERT INTO `appointment_files` (`id`, `admin_id`, `file_name`, `original_name`, `file_path`, `created_at`) VALUES
 	(4, 1, 'pointage_2025-05-26_21-09-40.xlsx', 'modified_état de présence mois de janvier 2025 (8).xlsx', 'files/modified_modified_état de présence mois de janvier 2025 (8).xlsx', '2025-05-26 21:09:41'),
 	(5, 1, 'pointage_2025-05-27_00-11-05.xlsx', 'modified_état de présence mois de janvier 2025 (8).xlsx', 'files/modified_modified_état de présence mois de janvier 2025 (8).xlsx', '2025-05-27 00:11:06'),
-	(6, 1, 'pointage_2025-05-27_00-12-43.xlsx', 'modified_état de présence mois de janvier 2025 (8).xlsx', 'files/modified_modified_état de présence mois de janvier 2025 (8).xlsx', '2025-05-27 00:12:44');
+	(6, 1, 'pointage_2025-05-27_00-12-43.xlsx', 'modified_état de présence mois de janvier 2025 (8).xlsx', 'files/modified_modified_état de présence mois de janvier 2025 (8).xlsx', '2025-05-27 00:12:44'),
+	(7, 1, 'pointage_2025-05-28_22-56-42.xlsx', 'modified_état de présence mois de janvier 2025 (9).xlsx', 'files/modified_modified_état de présence mois de janvier 2025 (9).xlsx', '2025-05-28 22:56:57'),
+	(8, 1, 'pointage_2025-05-28_22-58-48.xlsx', 'modified_état de présence mois de janvier 2025 (9).xlsx', 'files/modified_modified_état de présence mois de janvier 2025 (9).xlsx', '2025-05-28 22:59:03'),
+	(9, 1, 'pointage_2025-05-28_23-00-43.xlsx', 'modified_état de présence mois de janvier 2025 (9).xlsx', 'files/modified_modified_état de présence mois de janvier 2025 (9).xlsx', '2025-05-28 23:00:59'),
+	(10, 1, 'pointage_2025-05-28_23-07-31.xlsx', 'modified_état de présence mois de janvier 2025 (9).xlsx', 'files/modified_modified_état de présence mois de janvier 2025 (9).xlsx', '2025-05-28 23:07:45'),
+	(11, 1, 'pointage_2025-05-28_23-09-25.xlsx', 'modified_état de présence mois de janvier 2025 (9).xlsx', 'files/modified_modified_état de présence mois de janvier 2025 (9).xlsx', '2025-05-28 23:09:43');
 
 -- Dumping structure for table rayane.compte_rendus
 CREATE TABLE IF NOT EXISTS `compte_rendus` (
@@ -141,16 +190,17 @@ CREATE TABLE IF NOT EXISTS `demands` (
   PRIMARY KEY (`id`),
   KEY `FK_demands_employees` (`employee_id`),
   CONSTRAINT `FK_demands_employees` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table rayane.demands: ~3 rows (approximately)
+-- Dumping data for table rayane.demands: ~6 rows (approximately)
 DELETE FROM `demands`;
 INSERT INTO `demands` (`id`, `employee_id`, `type`, `duree`, `description`, `date_debut`, `date_fin`, `info`, `date_depose`, `status`) VALUES
 	(1, 1, 'conge_annual', 15, 'Dicta ad omnis quisq', '2025-05-26', '2025-06-26', '{"type":"text","content":"Eum quas explicabo "}', '2025-05-26 21:17:19', 'accepted'),
-	(2, 2, 'conge_annual', 5, 'Quae et dignissimos ', '2025-05-27', '2025-06-02', '{"type":"text","content":"Deleniti autem lorem"}', '2025-05-26 22:49:21', 'accepted'),
+	(2, 2, 'conge_annual', 5, 'Quae et dignissimos ', '2025-01-10', '2025-02-01', '{"type":"text","content":"Deleniti autem lorem"}', '2025-05-26 22:49:21', 'accepted'),
 	(3, 2, 'mission', 4, NULL, '2025-05-26', '2025-05-27', '{"type":"keys","content":{"destination":"Laborum tempor culpa","leave date":"2025-05-26","leave hour":"05:15","come date":"2025-05-27","come hour":"12:31","motif":"Excepteur autem debi"}}', '2025-05-26 23:07:39', 'accepted'),
 	(7, 2, 'conge_annual', 30, 'Deserunt impedit ve', '2025-05-27', '2025-06-27', '{"type":"text","content":"Rerum sit ex mollit "}', '2025-05-27 07:33:22', 'waiting'),
-	(8, 2, 'conge_annual', 30, 'Deserunt impedit ve', '2025-05-27', '2025-06-27', '{"type":"text","content":"Rerum sit ex mollit "}', '2025-05-27 07:34:03', 'waiting');
+	(8, 2, 'conge_annual', 30, 'Deserunt impedit ve', '2025-05-27', '2025-06-27', '{"type":"text","content":"Rerum sit ex mollit "}', '2025-05-27 07:34:03', 'waiting'),
+	(9, 2, 'conge_rc', 4, 'sdadaf', '2025-05-05', '2025-05-09', '{"type": "text", "content": "dsqdqdqsdqsd}', '2025-05-28 23:06:46', 'accepted');
 
 -- Dumping structure for table rayane.demand_lifecycle
 CREATE TABLE IF NOT EXISTS `demand_lifecycle` (
@@ -203,6 +253,30 @@ CREATE TABLE IF NOT EXISTS `departements_services` (
 -- Dumping data for table rayane.departements_services: ~0 rows (approximately)
 DELETE FROM `departements_services`;
 
+-- Dumping structure for table rayane.email_jobs
+CREATE TABLE IF NOT EXISTS `email_jobs` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `employee_id` int NOT NULL,
+  `subject` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `content` text COLLATE utf8mb4_general_ci NOT NULL,
+  `status` enum('pending','sent','failed') COLLATE utf8mb4_general_ci DEFAULT 'pending',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `sent_at` timestamp NULL DEFAULT NULL,
+  `error` text COLLATE utf8mb4_general_ci,
+  `attachment_path` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `employee_id` (`employee_id`),
+  CONSTRAINT `email_jobs_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Dumping data for table rayane.email_jobs: ~4 rows (approximately)
+DELETE FROM `email_jobs`;
+INSERT INTO `email_jobs` (`id`, `employee_id`, `subject`, `content`, `status`, `created_at`, `sent_at`, `error`, `attachment_path`) VALUES
+	(1, 1, 'cxwcxwc', 'wxcwxcwcx', 'sent', '2025-05-28 00:17:30', '2025-05-28 00:18:36', NULL, NULL),
+	(2, 2, 'cxwcxwc', 'wxcwxcwcx', 'sent', '2025-05-28 00:17:30', '2025-05-28 00:18:37', NULL, NULL),
+	(3, 1, 'xccvxcvcx', 'vcxvcxvxc', 'sent', '2025-05-28 00:28:39', '2025-05-28 00:29:25', NULL, 'C:\\Users\\Karim Aouaouda\\Desktop\\projects\\telecom\\actions/../storage/email_attachments/1748392119_carbon (8).png'),
+	(4, 2, 'xccvxcvcx', 'vcxvcxvxc', 'sent', '2025-05-28 00:28:39', '2025-05-28 00:29:45', NULL, 'C:\\Users\\Karim Aouaouda\\Desktop\\projects\\telecom\\actions/../storage/email_attachments/1748392119_carbon (8).png');
+
 -- Dumping structure for table rayane.employees
 CREATE TABLE IF NOT EXISTS `employees` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -234,13 +308,14 @@ CREATE TABLE IF NOT EXISTS `employees` (
   CONSTRAINT `employees_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`),
   CONSTRAINT `employees_ibfk_3` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`),
   CONSTRAINT `FK_employees_employees` FOREIGN KEY (`superior_id`) REFERENCES `employees` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table rayane.employees: ~2 rows (approximately)
+-- Dumping data for table rayane.employees: ~3 rows (approximately)
 DELETE FROM `employees`;
 INSERT INTO `employees` (`id`, `superior_id`, `base_payment`, `matricule`, `prenom`, `nom`, `email_professionnel`, `phone`, `start_date`, `password`, `departement_id`, `service_id`, `role_id`, `compte_valid`, `profile_photo`, `birth_day`, `birth_place`, `etat_civil`) VALUES
 	(1, NULL, NULL, 153, 'Rayan', 'Bougueffroune', 'rayan@gmail.com', '+213655766709', '2025-05-06', 'password123', 1, 2, 5, '1', NULL, '2003-02-23', 'Guelma', 'celibataire'),
-	(2, 1, NULL, 356, 'Maiores provident q', 'Perspiciatis conseq', 'karim@gmail.com', '0655766709', NULL, 'password123', 4, 11, 3, '1', NULL, '2003-02-23', 'Guelma', 'celibataire');
+	(2, 1, NULL, 17, 'Maiores provident q', 'Perspiciatis conseq', 'karimkimakimo@gmail.com', '0655766709', NULL, 'password123', 4, 11, 3, '1', NULL, '2003-02-23', 'Guelma', 'celibataire'),
+	(3, 1, 50000, 2, 'Soundous', 'Raiout', 'soundous@gmail.com', '0655766709', '2025-05-27', 'password123', 3, 12, 6, '1', NULL, '2003-02-23', 'Guelma', 'celibataire');
 
 -- Dumping structure for table rayane.notifications
 CREATE TABLE IF NOT EXISTS `notifications` (
