@@ -829,12 +829,12 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
             if (!file) return;
 
             Swal.fire({
-                text: `vous etes sur vous voulez upload cette ficheie : ${file.name} ?`,
+                text: `vous etes sur vous voulez telecharger cette ficheie : ${file.name} ?`,
                 title: 'Confirmer',
                 icon: 'question',
                 showDenyButton: true,
                 showCancelButton: true,
-                confirmButtonText: "upload",
+                confirmButtonText: "continué",
                 denyButtonText: `annuler`,
                 showCancelButton: false
             }).then(function(result) {
