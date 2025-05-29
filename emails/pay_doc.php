@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../vendor/autoload.php';
+$id = 1;
 // Get employee information
 $employee = fetch_user_information($id);
 $month = date('F Y'); // Current month and year
