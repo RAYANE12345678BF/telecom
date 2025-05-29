@@ -1003,20 +1003,7 @@ $leaves_count = count($leaves);
         <div class="container">
             <!-- Carte principale de l'employé -->
             <div class="card employee-card">
-                <div class="w-full py-4 text-center">
-                    <select class="p-2 text-md" name="employee" id="employee">
-                        <option selected disabled>chose employee</option>
-                        <?php foreach($users as $employee): ?>
-                            <option value="<?= $employee['id'] ?>" <?= $employee['id'] == $id ? 'selected' : "" ?>><?= $employee['nom'] . " " . $employee['prenom'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
-
-                    <script>
-                        document.querySelector('#employee').addEventListener('change', function(elem) {
-                            location.href = `<?= url('dashboard/statistics?id=') ?>${elem.target.value}`
-                        })
-                    </script>
-                </div>
+                
                 <div class="card-header employee-header">
                     <div class="row align-items-center">
                         <div class="col-md-2 text-center">
