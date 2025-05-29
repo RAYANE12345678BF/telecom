@@ -858,8 +858,15 @@ $leaves_count = count($leaves);
 
                 <a href="<?= url('dashboard/droits') ?>" class="menu-item">
                     <i class="fas fa-list"></i>
-                    <span class="menu-text">my droirs</span>
+                    <span class="menu-text">my droits</span>
                 </a>
+
+                <?php if( if_user_is(['Directeur', 'GRH'], null) ): ?>
+                <a href="<?= url('dashboard/employee/list.php') ?>" class="menu-item">
+                    <i class="fas fa-list"></i>
+                    <span class="menu-text">elist d'employees</span>
+                </a>
+                <?php endif ?>
 
                 <div class="nav-title">Demandes</div>
                 <div class="request-section">

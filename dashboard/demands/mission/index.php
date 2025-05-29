@@ -8,7 +8,14 @@ if (! session_id()) {
 
 redirect_if_not_auth();
 
-if( !can_do_conge($_SESSION['user_id'], 'mission') ){
+if (isset($_GET['demand_id'])) {
+    $action = 'view';
+    $demand = fetch_demand($_GET['demand_id']);
+} else {
+    $action = 'create';
+}
+
+if ($action == 'create' && !can_do_conge($_SESSION['user_id'], 'mission')) {
     $_SESSION['status_icon'] = 'info';
     $_SESSION['status'] = "vous ne pouvez pas faire cette action car vous avez conger deja";
     redirect(url('dashboard'));
@@ -754,7 +761,7 @@ $user = fetch_user_information($_SESSION['user_id']);
 </head>
 
 <body>
-<div class="sidebar">
+    <div class="sidebar">
         <div class="sidebar-header">
             <div class="logo">
                 <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
@@ -772,6 +779,23 @@ $user = fetch_user_information($_SESSION['user_id']);
                     <i class="fas fa-user-circle"></i>
                     <span class="menu-text">Mon Profil</span>
                 </a>
+
+                <a href="<?= url('dashboard/statistics') ?>" class="menu-item">
+                    <i class="fas fa-chart-simple"></i>
+                    <span class="menu-text">statistics</span>
+                </a>
+
+                <a href="<?= url('dashboard/droits') ?>" class="menu-item">
+                    <i class="fas fa-list"></i>
+                    <span class="menu-text">my droits</span>
+                </a>
+
+                <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
+                    <a href="<?= url('dashboard/employee/list.php') ?>" class="menu-item">
+                        <i class="fas fa-list"></i>
+                        <span class="menu-text">elist d'employees</span>
+                    </a>
+                <?php endif ?>
 
                 <div class="nav-title">Demandes</div>
                 <div class="request-section">
@@ -832,17 +856,18 @@ $user = fetch_user_information($_SESSION['user_id']);
                         </a>
                     <?php endif ?>
 
-                    <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
-                    <a href="#" class="menu-item" onclick="Swal.fire({title : 'information', text : 'en train de developper!', icon : 'info'})">
-                        <i class="fas fa-clock"></i>
-                        <span class="menu-text">Voir Pointage</span>
-                    </a>
-                    <?php endif ?>
 
-                    
+
+
                 </div>
 
                 <div class="nav-title">Autres</div>
+                <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
+                    <a href="<?= dashboard_url('pointage') ?>" class="menu-item">
+                        <i class="fas fa-clock"></i>
+                        <span class="menu-text">Voir Pointage</span>
+                    </a>
+                <?php endif ?>
                 <a href="<?= url('dashboard/support') ?>" class="menu-item">
                     <i class="fas fa-question-circle"></i>
                     <span class="menu-text">Support</span>
@@ -941,33 +966,33 @@ $user = fetch_user_information($_SESSION['user_id']);
                         <div class="form-group-row">
                             <div class="form-group">
                                 <label class="form-label" for="date-Sortie">Date de sortie</label>
-                                <input name="leave_date" type="date" id="date-sortie" class="form-input" required>
+                                <input :value="<?= $demand['info']['content']['leave date'] ?? '' ?>" name="leave_date" type="date" id="date-sortie" class="form-input" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="date-entrée">date de entrée</label>
-                                <input name="come_date" type="date" id="date-entrée" class="form-input" required>
+                                <input :value="<?= $demand['info']['content']['come date'] ?? '' ?>" name="come_date" type="date" id="date-entrée" class="form-input" required>
                             </div>
                         </div>
 
                         <div class="form-group-row">
                             <div class="form-group">
                                 <label class="form-label" for="heur-sortie">heur de sortie</label>
-                                <input name="leave_hour" type="time" id="heur-sortie" class="form-input" required>
+                                <input :value="<?= $demand['info']['content']['leave hour'] ?? '' ?>" name="leave_hour" type="time" id="heur-sortie" class="form-input" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="heur-entrée">heur d'entrée</label>
-                                <input name="come_hour" type="time" id="heur-entrée" class="form-input" required>
+                                <input :value="<?= $demand['info']['content']['come hour'] ?? '' ?>" name="come_hour" type="time" id="heur-entrée" class="form-input" required>
                             </div>
                         </div>
 
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="Distination">Distination</label>
-                        <input name="destination" type="text" id="Distination" class="form-input" required>
+                        <input :value="<?= $demand['info']['content']['destination'] ?? '' ?>" name="destination" type="text" id="Distination" class="form-input" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="Motif_mission">Motif de la mission </label>
-                        <input name="motif" type="text" id="Motif_mission" class="form-input" required>
+                        <input :value="<?= $demand['info']['content']['motif'] ?? '' ?>" name="motif" type="text" id="Motif_mission" class="form-input" required>
                     </div>
 
                     <div class="buttons-container" style="display: flex; justify-content: flex-end; gap: 10px;">

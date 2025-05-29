@@ -765,6 +765,23 @@ $demand = fetch_demand($_GET['demand_id']);
                     <span class="menu-text">Mon Profil</span>
                 </a>
 
+                <a href="<?= url('dashboard/statistics') ?>" class="menu-item">
+                    <i class="fas fa-chart-simple"></i>
+                    <span class="menu-text">statistics</span>
+                </a>
+
+                <a href="<?= url('dashboard/droits') ?>" class="menu-item">
+                    <i class="fas fa-list"></i>
+                    <span class="menu-text">my droits</span>
+                </a>
+
+                <?php if( if_user_is(['Directeur', 'GRH'], null) ): ?>
+                <a href="<?= url('dashboard/employee/list.php') ?>" class="menu-item">
+                    <i class="fas fa-list"></i>
+                    <span class="menu-text">elist d'employees</span>
+                </a>
+                <?php endif ?>
+
                 <div class="nav-title">Demandes</div>
                 <div class="request-section">
                     <a href="#" class="menu-item" id="faireDemandeBtn">
@@ -824,17 +841,18 @@ $demand = fetch_demand($_GET['demand_id']);
                         </a>
                     <?php endif ?>
 
-                    <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
-                    <a href="#" class="menu-item" onclick="Swal.fire({title : 'information', text : 'comming soon!', icon : 'info'})">
-                        <i class="fas fa-clock"></i>
-                        <span class="menu-text">Voir Pointage</span>
-                    </a>
-                    <?php endif ?>
 
-                    
+
+
                 </div>
 
                 <div class="nav-title">Autres</div>
+                <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
+                    <a href="<?= dashboard_url('pointage') ?>" class="menu-item">
+                        <i class="fas fa-clock"></i>
+                        <span class="menu-text">Voir Pointage</span>
+                    </a>
+                <?php endif ?>
                 <a href="<?= url('dashboard/support') ?>" class="menu-item">
                     <i class="fas fa-question-circle"></i>
                     <span class="menu-text">Support</span>

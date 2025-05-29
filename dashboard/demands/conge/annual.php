@@ -788,7 +788,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
 </head>
 
 <body x-data="body">
-    <div class="sidebar">
+<div class="sidebar">
         <div class="sidebar-header">
             <div class="logo">
                 <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
@@ -806,6 +806,23 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                     <i class="fas fa-user-circle"></i>
                     <span class="menu-text">Mon Profil</span>
                 </a>
+
+                <a href="<?= url('dashboard/statistics') ?>" class="menu-item">
+                    <i class="fas fa-chart-simple"></i>
+                    <span class="menu-text">statistics</span>
+                </a>
+
+                <a href="<?= url('dashboard/droits') ?>" class="menu-item">
+                    <i class="fas fa-list"></i>
+                    <span class="menu-text">my droits</span>
+                </a>
+
+                <?php if( if_user_is(['Directeur', 'GRH'], null) ): ?>
+                <a href="<?= url('dashboard/employee/list.php') ?>" class="menu-item">
+                    <i class="fas fa-list"></i>
+                    <span class="menu-text">elist d'employees</span>
+                </a>
+                <?php endif ?>
 
                 <div class="nav-title">Demandes</div>
                 <div class="request-section">
@@ -866,17 +883,18 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                         </a>
                     <?php endif ?>
 
-                    <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
-                        <a href="#" class="menu-item" onclick="Swal.fire({title : 'information', text : 'en train de developper!', icon : 'info'})">
-                            <i class="fas fa-clock"></i>
-                            <span class="menu-text">Voir Pointage</span>
-                        </a>
-                    <?php endif ?>
+
 
 
                 </div>
 
                 <div class="nav-title">Autres</div>
+                <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
+                    <a href="<?= dashboard_url('pointage') ?>" class="menu-item">
+                        <i class="fas fa-clock"></i>
+                        <span class="menu-text">Voir Pointage</span>
+                    </a>
+                <?php endif ?>
                 <a href="<?= url('dashboard/support') ?>" class="menu-item">
                     <i class="fas fa-question-circle"></i>
                     <span class="menu-text">Support</span>
@@ -1001,11 +1019,11 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                         <h3 class="section-title">Détails de congé</h3>
                         <div class="form-group">
                             <label class="form-label" for=" demande ">Description</label>
-                            <input value="<?= $demand['description'] ?>" name="description" type="text" id="demande" class="form-input" required>
+                            <input value="<?= $demand['description'] ?? '' ?>" name="description" type="text" id="demande" class="form-input" required>
                         </div>
                         <div x-data="{duree : 30}" class="form-group">
                             <label class="form-label" for="duree">Durée</label>
-                            <select :value="<?= $demand['duree'] ?>" x-init="$watch('duree', (e) => $el.value=e)" :name="duree!=-1 ? 'duree' : 'duree2'" @change="duree = $el.value" id="duree-select" class="form-input" <?= $action == 'view' ? 'disabled' : ''; ?>>
+                            <select :value="<?= $demand['duree'] ?? 30 ?>" x-init="$watch('duree', (e) => $el.value=e)" :name="duree!=-1 ? 'duree' : 'duree2'" @change="duree = $el.value" id="duree-select" class="form-input" <?= $action == 'view' ? 'disabled' : ''; ?>>
                                 <option value="30" selected>1 mois</option>
                                 <option value="15">15 jours</option>
                                 <option value="-1">Autre</option>
@@ -1015,11 +1033,11 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                         <div class="form-group-row">
                             <div class="form-group">
                                 <label class="form-label" for="date-debut">Date début</label>
-                                <input value="<?= $demand['date_debut'] ?>" name="start_date" type="date" id="date-debut" class="form-input" required>
+                                <input value="<?= $demand['date_debut'] ?? '' ?>" name="start_date" type="date" id="date-debut" class="form-input" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="date-fin">Date de fin</label>
-                                <input value="<?= $demand['date_fin'] ?>" readonly name="end_date" type="date" id="date-fin" class="form-input" required>
+                                <input value="<?= $demand['date_fin'] ?? '' ?>" readonly name="end_date" type="date" id="date-fin" class="form-input" required>
                             </div>
                         </div>
 
@@ -1028,7 +1046,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                         <h3 class="section-title">Informations Complémentaires</h3>
                         <h4 class="section-subtitle small-text">pour en jouir a l'adresse suivante </h4>
                         <div class="form-group">
-                            <textarea name="info" id="info-complementaire" class="form-input" rows="4" placeholder="Entrez vos informations complémentaires ici..."><?= $demand['info']['content'] ?></textarea>
+                            <textarea name="info" id="info-complementaire" class="form-input" rows="4" placeholder="Entrez vos informations complémentaires ici..."><?= $demand['info']['content'] ?? '' ?></textarea>
                         </div>
                     </div>
                     <div class="buttons-container" style="display: flex; justify-content: flex-end; gap: 10px;">

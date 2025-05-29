@@ -716,7 +716,7 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
     <div class="sidebar">
         <div class="sidebar-header">
             <div class="logo">
-                <img src="./../../assets/logo.jpg" alt="DjazairRH Logo">
+                <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
                 <span class="logo-text">DjazairRH</span>
             </div>
         </div>
@@ -732,15 +732,22 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
                     <span class="menu-text">Mon Profil</span>
                 </a>
 
-                <a href="<?= url('dashboard/droits') ?>" class="menu-item">
+                <a href="<?= url('dashboard/statistics') ?>" class="menu-item">
                     <i class="fas fa-chart-simple"></i>
                     <span class="menu-text">statistics</span>
                 </a>
 
                 <a href="<?= url('dashboard/droits') ?>" class="menu-item">
                     <i class="fas fa-list"></i>
-                    <span class="menu-text">my droirs</span>
+                    <span class="menu-text">my droits</span>
                 </a>
+
+                <?php if( if_user_is(['Directeur', 'GRH'], null) ): ?>
+                <a href="<?= url('dashboard/employee/list.php') ?>" class="menu-item">
+                    <i class="fas fa-list"></i>
+                    <span class="menu-text">elist d'employees</span>
+                </a>
+                <?php endif ?>
 
                 <div class="nav-title">Demandes</div>
                 <div class="request-section">

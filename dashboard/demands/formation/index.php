@@ -8,7 +8,7 @@ if (! session_id()) {
 
 redirect_if_not_auth();
 
-if( !can_do_conge($_SESSION['user_id'], 'formation') ){
+if (!can_do_conge($_SESSION['user_id'], 'formation')) {
     $_SESSION['status_icon'] = 'info';
     $_SESSION['status'] = "vous ne pouvez pas faire cette action car vous avez conger deja";
     redirect(url('dashboard'));
@@ -764,6 +764,23 @@ $user = fetch_user_information($_SESSION['user_id']);
                     <span class="menu-text">Mon Profil</span>
                 </a>
 
+                <a href="<?= url('dashboard/statistics') ?>" class="menu-item">
+                    <i class="fas fa-chart-simple"></i>
+                    <span class="menu-text">statistics</span>
+                </a>
+
+                <a href="<?= url('dashboard/droits') ?>" class="menu-item">
+                    <i class="fas fa-list"></i>
+                    <span class="menu-text">my droits</span>
+                </a>
+
+                <?php if( if_user_is(['Directeur', 'GRH'], null) ): ?>
+                <a href="<?= url('dashboard/employee/list.php') ?>" class="menu-item">
+                    <i class="fas fa-list"></i>
+                    <span class="menu-text">elist d'employees</span>
+                </a>
+                <?php endif ?>
+
                 <div class="nav-title">Demandes</div>
                 <div class="request-section">
                     <a href="#" class="menu-item" id="faireDemandeBtn">
@@ -823,17 +840,18 @@ $user = fetch_user_information($_SESSION['user_id']);
                         </a>
                     <?php endif ?>
 
-                    <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
-                    <a href="#" class="menu-item" onclick="Swal.fire({title : 'information', text : 'en train de developper', icon : 'info'})">
-                        <i class="fas fa-clock"></i>
-                        <span class="menu-text">Voir Pointage</span>
-                    </a>
-                    <?php endif ?>
 
-                    
+
+
                 </div>
 
                 <div class="nav-title">Autres</div>
+                <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
+                    <a href="<?= dashboard_url('pointage') ?>" class="menu-item">
+                        <i class="fas fa-clock"></i>
+                        <span class="menu-text">Voir Pointage</span>
+                    </a>
+                <?php endif ?>
                 <a href="<?= url('dashboard/support') ?>" class="menu-item">
                     <i class="fas fa-question-circle"></i>
                     <span class="menu-text">Support</span>

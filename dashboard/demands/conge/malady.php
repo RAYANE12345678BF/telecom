@@ -8,7 +8,14 @@ if (! session_id()) {
 
 redirect_if_not_auth();
 
-if( !can_do_conge($_SESSION['user_id'], 'conge_malady') ){
+if (isset($_GET['demand_id'])) {
+    $action = 'view';
+    $demand = fetch_demand($_GET['demand_id']);
+} else {
+    $action = 'create';
+}
+
+if ($action == 'create' && !can_do_conge($_SESSION['user_id'], 'conge_malady')) {
     $_SESSION['status_icon'] = 'info';
     $_SESSION['status'] = "vous ne pouvez pas faire cette action car vous avez conger deja";
     redirect(url('dashboard'));
@@ -765,6 +772,23 @@ $user = fetch_user_information($_SESSION['user_id']);
                     <span class="menu-text">Mon Profil</span>
                 </a>
 
+                <a href="<?= url('dashboard/statistics') ?>" class="menu-item">
+                    <i class="fas fa-chart-simple"></i>
+                    <span class="menu-text">statistics</span>
+                </a>
+
+                <a href="<?= url('dashboard/droits') ?>" class="menu-item">
+                    <i class="fas fa-list"></i>
+                    <span class="menu-text">my droits</span>
+                </a>
+
+                <?php if( if_user_is(['Directeur', 'GRH'], null) ): ?>
+                <a href="<?= url('dashboard/employee/list.php') ?>" class="menu-item">
+                    <i class="fas fa-list"></i>
+                    <span class="menu-text">elist d'employees</span>
+                </a>
+                <?php endif ?>
+
                 <div class="nav-title">Demandes</div>
                 <div class="request-section">
                     <a href="#" class="menu-item" id="faireDemandeBtn">
@@ -817,13 +841,25 @@ $user = fetch_user_information($_SESSION['user_id']);
                         <i class="fas fa-tasks"></i>
                         <span class="menu-text">État de demande</span>
                     </a>
-                    <a href="<?= url('dashboard/demands/consulte.php') ?>" class="menu-item">
-                        <i class="fas fa-eye"></i>
-                        <span class="menu-text">Consulter Demande</span>
-                    </a>
+                    <?php if (!if_user_is('Employé', null)): ?>
+                        <a href="<?= url('dashboard/demands/consulte.php') ?>" class="menu-item">
+                            <i class="fas fa-eye"></i>
+                            <span class="menu-text">Consulter Demande</span>
+                        </a>
+                    <?php endif ?>
+
+
+
+
                 </div>
 
                 <div class="nav-title">Autres</div>
+                <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
+                    <a href="<?= dashboard_url('pointage') ?>" class="menu-item">
+                        <i class="fas fa-clock"></i>
+                        <span class="menu-text">Voir Pointage</span>
+                    </a>
+                <?php endif ?>
                 <a href="<?= url('dashboard/support') ?>" class="menu-item">
                     <i class="fas fa-question-circle"></i>
                     <span class="menu-text">Support</span>
@@ -922,23 +958,23 @@ $user = fetch_user_information($_SESSION['user_id']);
                     </div>
                     <div class="section">
                         <h3 class="section-title">Détails de congé</h3>
-                        <div x-data="{duree : 30}" class="form-group">
+                        <div :value="<?= $demand['duree'] ?? '' ?>" x-data="{duree : 30}" class="form-group">
                             <label class="form-label" for="duree">Durée</label>
                             <select x-init="$watch('duree', (e) => $el.value=e)" :name="duree!=-1 ? 'duree' : 'duree2'" @change="duree = $el.value" id="duree-select" class="form-input">
                                 <option value="30" selected>1 mois</option>
                                 <option value="15">15 jours</option>
                                 <option value="-1">Autre</option>
                             </select>
-                            <input :name="duree==-1 ? 'duree' : 'duree2'" min="1" x-show="duree == -1" type="number" id="duree-input" class="form-input" placeholder="Entrez la durée en jours" style="display: none; margin-top: 10px;" min="1" max="30">
+                            <input :value="<?= $demand['duree'] ?? '' ?>" :name="duree==-1 ? 'duree' : 'duree2'" min="1" x-show="duree == -1" type="number" id="duree-input" class="form-input" placeholder="Entrez la durée en jours" style="display: none; margin-top: 10px;" min="1" max="30">
                         </div>
                         <div class="form-group-row">
                             <div class="form-group">
                                 <label class="form-label" for="date-debut">Date début</label>
-                                <input name="start_date" type="date" id="date-debut" class="form-input" required>
+                                <input :value="<?= $demand['date_debut'] ?? '' ?>" name="start_date" type="date" id="date-debut" class="form-input" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="date-fin">Date de fin</label>
-                                <input name="end_date" type="date" id="date-fin" class="form-input" required>
+                                <input :value="<?= $demand['date_fin'] ?? '' ?>" name="end_date" type="date" id="date-fin" class="form-input" required>
                             </div>
                         </div>
 
@@ -948,7 +984,7 @@ $user = fetch_user_information($_SESSION['user_id']);
                         <h4 class="section-subtitle small-text"> ajoutez les papiers de la maladie ici s'il vous plait </h4>
                         <div class="form-group">
                             <label for="file-upload">Ou téléchargez un fichier (PDF ou image) :</label>
-                            <input name="info" type="file" id="file-upload" class="form-input" accept=".pdf, .jpg, .jpeg, .png">
+                            <input :hidden="<?= ($action === 'view') ?>" name="info" type="file" id="file-upload" class="form-input" accept=".pdf, .jpg, .jpeg, .png">
                         </div>
 
                     </div>
@@ -973,13 +1009,13 @@ $user = fetch_user_information($_SESSION['user_id']);
                             var duree = document.querySelector('input[name=duree]') || document.querySelector('select[name=duree]')
 
                             duree.min = 1
-                            if( +duree.value < 1 ){
+                            if (+duree.value < 1) {
                                 duree.value = 1
                             }
-                            
+
                             if (start_date.value.trim() != "") {
                                 let date = new Date(start_date.value);
-                                date.setDate(date.getDate() + +duree.value  + 1)
+                                date.setDate(date.getDate() + +duree.value + 1)
 
                                 console.log(date, duree)
                                 end_date.value = date.toISOString().split("T")[0]

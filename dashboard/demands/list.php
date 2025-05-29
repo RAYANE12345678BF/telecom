@@ -709,7 +709,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                         </td>
                         <td>
                             <?php if ($demand['status'] == 'accepted'): ?>
-                                <a href="<?= url('actions/print.php?demand=' . $demand['id']) ?>">
+                                <a href="<?= url('dashboard/demands/view.php?demand=' . $demand['id'] . '&type='. $demand['type']) ?>">
                                     imprimé
                                 </a>
                             <?php else: ?>
