@@ -15,14 +15,12 @@ $work_days = fetch_work_days($_SESSION['user_id']);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DjazairRH - Calendrier Employé</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    <?php component('partials/include') ?>
     <style>
         :root {
             --primary-color: #003366;
@@ -137,7 +135,8 @@ $work_days = fetch_work_days($_SESSION['user_id']);
             font-weight: 500;
         }
 
-        .sidebar a:hover, .sidebar .active {
+        .sidebar a:hover,
+        .sidebar .active {
             background: var(--hover-color);
             transform: translateX(5px);
             color: var(--primary-color);
@@ -410,7 +409,8 @@ $work_days = fetch_work_days($_SESSION['user_id']);
             color: #003366;
         }
 
-        .fc-day-sat, .fc-day-fri {
+        .fc-day-sat,
+        .fc-day-fri {
             background-color: #e6f3ff !important;
         }
 
@@ -423,7 +423,8 @@ $work_days = fetch_work_days($_SESSION['user_id']);
                 width: 80px;
             }
 
-            .logo-text, .menu-text {
+            .logo-text,
+            .menu-text {
                 display: none;
             }
 
@@ -448,155 +449,16 @@ $work_days = fetch_work_days($_SESSION['user_id']);
         }
     </style>
 </head>
-<body>
+
+<body x-data="body">
     <!-- Navigation Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <div class="logo">
-                <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
-                <span class="logo-text">DjazairRH</span>
-            </div>
-        </div>
-        <div class="sidebar-content">
-            <div class="menu-items">
-                <div class="nav-title">Principal</div>
-                <a href="<?= url('/') ?>" class="menu-item">
-                    <i class="fas fa-home"></i>
-                    <span class="menu-text">Accueil</span>
-                </a>
-                <a href="<?= url('dashboard') ?>" class="menu-item active">
-                    <i class="fas fa-user-circle"></i>
-                    <span class="menu-text">Mon Profil</span>
-                </a>
-
-                <a href="<?= url('dashboard/statistics') ?>" class="menu-item">
-                    <i class="fas fa-chart-simple"></i>
-                    <span class="menu-text">statistics</span>
-                </a>
-
-                <a href="<?= url('dashboard/droits') ?>" class="menu-item">
-                    <i class="fas fa-list"></i>
-                    <span class="menu-text">my droits</span>
-                </a>
-
-                <?php if( if_user_is(['Directeur', 'GRH'], null) ): ?>
-                <a href="<?= url('dashboard/employee/list.php') ?>" class="menu-item">
-                    <i class="fas fa-list"></i>
-                    <span class="menu-text">elist d'employees</span>
-                </a>
-                <?php endif ?>
-
-                <div class="nav-title">Demandes</div>
-                <div class="request-section">
-                    <a href="#" class="menu-item" id="faireDemandeBtn">
-                        <i class="fas fa-file-alt"></i>
-                        <span class="menu-text">Faire une demande</span>
-                    </a>
-                    <div class="submenu" id="demandeSubmenu" style="display: none;">
-                        <div>
-                            <a href="#" class="menu-item" id="congeBtn">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span class="menu-text">Demande Congé</span>
-                            </a>
-                            <div class="submenu" id="congeSubmenu" style="display: none;">
-                                <a href="<?= url('dashboard/demands/conge/annual.php') ?>" class="menu-item">
-                                    <i class="fas fa-sun"></i>
-                                    <span class="menu-text">Congé Annuel</span>
-                                </a>
-                                <a href="<?= url('dashboard/demands/conge/malady.php') ?>" class="menu-item">
-                                    <i class="fas fa-hospital"></i>
-                                    <span class="menu-text">Congé Maladie</span>
-                                </a>
-                                <a href="<?= url('dashboard/demands/conge/maternity.php') ?>" class="menu-item">
-                                    <i class="fas fa-baby"></i>
-                                    <span class="menu-text">Congé Maternité</span>
-                                </a>
-                                <a href="<?= url('dashboard/demands/conge/rc.php') ?>" class="menu-item">
-                                    <i class="fas fa-clock"></i>
-                                    <span class="menu-text">Congé RC</span>
-                                </a>
-                            </div>
-                        </div>
-                        <a href="<?= url('dashboard/demands/formation') ?>" class="menu-item">
-                            <i class="fas fa-graduation-cap"></i>
-                            <span class="menu-text">Demande Formation</span>
-                        </a>
-                        <a href="<?= url('dashboard/demands/mission') ?>" class="menu-item">
-                            <i class="fas fa-plane"></i>
-                            <span class="menu-text">Demande Ordre Mission</span>
-                        </a>
-                        <a href="<?= url('dashboard/demands/deplacement') ?>" class="menu-item">
-                            <i class="fas fa-car"></i>
-                            <span class="menu-text">Demande Déplacement</span>
-                        </a>
-                        <a href="<?= url('dashboard/demands/leave') ?>" class="menu-item">
-                            <i class="fas fa-door-open"></i>
-                            <span class="menu-text">Demande Sortie</span>
-                        </a>
-                    </div>
-                    <a href="<?= url('dashboard/demands/list.php') ?>" class="menu-item">
-                        <i class="fas fa-tasks"></i>
-                        <span class="menu-text">État de demande</span>
-                    </a>
-                    <?php if (!if_user_is('Employé', null)): ?>
-                        <a href="<?= url('dashboard/demands/consulte.php') ?>" class="menu-item">
-                            <i class="fas fa-eye"></i>
-                            <span class="menu-text">Consulter Demande</span>
-                        </a>
-                    <?php endif ?>
-
-
-
-
-                </div>
-
-                <div class="nav-title">Autres</div>
-                <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
-                    <a href="<?= dashboard_url('pointage') ?>" class="menu-item">
-                        <i class="fas fa-clock"></i>
-                        <span class="menu-text">Voir Pointage</span>
-                    </a>
-                <?php endif ?>
-                <a href="<?= url('dashboard/support') ?>" class="menu-item">
-                    <i class="fas fa-question-circle"></i>
-                    <span class="menu-text">Support</span>
-                </a>
-                <!-- Nouveau bouton "Calendrier RC d'Employé" -->
-                <a href="<?= url('dashboard/calendrier') ?>" class="menu-item">
-                    <i class="fas fa-calendar"></i>
-                    <span class="menu-text">Calendrier RC d'Employé</span>
-                </a>
-            </div>
-        </div>
-        <form action="<?= url('actions/auth.php') ?>" method="post" class="user-section">
-            <input type="hidden" value="logout" name="action" />
-            <div class="user-avatar">
-                <i class="fas fa-sign-in-alt"></i>
-            </div>
-            <button type="submit" style="border : none">Se déconnecter</button>
-        </form>
-    </div>
+    <?php component('partials/sidebar') ?>
 
     <!-- Top Navbar -->
-    <nav class="navbar">
-        <div class="nav-icons">
-            <div class="icon-wrapper" onclick="toggleNotifications()">
-                <i class="fa-solid fa-bell"></i>
-                <!-- Badge pour les notifications non lues -->
-                <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
-            </div>
-            <div class="icon-wrapper" onclick="toggleMessenger()">
-                <i class="fa-brands fa-facebook-messenger"></i>
-            </div>
-        </div>
-    </nav>
+    <?php component('partials/navbar') ?>
 
     <!-- Menu déroulant des notifications -->
-    <div class="notification-dropdown" id="notificationDropdown">
-        <div class="no-notifications">
-            Aucune notification pour le moment.
-        </div>
-    </div>
+<?php component('partials/notifications') ?>
 
     <!-- Menu déroulant de messagerie -->
     <div class="messenger-dropdown" id="messengerDropdown">
@@ -615,10 +477,8 @@ $work_days = fetch_work_days($_SESSION['user_id']);
         <div class="messenger-footer">
             <input type="text" placeholder="Entrez un nom">
         </div>
-            
-    </div>
-</nav>
 
+    </div>
     <!-- Main Content -->
     <div class="main-content">
         <div class="container">
@@ -635,7 +495,7 @@ $work_days = fetch_work_days($_SESSION['user_id']);
 
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/fr.min.js"></script>
-    
+
     <script>
         async function insertDateToDatabse(dateStr) {
             let data = new FormData
@@ -657,7 +517,7 @@ $work_days = fetch_work_days($_SESSION['user_id']);
             })
         }
     </script>
-    
+
     <script>
         const holidays = [
             '2024-01-01',
@@ -731,7 +591,7 @@ $work_days = fetch_work_days($_SESSION['user_id']);
                 },
                 eventClick: function(info) {
                     if (confirm('Voulez-vous supprimer ce jour travaillé ?')) {
-                        if( info.event.title.includes('(B)') ){
+                        if (info.event.title.includes('(B)')) {
                             alert('you can not remove  date you benefited from')
                             return
                         }
@@ -761,14 +621,14 @@ $work_days = fetch_work_days($_SESSION['user_id']);
 
             work_days.forEach(day => {
                 calendar.addEvent({
-                    benefited : day.benefited,
+                    benefited: day.benefited,
                     title: `Jour travaillé ${day.benefited ? '(B)' : ''}`,
                     start: day.date,
                     backgroundColor: holidays.includes(day.date) ? '#FF5733' : '#003366',
                     borderColor: holidays.includes(day.date) ? '#FF5733' : '#003366',
                 });
             })
-            
+
             calendar.render();
 
             function calculateRCDays() {
@@ -789,8 +649,8 @@ $work_days = fetch_work_days($_SESSION['user_id']);
                 document.getElementById('rcDaysResult').textContent = `Jours de RC accumulés : ${rcDays}`;
             }
         });
-         // Navigation menu toggle functions
-         document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
+        // Navigation menu toggle functions
+        document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
             e.preventDefault();
             const submenu = document.getElementById('demandeSubmenu');
             submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
@@ -801,173 +661,180 @@ $work_days = fetch_work_days($_SESSION['user_id']);
             const submenu = document.getElementById('congeSubmenu');
             submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
         });
-          // Navigation menu toggle functions
-    document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
-       e.preventDefault();
-       const submenu = document.getElementById('demandeSubmenu');
-       submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
-   });
+        // Navigation menu toggle functions
+        document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const submenu = document.getElementById('demandeSubmenu');
+            submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+        });
 
-   document.getElementById('congeBtn').addEventListener('click', function(e) {
-       e.preventDefault();
-       const submenu = document.getElementById('congeSubmenu');
-       submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
-   });
-   document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
-       e.preventDefault();
-       const submenu = document.getElementById('demandeSubmenu');
-       if (submenu.style.display === 'none') {
-           submenu.style.display = 'block';
-       } else {
-           submenu.style.display = 'none';
-       }
-   });
+        document.getElementById('congeBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const submenu = document.getElementById('congeSubmenu');
+            submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+        });
+        document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const submenu = document.getElementById('demandeSubmenu');
+            if (submenu.style.display === 'none') {
+                submenu.style.display = 'block';
+            } else {
+                submenu.style.display = 'none';
+            }
+        });
 
-   document.getElementById('congeBtn').addEventListener('click', function(e) {
-       e.preventDefault();
-       const submenu = document.getElementById('congeSubmenu');
-       if (submenu.style.display === 'none') {
-           submenu.style.display = 'block';
-       } else {
-           submenu.style.display = 'none';
-       }
-   });
-   document.getElementById('logoutButton').addEventListener('click', function() {
-    window.location.href = 'loginAT1.html';
-});
-   document.querySelector(".menu-toggle").addEventListener("click", function(e) {
-       e.preventDefault();
-       let submenu = document.querySelector(".submenu");
-       let icon = this.querySelector(".fa-chevron-right");
-       
-       if (submenu.style.display === "flex") {
-           submenu.style.display = "none";
-           icon.style.transform = "rotate(0deg)";
-       } else {
-           submenu.style.display = "flex";
-           icon.style.transform = "rotate(90deg)";
-       }
-   });
-   document.querySelectorAll('.menu-item').forEach(item => {
-    item.addEventListener('click', function(e) {
-        if (this !== document.getElementById('faireDemandeBtn') && this !== document.getElementById('congeBtn')) {
-            document.querySelectorAll('.submenu').forEach(sub => {
-                sub.style.display = 'none';
+        document.getElementById('congeBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const submenu = document.getElementById('congeSubmenu');
+            if (submenu.style.display === 'none') {
+                submenu.style.display = 'block';
+            } else {
+                submenu.style.display = 'none';
+            }
+        });
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            window.location.href = 'loginAT1.html';
+        });
+        document.querySelector(".menu-toggle").addEventListener("click", function(e) {
+            e.preventDefault();
+            let submenu = document.querySelector(".submenu");
+            let icon = this.querySelector(".fa-chevron-right");
+
+            if (submenu.style.display === "flex") {
+                submenu.style.display = "none";
+                icon.style.transform = "rotate(0deg)";
+            } else {
+                submenu.style.display = "flex";
+                icon.style.transform = "rotate(90deg)";
+            }
+        });
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                if (this !== document.getElementById('faireDemandeBtn') && this !== document.getElementById('congeBtn')) {
+                    document.querySelectorAll('.submenu').forEach(sub => {
+                        sub.style.display = 'none';
+                    });
+                }
             });
+        });
+        document.querySelector(".sub-menu-toggle").addEventListener("click", function(e) {
+            e.preventDefault();
+            let subSubmenu = document.querySelector(".sub-submenu");
+            let icon = this.querySelector(".fa-chevron-right");
+
+            if (subSubmenu.style.display === "flex") {
+                subSubmenu.style.display = "none";
+                icon.style.transform = "rotate(0deg)";
+            } else {
+                subSubmenu.style.display = "flex";
+                icon.style.transform = "rotate(90deg)";
+            }
+        });
+
+        document.querySelector(".conges-toggle").addEventListener("click", function(e) {
+            e.preventDefault();
+            let subSubSubmenu = document.querySelector(".sub-sub-submenu");
+            let icon = this.querySelector(".fa-chevron-right");
+
+            if (subSubSubmenu.style.display === "flex") {
+                subSubSubmenu.style.display = "none";
+                icon.style.transform = "rotate(0deg)";
+            } else {
+                subSubSubmenu.style.display = "flex";
+                icon.style.transform = "rotate(90deg)";
+            }
+        });
+
+        function validateName(value) {
+            // Validation logic here
         }
-    });
-});
-   document.querySelector(".sub-menu-toggle").addEventListener("click", function(e) {
-       e.preventDefault();
-       let subSubmenu = document.querySelector(".sub-submenu");
-       let icon = this.querySelector(".fa-chevron-right");
-       
-       if (subSubmenu.style.display === "flex") {
-           subSubmenu.style.display = "none";
-           icon.style.transform = "rotate(0deg)";
-       } else {
-           subSubmenu.style.display = "flex";
-           icon.style.transform = "rotate(90deg)";
-       }
-   });
 
-   document.querySelector(".conges-toggle").addEventListener("click", function(e) {
-       e.preventDefault();
-       let subSubSubmenu = document.querySelector(".sub-sub-submenu");
-       let icon = this.querySelector(".fa-chevron-right");
-       
-       if (subSubSubmenu.style.display === "flex") {
-           subSubSubmenu.style.display = "none";
-           icon.style.transform = "rotate(0deg)";
-       } else {
-           subSubSubmenu.style.display = "flex";
-           icon.style.transform = "rotate(90deg)";
-       }
-   });
+        function validateDates(depart, retour) {
+            // Validation logic here
+        }
 
-   function validateName(value) {
-       // Validation logic here
-   }
-   function validateDates(depart, retour) {
-       // Validation logic here
-   }
-   function showError(elementId, show) {
-       // Show error logic here
-   }
-   function handleSubmit(event) {
-       event.preventDefault();
-       // Form submission logic here
-   }
-   function handlePrint() {
-       // Print logic here
-   }
-   document.getElementById('printButton').addEventListener('click', function() {
-   window.print();
-});
+        function showError(elementId, show) {
+            // Show error logic here
+        }
 
-   // Fonction pour afficher/masquer les notifications
-   function toggleNotifications() {
-       const dropdown = document.getElementById('notificationDropdown');
-       dropdown.classList.toggle('show');
-   }
+        function handleSubmit(event) {
+            event.preventDefault();
+            // Form submission logic here
+        }
 
-   // Fonction pour afficher/masquer la messagerie
-   function toggleMessenger() {
-       const dropdown = document.getElementById('messengerDropdown');
-       dropdown.classList.toggle('show');
+        function handlePrint() {
+            // Print logic here
+        }
+        document.getElementById('printButton').addEventListener('click', function() {
+            window.print();
+        });
 
-       // Vérifier s'il y a des contacts
-       const contactList = document.getElementById('contactList');
-       const noMessages = document.getElementById('noMessages');
+        // Fonction pour afficher/masquer les notifications
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            dropdown.classList.toggle('show');
+        }
 
-       if (contactList.children.length === 0) {
-           noMessages.style.display = 'flex'; // Afficher le message
-       } else {
-           noMessages.style.display = 'none'; // Masquer le message
-       }
-   }
+        // Fonction pour afficher/masquer la messagerie
+        function toggleMessenger() {
+            const dropdown = document.getElementById('messengerDropdown');
+            dropdown.classList.toggle('show');
 
-   // Fermer les menus déroulants si on clique en dehors
-   document.addEventListener('click', function(event) {
-       const notificationDropdown = document.getElementById('notificationDropdown');
-       const messengerDropdown = document.getElementById('messengerDropdown');
-       const notificationIcon = document.querySelector('.icon-wrapper[onclick="toggleNotifications()"]');
-       const messengerIcon = document.querySelector('.icon-wrapper[onclick="toggleMessenger()"]');
+            // Vérifier s'il y a des contacts
+            const contactList = document.getElementById('contactList');
+            const noMessages = document.getElementById('noMessages');
 
-       if (!notificationDropdown.contains(event.target) && !notificationIcon.contains(event.target)) {
-           notificationDropdown.classList.remove('show');
-       }
+            if (contactList.children.length === 0) {
+                noMessages.style.display = 'flex'; // Afficher le message
+            } else {
+                noMessages.style.display = 'none'; // Masquer le message
+            }
+        }
 
-       if (!messengerDropdown.contains(event.target) && !messengerIcon.contains(event.target)) {
-           messengerDropdown.classList.remove('show');
-       }
-   });
-   
+        // Fermer les menus déroulants si on clique en dehors
+        document.addEventListener('click', function(event) {
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            const messengerDropdown = document.getElementById('messengerDropdown');
+            const notificationIcon = document.querySelector('.icon-wrapper[onclick="toggleNotifications()"]');
+            const messengerIcon = document.querySelector('.icon-wrapper[onclick="toggleMessenger()"]');
 
-   // Consulter Demandes functions
-   function toggleDropdown(requestId) {
-       const dropdown = document.getElementById(`dropdown-${requestId}`);
-       dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-   }
+            if (!notificationDropdown.contains(event.target) && !notificationIcon.contains(event.target)) {
+                notificationDropdown.classList.remove('show');
+            }
 
-   function acceptRequest(requestId) {
-       const statusCell = document.querySelector(`#request-${requestId} .status`);
-       statusCell.textContent = "Accepté";
-       statusCell.style.color = "#28a745"; // Vert pour indiquer l'acceptation
-       closeDropdown(requestId);
-   }
+            if (!messengerDropdown.contains(event.target) && !messengerIcon.contains(event.target)) {
+                messengerDropdown.classList.remove('show');
+            }
+        });
 
-   function refuseRequest(requestId) {
-       const statusCell = document.querySelector(`#request-${requestId} .status`);
-       statusCell.textContent = "Refusé";
-       statusCell.style.color = "#dc3545"; // Rouge pour indiquer le refus
-       closeDropdown(requestId);
-   }
 
-   function closeDropdown(requestId) {
-       const dropdown = document.getElementById(`dropdown-${requestId}`);
-       dropdown.style.display = "none";
-   }
+        // Consulter Demandes functions
+        function toggleDropdown(requestId) {
+            const dropdown = document.getElementById(`dropdown-${requestId}`);
+            dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+        }
+
+        function acceptRequest(requestId) {
+            const statusCell = document.querySelector(`#request-${requestId} .status`);
+            statusCell.textContent = "Accepté";
+            statusCell.style.color = "#28a745"; // Vert pour indiquer l'acceptation
+            closeDropdown(requestId);
+        }
+
+        function refuseRequest(requestId) {
+            const statusCell = document.querySelector(`#request-${requestId} .status`);
+            statusCell.textContent = "Refusé";
+            statusCell.style.color = "#dc3545"; // Rouge pour indiquer le refus
+            closeDropdown(requestId);
+        }
+
+        function closeDropdown(requestId) {
+            const dropdown = document.getElementById(`dropdown-${requestId}`);
+            dropdown.style.display = "none";
+        }
     </script>
+
+    <?php component('utils/status') ?>
 </body>
+
 </html>

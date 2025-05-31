@@ -232,13 +232,6 @@ if (!function_exists('read_notification')) {
     }
 }
 
-if (!function_exists('component')) {
-    function component(string $path)
-    {
-        require_once __DIR__ . '/../components/' . trim($path, '/');
-    }
-}
-
 if (!function_exists('get_roles')) {
     function get_roles()
     {
@@ -955,6 +948,7 @@ if( !function_exists('get_absences') ){
 
 
 
+if( !function_exists('countDaysInMonthBetweenDates') ){
 function countDaysInMonthBetweenDates(string $startDate, string $endDate, int $targetMonth): int
 {
     $start = DateTime::createFromFormat('m-d-Y', $startDate);
@@ -978,4 +972,21 @@ function countDaysInMonthBetweenDates(string $startDate, string $endDate, int $t
 
     // Otherwise, no full month coverage
     return 0;
+}
+}
+
+
+
+
+if( !function_exists('component') ){
+    function component(string $path)
+    {
+        $fullPath = sprintf(__DIR__ . "/../components/%s", trim($path, '/') . '.inc.php');
+
+        if (file_exists($fullPath)) {
+            require_once $fullPath;
+        } else {
+            throw new RuntimeException("Component file not found: " . $fullPath);
+        }
+    }
 }

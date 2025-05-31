@@ -32,34 +32,9 @@ $_SESSION['user'] = get_user($current_user['id']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DjazairRH - Profil <?= $user['role']['nom'] ?></title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Navigation Sidebar -->
+    <?php component('partials/include') ?>
 
-    <script>
-        function setNotificationToRead(el) {
-            let id = el.dataset.id
-            if (el.dataset.read != 1) {
-                let data = new FormData
-                data.append('action', 'set_read')
-                data.append('id', id)
-                fetch("<?= url('actions/notifications.php') ?>", {
-                        method: "POST",
-                        body: data
-                    }).then(res => res.json())
-                    .then(js => {
-                        el.dataset.read = 1
-                    })
-                return true
-            } else {
-                return false
-            }
-        }
-    </script>
 
     <style>
         :root {
@@ -709,175 +684,13 @@ $_SESSION['user'] = get_user($current_user['id']);
 
 <body x-data="body">
     <!-- Navigation Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <div class="logo">
-                <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
-                <span class="logo-text">DjazairRH</span>
-            </div>
-        </div>
-        <div class="sidebar-content">
-            <div class="menu-items">
-                <div class="nav-title">Principal</div>
-                <a href="<?= url('/') ?>" class="menu-item">
-                    <i class="fas fa-home"></i>
-                    <span class="menu-text">Accueil</span>
-                </a>
-                <a href="<?= url('dashboard') ?>" class="menu-item active">
-                    <i class="fas fa-user-circle"></i>
-                    <span class="menu-text">Mon Profil</span>
-                </a>
-
-                <a href="<?= url('dashboard/droits') ?>" class="menu-item">
-                    <i class="fas fa-chart-simple"></i>
-                    <span class="menu-text">statistics</span>
-                </a>
-
-                <a href="<?= url('dashboard/droits') ?>" class="menu-item">
-                    <i class="fas fa-list"></i>
-                    <span class="menu-text">my droirs</span>
-                </a>
-
-                <div class="nav-title">Demandes</div>
-                <div class="request-section">
-                    <a href="#" class="menu-item" id="faireDemandeBtn">
-                        <i class="fas fa-file-alt"></i>
-                        <span class="menu-text">Faire une demande</span>
-                    </a>
-                    <div class="submenu" id="demandeSubmenu" style="display: none;">
-                        <div>
-                            <a href="#" class="menu-item" id="congeBtn">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span class="menu-text">Demande Congé</span>
-                            </a>
-                            <div class="submenu" id="congeSubmenu" style="display: none;">
-                                <a href="<?= url('dashboard/demands/conge/annual.php') ?>" class="menu-item">
-                                    <i class="fas fa-sun"></i>
-                                    <span class="menu-text">Congé Annuel</span>
-                                </a>
-                                <a href="<?= url('dashboard/demands/conge/malady.php') ?>" class="menu-item">
-                                    <i class="fas fa-hospital"></i>
-                                    <span class="menu-text">Congé Maladie</span>
-                                </a>
-                                <a href="<?= url('dashboard/demands/conge/maternity.php') ?>" class="menu-item">
-                                    <i class="fas fa-baby"></i>
-                                    <span class="menu-text">Congé Maternité</span>
-                                </a>
-                                <a href="<?= url('dashboard/demands/conge/rc.php') ?>" class="menu-item">
-                                    <i class="fas fa-clock"></i>
-                                    <span class="menu-text">Congé RC</span>
-                                </a>
-                            </div>
-                        </div>
-                        <a href="<?= url('dashboard/demands/formation') ?>" class="menu-item">
-                            <i class="fas fa-graduation-cap"></i>
-                            <span class="menu-text">Demande Formation</span>
-                        </a>
-                        <a href="<?= url('dashboard/demands/mission') ?>" class="menu-item">
-                            <i class="fas fa-plane"></i>
-                            <span class="menu-text">Demande Ordre Mission</span>
-                        </a>
-                        <a href="<?= url('dashboard/demands/deplacement') ?>" class="menu-item">
-                            <i class="fas fa-car"></i>
-                            <span class="menu-text">Demande Déplacement</span>
-                        </a>
-                        <a href="<?= url('dashboard/demands/leave') ?>" class="menu-item">
-                            <i class="fas fa-door-open"></i>
-                            <span class="menu-text">Demande Sortie</span>
-                        </a>
-                    </div>
-                    <a href="<?= url('dashboard/demands/list.php') ?>" class="menu-item">
-                        <i class="fas fa-tasks"></i>
-                        <span class="menu-text">État de demande</span>
-                    </a>
-                    <?php if (!if_user_is('Employé', null)): ?>
-                        <a href="<?= url('dashboard/demands/consulte.php') ?>" class="menu-item">
-                            <i class="fas fa-eye"></i>
-                            <span class="menu-text">Consulter Demande</span>
-                        </a>
-                    <?php endif ?>
-
-
-
-
-                </div>
-
-                <div class="nav-title">Autres</div>
-                <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
-                    <a href="<?= dashboard_url('pointage') ?>" class="menu-item">
-                        <i class="fas fa-clock"></i>
-                        <span class="menu-text">Voir Pointage</span>
-                    </a>
-                <?php endif ?>
-                <a href="<?= url('dashboard/support') ?>" class="menu-item">
-                    <i class="fas fa-question-circle"></i>
-                    <span class="menu-text">Support</span>
-                </a>
-                <!-- Nouveau bouton "Calendrier RC d'Employé" -->
-                <a href="<?= url('dashboard/calendrier') ?>" class="menu-item">
-                    <i class="fas fa-calendar"></i>
-                    <span class="menu-text">Calendrier RC d'Employé</span>
-                </a>
-            </div>
-        </div>
-        <form action="<?= url('actions/auth.php') ?>" method="post" class="user-section">
-            <input type="hidden" value="logout" name="action" />
-            <div class="user-avatar">
-                <i class="fas fa-sign-in-alt"></i>
-            </div>
-            <button type="submit" style="border : none">Se déconnecter</button>
-        </form>
-    </div>
+    <?php component('partials/sidebar') ?>
 
     <!-- Top Navbar -->
-    <nav class="navbar">
-        <div class="nav-icons">
-            <div class="icon-wrapper relative" onclick="toggleNotifications()">
-                <i class="fa-solid fa-bell"></i>
-                <!-- Badge pour les notifications non lues -->
-                <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
-                <span id="redPin" class="w-1 h-1 rounded-full bg-red-500 top-3 right-3 absolute <?= !$redPin ? 'hidden' : '' ?>"></span>
-            </div>
-            <div class="icon-wrapper" onclick="toggleMessenger()">
-                <i class="fa-brands fa-facebook-messenger"></i>
-            </div>
-        </div>
-    </nav>
+    <?php component('partials/navbar') ?>
 
     <!-- Menu déroulant des notifications -->
-    <div class="notification-dropdown" id="notificationDropdown">
-        <!-- <div class="no-notifications">
-        Aucune notification pour le moment.
-        </div> -->
-        <div class="w-full flex flex-col-reverse space-y-1" id="notifications-container">
-            <!-- start a notification with two actions (accept/reject) -->
-            <template x-if="notifications.length > 0">
-                <template x-for="notification in notifications">
-                    <a
-                        x-init="$el.dataset.read = notification['read_state'];$el.dataset.id = notification['id']"
-                        :key="notification['id']"
-                        :class="{'bg-gray-50' : notification['read_state'] != 0,'bg-gray-200' : notification['read_state'] == 0 }"
-                        x-intersect="setRead($el, $data)" :href="notification['url']" class="flex flex-col space-y-2 items-center justify-between p-2  hover:bg-slate-300 duration-300 ease-in-out rounded-lg">
-                        <div class="flex items-center space-x-2">
-                            <div class="flex items-center justify-center w-10 h-10 bg-gray-300 rounded-full">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-semibold" x-text="notification['title']"></p>
-                                <p class="text-xs text-gray-500" x-text="notification['description']"></p>
-                            </div>
-                        </div>
-                    </a>
-                </template>
-            </template>
-            <template x-if="notifications.length == 0">
-                <div class="w-full text-center py-4 text-slate-800 font-semibold uppercase">
-                    no notifications right now
-                </div>
-            </template>
-            <!-- end a notification with two actions (accept/reject) -->
-        </div>
-    </div>
+    <?php component('partials/notifications') ?>
 
     <!-- Menu déroulant de messagerie -->
     <div class="messenger-dropdown" id="messengerDropdown">
@@ -897,7 +710,6 @@ $_SESSION['user'] = get_user($current_user['id']);
             <input type="text" placeholder="Entrez un nom">
         </div>
     </div>
-    </nav>
 
 
     <!-- Main Content -->
@@ -1121,18 +933,8 @@ $_SESSION['user'] = get_user($current_user['id']);
         }
     </script>
 
-    <?php if (isset($_SESSION['status'])): ?>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-            Swal.fire({
-                title: "information!",
-                text: "<?= $_SESSION['status'] ?>",
-                icon: "<?= $_SESSION['status_icon'] ?? "success" ?>"
-            });
-        </script>
-    <?php unset($_SESSION['status']);
-        unset($_SESSION['status_icon']);
-    endif; ?>
+    <!-- Navigation Sidebar -->
+    <?php component('utils/status') ?>
 
     <script>
         // Navigation menu toggle functions
@@ -1279,66 +1081,6 @@ $_SESSION['user'] = get_user($current_user['id']);
                 messengerDropdown.classList.remove('show');
             }
         });
-    </script>
-
-    <script defer>
-        const notifyContainer = document.querySelector('#notifications-container');
-        const poll_interval = 4000; // 10 seconds
-        function pollNotifications($data) {
-            fetch('<?= url('actions/notifications.php') ?>')
-                .then(response => response.json())
-                .then(data => {
-                    let redPin = data.filter(value => {
-                        return +value.read_state === 0
-                    })
-
-                    console.log('pin', redPin)
-
-                    if (redPin.length > 0) {
-                        document.querySelector('#redPin').classList.remove('hidden')
-                    }
-                    console.log(data)
-                    $data.notifications = data
-
-
-
-
-
-                });
-        }
-        var m;
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('body', () => {
-                return {
-                    notifications: JSON.parse(`<?= json_encode($notifications) ?>`),
-                    setRead: (el, data) => {
-                        if (setNotificationToRead(el)) {
-                            data.notifications = data.notifications.map(v => {
-                                if (v.id == el.dataset.id) {
-                                    v.read_state = 1
-                                }
-
-                                return v
-                            })
-                        }
-
-                        let redPin = data.notifications.filter(value => {
-                            return +value.read_state === 0
-                        })
-
-
-                        if (redPin.length <= 0) {
-                            document.querySelector('#redPin').classList.add('hidden')
-                        }
-                    },
-                    init() {
-                        m = setInterval(() => pollNotifications(this), poll_interval);
-                    }
-                }
-            })
-
-
-        })
     </script>
 </body>
 

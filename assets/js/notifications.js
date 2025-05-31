@@ -1,6 +1,25 @@
 const notifyContainer = document.querySelector('#notifications-container');
 const poll_interval = 4000; // 10 seconds
 
+function setNotificationToRead(el) {
+        let id = el.dataset.id
+        if (el.dataset.read != 1) {
+            let data = new FormData
+            data.append('action', 'set_read')
+            data.append('id', id)
+            fetch("<?= url('actions/notifications.php') ?>", {
+                    method: "POST",
+                    body: data
+                }).then(res => res.json())
+                .then(js => {
+                    el.dataset.read = 1
+                })
+            return true
+        } else {
+            return false
+        }
+    }
+
 function pollNotifications($data) {
     fetch('http://localhost:8000/actions/notifications.php')
         .then(response => response.json())
