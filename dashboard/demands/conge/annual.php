@@ -788,7 +788,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
 </head>
 
 <body x-data="body">
-<div class="sidebar">
+    <div class="sidebar">
         <div class="sidebar-header">
             <div class="logo">
                 <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
@@ -817,11 +817,11 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                     <span class="menu-text">my droits</span>
                 </a>
 
-                <?php if( if_user_is(['Directeur', 'GRH'], null) ): ?>
-                <a href="<?= url('dashboard/employee/list.php') ?>" class="menu-item">
-                    <i class="fas fa-list"></i>
-                    <span class="menu-text">elist d'employees</span>
-                </a>
+                <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
+                    <a href="<?= url('dashboard/employee/list.php') ?>" class="menu-item">
+                        <i class="fas fa-list"></i>
+                        <span class="menu-text">elist d'employees</span>
+                    </a>
                 <?php endif ?>
 
                 <div class="nav-title">Demandes</div>
@@ -918,10 +918,11 @@ $user_demands = get_user_demands($_SESSION['user_id']);
     <!-- Top Navbar -->
     <nav class="navbar">
         <div class="nav-icons">
-            <div class="icon-wrapper" onclick="toggleNotifications()">
+            <div class="icon-wrapper relative" onclick="toggleNotifications()">
                 <i class="fa-solid fa-bell"></i>
                 <!-- Badge pour les notifications non lues -->
                 <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                <span :class="{'hidden': unreadNotifications.length === 0}"  x-text="unreadNotifications.length" id="redPin" class="text-[.53rem] h-3 w-3 flex items-center justify-center rounded-full bg-red-500 text-white top-1 right-2 absolute <?= !$redPin ? 'hidden' : '' ?>"></span>
             </div>
             <div class="icon-wrapper" onclick="toggleMessenger()">
                 <i class="fa-brands fa-facebook-messenger"></i>
@@ -984,7 +985,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
     </div>
     </nav>
     <div class="content">
-        <div class="container" >
+        <div class="container">
             <div class="form-card" id="print">
                 <div class="header">
                     <h1 class="title"> demande congé Annuel </h1>
@@ -1275,40 +1276,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             }
         });
     </script>
-    <script defer>
-        const notifyContainer = document.querySelector('#notifications-container');
-        const poll_interval = 4000; // 10 seconds
-        function pollNotifications($data) {
-            fetch('<?= url('actions/notifications.php') ?>')
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data)
-                    $data.notifications = data
-
-                });
-        }
-        var m;
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('body', () => {
-                return {
-                    notifications: JSON.parse(`<?= json_encode($notifications) ?>`),
-                    setRead: (el, data) => {
-                        if (setNotificationToRead(el)) {
-                            data.notifications = data.notifications.map(v => {
-                                if (v.id == el.dataset.id) {
-                                    v.read_state = 1
-                                }
-
-                                return v
-                            })
-                        }
-                    }
-                }
-            })
-
-            m = setInterval(() => pollNotifications(Alpine.data('body')), poll_interval);
-        })
-    </script>
+    <script src="<?= asset('js/notifications.js') ?>"></script>
 </body>
 
 </html>

@@ -846,7 +846,7 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
                 <i class="fa-solid fa-bell"></i>
                 <!-- Badge pour les notifications non lues -->
                 <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
-                <span id="redPin" class="w-1 h-1 rounded-full bg-red-500 top-3 right-3 absolute <?= !$redPin ? 'hidden' : '' ?>"></span>
+                <span :class="{'hidden': unreadNotifications.length === 0}"  x-text="unreadNotifications.length" id="redPin" class="text-[.53rem] h-3 w-3 flex items-center justify-center rounded-full bg-red-500 text-white top-1 right-2 absolute <?= !$redPin ? 'hidden' : '' ?>"></span>
             </div>
             <div class="icon-wrapper" onclick="toggleMessenger()">
                 <i class="fa-brands fa-facebook-messenger"></i>
@@ -859,7 +859,7 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
         <!-- <div class="no-notifications">
         Aucune notification pour le moment.
         </div> -->
-        <div class="w-full flex flex-col-reverse space-y-1" id="notifications-container">
+        <div class="w-full flex flex-col space-y-1" id="notifications-container">
             <!-- start a notification with two actions (accept/reject) -->
             <template x-if="notifications.length > 0">
                 <template x-for="notification in notifications">
@@ -1343,64 +1343,8 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
         });
     </script>
 
-    <script defer>
-        const notifyContainer = document.querySelector('#notifications-container');
-        const poll_interval = 4000; // 10 seconds
-        function pollNotifications($data) {
-            fetch('<?= url('actions/notifications.php') ?>')
-                .then(response => response.json())
-                .then(data => {
-                    let redPin = data.filter(value => {
-                        return +value.read_state === 0
-                    })
-
-                    console.log('pin', redPin)
-
-                    if (redPin.length > 0) {
-                        document.querySelector('#redPin').classList.remove('hidden')
-                    }
-                    console.log(data)
-                    $data.notifications = data
-
-
-
-
-
-                });
-        }
-        var m;
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('body', () => {
-                return {
-                    notifications: JSON.parse(`<?= json_encode($notifications) ?>`),
-                    setRead: (el, data) => {
-                        if (setNotificationToRead(el)) {
-                            data.notifications = data.notifications.map(v => {
-                                if (v.id == el.dataset.id) {
-                                    v.read_state = 1
-                                }
-
-                                return v
-                            })
-                        }
-
-                        let redPin = data.notifications.filter(value => {
-                            return +value.read_state === 0
-                        })
-
-
-                        if (redPin.length <= 0) {
-                            document.querySelector('#redPin').classList.add('hidden')
-                        }
-                    },
-                    init() {
-                        m = setInterval(() => pollNotifications(this), poll_interval);
-                    }
-                }
-            })
-
-
-        })
+    <script src="<?= asset('js/notifications.js') ?>">
+        
     </script>
 </body>
 

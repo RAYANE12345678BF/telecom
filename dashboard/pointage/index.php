@@ -920,7 +920,7 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
 
             if (data.length > 0) {
                 const headerRow = document.createElement('tr');
-                data[0].forEach(colName => {
+                data[1].forEach(colName => {
                     const th = document.createElement('th');
                     th.textContent = colName;
                     headerRow.appendChild(th);
@@ -928,13 +928,15 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
                 thead.appendChild(headerRow);
             }
 
-            data.slice(1).forEach(rowData => {
+            data.slice(2).forEach(rowData => {
                 const tr = document.createElement('tr');
-                rowData.forEach(cellData => {
+                let length = rowData.length ?? 0
+                for(let i = 0; i < length; i++){
+                    let cellData = rowData[i]
                     const td = document.createElement('td');
-                    td.textContent = cellData !== undefined ? cellData : '';
+                    td.textContent = cellData !== undefined ? cellData : '/';
                     tr.appendChild(td);
-                });
+                }
                 tbody.appendChild(tr);
             });
         }
@@ -998,6 +1000,7 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
             }
         });
     </script>
+    <script src="<?= asset('js/notifications.js') ?>"></script>
 </body>
 
 </html>

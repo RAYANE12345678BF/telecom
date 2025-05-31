@@ -60,6 +60,14 @@ if (!function_exists('redirect')) {
     }
 }
 
+if( !function_exists('asset') ){
+    function asset(string $path, $url=true){
+        if (!$path)
+            throw new \Exception('error in path to storage');
+        return $url ? url('assets/' . $path) : __DIR__ . '/../assets/' . $path;
+    }
+}
+
 if (!function_exists('get_department_id')) {
     function get_department_id(string $department): int
     {
@@ -401,7 +409,7 @@ if( !function_exists('push_demand_status') ){
         $demand = fetch_demand($demand_id);
 
         $title = 'creation status';
-        $description = 'la decision de votre demands de conge a ete deposer';
+        $description = 'un decision de votre demands de conge a ete deposer';
 
         $sql = "INSERT INTO `notifications` (`employee_id`, `title`, `description`,`url` ) VALUES (?, ?, ?, ?)";
 
@@ -435,10 +443,6 @@ if (!function_exists('set_decision')) {
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([$decision, $demand_id]);
 
-                if( $decision == 'accepted' ){
-                    push_demand_status($_POST['demand_id']);
-                }
-
 
                 if ($demand['type'] == 'conge_rc' && $decision == 'accepted') {
 
@@ -453,6 +457,7 @@ if (!function_exists('set_decision')) {
                 add_lifecycle_entry($demand_id, $superior_id);
                 push_demand_creation_notification($demand['id']);
             }
+            push_demand_status($_POST['demand_id']);
             return ["success" => true, "message" => "Lifecycle entry updated"];
         } else {
             return ["success" => false, "message" => "Failed to add lifecycle entry"];
@@ -906,7 +911,7 @@ if( !function_exists('push_demand_creation_notification') ){
 
         $target_user_id = $current_life['superior_id'];
 
-        $title = 'creation demand';
+        $title = 'creation demand from ' . $employee['nom'] . ' ' . $employee['prenom'];
         $description = 'il y a une nouvelle demande de creation de conge';
 
         $sql = "INSERT INTO `notifications` (`employee_id`, `title`, `description`,`url` ) VALUES (?, ?, ?, ?)";
