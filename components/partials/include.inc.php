@@ -18,5 +18,10 @@ $redPin = count(array_filter($notifications, function ($v, $i) {
     return $v['read_state'] == 0;
 }, ARRAY_FILTER_USE_BOTH)) > 0;
 
+// here we will include the middlewares
+
+component('middlewares/auth', false);
+component('middlewares/role', false);
+component('middlewares/information_complete', false);
 ?>
 

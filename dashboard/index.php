@@ -863,6 +863,22 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
                                     </div>
                                 </div>
                             <?php endif; ?>
+
+                            <?php if (true): ?>
+                                <div class="info-field">
+                                    <div class="field-label">remplacante en cas d'absence</div>
+                                    <div class="field-value">
+                                        <select name="substitute_id">
+                                            <option value="" disabled selected>Sélectionner</option>
+                                            <?php foreach ($employees as $employee): ?>
+                                                <?php if ($employee['id'] != $user['id']): ?>
+                                                    <option <?php echo ($user['substitute']['id'] ?? -1) == $employee['id'] ? 'selected' : '' ?> value="<?php echo $employee['id'] ?>"><?php echo $employee['nom'] . ' ' . $employee['prenom'] ?></option>
+                                                <?php endif; ?>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -877,7 +893,7 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
             let data = new FormData
             data.append('action', 'save_prof')
 
-            let keys = ["matricule", "role_id", "department_id", "start_date", "service_id", "superior_id"]
+            let keys = ["matricule", "role_id", "department_id", "start_date", "service_id", "superior_id", "substitute_id"]
 
 
             keys.forEach(e => {

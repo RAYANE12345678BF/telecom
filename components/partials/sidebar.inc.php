@@ -30,7 +30,7 @@
             <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
                 <a href="<?= url('dashboard/employee/list.php') ?>" class="menu-item">
                     <i class="fas fa-list"></i>
-                    <span class="menu-text">elist d'employees</span>
+                    <span class="menu-text">list d'employees</span>
                 </a>
             <?php endif ?>
 

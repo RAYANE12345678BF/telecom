@@ -73,6 +73,7 @@ switch($action){
         $service_id =  empty($_POST['service_id']) ? null : $_POST['service_id'];
         $superior_id = empty($_POST['superior_id']) ? null : $_POST['superior_id'];
         $start_date = empty($_POST['start_date']) ? null : $_POST['start_date'];
+        $substitute_id = empty($_POST['substitute_id']) ? null : $_POST['substitute_id'];
 
         if( ($u = get_user_with('matricule', $matricule)) != null && $u['id'] != $_SESSION['user_id']  ){
             send_json_response([
@@ -91,7 +92,7 @@ switch($action){
 
         $user_id = $_SESSION['user_id'];
     
-        $data = compact('matricule', 'departement_id', 'start_date', 'service_id', 'superior_id');
+        $data = compact('matricule', 'departement_id', 'start_date', 'service_id', 'superior_id', 'substitute_id');
     
         $user = update_user($user_id, $data);
     

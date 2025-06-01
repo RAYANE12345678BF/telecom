@@ -3,6 +3,9 @@ if(! session_id()){
     session_start();
 }
 
+
+const STORE_ALL = true;
+
 require __DIR__ . '/../vendor/autoload.php';
 
 
@@ -50,6 +53,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
             $targetColumnIndex = array_search($targetColumn, $headerValues) + 1; // 1-based index
             $dateColumnIndex = array_search('Date', $headerValues) + 1;
             $daypartColIndex = array_search('Timetable', $headerValues) + 1;
+            $isAbsentColIndex = array_search('Absent', $headerValues) + 1;
+
+            $onDutyColIndex = array_search('On duty', $headerValues) + 1;
+            $offDutyColIndex = array_search('Off duty', $headerValues) + 1;
+
+            $clockInColIndex = array_search('Clock In', $headerValues) + 1;
+            $clockOffColIndex = array_search('Clock Off', $headerValues) + 1;
+
+            $lateThreshold = 59;
 
             $timestamp = date('Y-m-d_H-i-s');
             $newFileName = "pointage_{$timestamp}.xlsx";
@@ -67,8 +79,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
                 try {
                     $cell = $row->getCellIterator(convertFromAscii($targetColumnIndex));
                     $user_no = $row->getCellIterator()->current()->getValue();
+
+                    $user = $users[$user_no] ?? getUserWithDemands($user_no, 'accepted');
+
+                    if (!$user){
+                        $users[$user_no] = null;
+                        continue;
+                    }
+
+
                     $dateCell = $row->getCellIterator(convertFromAscii($dateColumnIndex));
                     $daypartCell = $row->getCellIterator(convertFromAscii($daypartColIndex));
+                    $isAbsentCell = $row->getCellIterator(convertFromAscii($isAbsentColIndex));
+                    $onDutyCell = $row->getCellIterator(convertFromAscii($onDutyColIndex));
+                    $offDutyCell = $row->getCellIterator(convertFromAscii($offDutyColIndex));
+                    $clockInCell = $row->getCellIterator(convertFromAscii($clockInColIndex));
+                    $clockOffCell = $row->getCellIterator(convertFromAscii($clockOffColIndex));
 
                     // convert date from d/m/y to y-m-d
                     $dateValue = DateTime::createFromFormat('d/m/Y', $dateCell->current()->getValue());
@@ -76,45 +102,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
 
                     $dayPartValue = $daypartCell->current()->getValue();
 
-                    // get user demands
-                    if (isset($users[$user_no])) {
-                        $user = $users[$user_no];
+                    $isAbsent = $isAbsentCell->current()->getValue() == "True";
+                    $onDuty = $onDutyCell->current()->getValue();
+                    $offDuty = $offDutyCell->current()->getValue();
+                    $clockIn = $clockInCell->current()->getValue() ?? $offDuty;
+                    $clockOff = $clockOffCell->current()->getValue();
+                    $isLate = false;
+                    $row = [
+                        'employee_matricule' => $user_no,
+                        'date' => $formattedDate,
+                        'day_part' => $dayPartValue == 'matiniée' ? 'morning' : 'evening',
+                        'is_absent' => $isAbsent ? '1' : '0',
+                        'justification' => null,
+                        'late_hours' => null,
+                    ];
+
+                    if( !$isAbsent ){
+                        $lateDuration = time_diff($clockIn, $onDuty);
+                        $times = -1;
+
+                        if( $lateDuration > $lateThreshold ){
+                            $isLate = true;
+                            $times = (int) ($lateDuration / $lateThreshold);
+                        }
+
+                        $row['late_hours'] = $isLate ? $times : 0.0;
+
                     } else {
-                        $user = getUserWithDemands($user_no, 'accepted');
-                        if( !$user ){
-                            $cell->current()->setValue('no justifié');
+                        $justification = isAbsentJustified($user, $formattedDate, is_array($user));
+
+                        if( $justification === false ){
                             continue;
                         }
-                        $users[$user_no] = $user;
+
+                        $row['justification'] = $justification;
+                        $cell->current()->setValue($justification ?? 'non justifié');
+
                     }
-
-                    // Check if formatted date between startdate and enddate
-                    if ($user) {
-                        $row = [
-                            'employee_matricule' => $user_no,
-                            'date' => $formattedDate,
-                            'day_part' => $dayPartValue == 'matiniée' ? 'morning' : 'evening',
-                        ];
-
-                        $active_demands = array_filter($user['demands'], function ($demand) use ($formattedDate) {
-                            return $demand['date_debut'] <= $formattedDate && $demand['date_fin'] >= $formattedDate;
-                        });
-
-                        if (count($active_demands) > 0) {
-                            // Set the cell value to 'OK' if user found and date is between start and end date
-                            $cell->current()->setValue($active_demands[0]['type']);
-                            $row['justify'] = $active_demands[0]['type'];
-                        } else {
-                            // Set the cell value to 'NOK' if user found but date is not between start and end date
-                            $cell->current()->setValue('no justifié');
-                            $row['justify'] = 'no';
-                        }
-                    } else {
-                        // Set the cell value to 'NOK' if user not found
-                        $cell->current()->setValue('no justifié');
-                        $row['justify'] = 'no';
-                    }
-
                     $rows[] = $row;
                 } catch (Exception $e) {
                     // Handle exception if the cell is not found or any other issue
@@ -123,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
             }
 
 
-            insertMultipleRows('absenses', $rows);
+            insertMultipleRows('appointments', $rows);
             // Save the modified file
             $outputFilePath = 'files/' . 'modified_' . $uploadedFile['name'];
             $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');

@@ -447,6 +447,12 @@ if (!function_exists('set_decision')) {
                 }
             } else {
                 $superior_id = fetch_user_information($superior_id)['superior_id'];
+
+                if( is_in_conge($superior_id) ){
+                    $superior = get_substitue($superior_id);
+                    $superior_id = $superior['id'];
+                }
+
                 add_lifecycle_entry($demand_id, $superior_id);
                 push_demand_creation_notification($demand['id']);
             }
@@ -738,7 +744,8 @@ if (!function_exists('handle_role')) {
 if (!function_exists('dashboard_url')) {
     function dashboard_url($uri, $prefix = 'dashboard')
     {
-        return url(rtrim($prefix) . '/' . rtrim($uri));
+        //dd(url(rtrim(rtrim($prefix) . '/' . rtrim($uri), '/')));
+        return url(rtrim(rtrim($prefix) . '/' . rtrim($uri), '/'));
     }
 }
 
@@ -870,7 +877,7 @@ if (!function_exists('insertMultipleRows')) {
         foreach ($rows as $row) {
             $placeholders[] = '(' . rtrim(str_repeat('?, ', count($columns)), ', ') . ')';
             foreach ($columns as $col) {
-                $values[] = $row[$col];
+                $values[] = $row[$col] ?? null;
             }
         }
 
@@ -979,14 +986,45 @@ function countDaysInMonthBetweenDates(string $startDate, string $endDate, int $t
 
 
 if( !function_exists('component') ){
-    function component(string $path)
+    function component(string $path, $add__inc_suffix = true)
     {
-        $fullPath = sprintf(__DIR__ . "/../components/%s", trim($path, '/') . '.inc.php');
+        $fullPath = sprintf(__DIR__ . "/../components/%s", trim($path, '/') . ($add__inc_suffix? '.inc' : '') . '.php');
 
         if (file_exists($fullPath)) {
             require_once $fullPath;
         } else {
             throw new RuntimeException("Component file not found: " . $fullPath);
         }
+    }
+}
+
+if( !function_exists('session') ){
+    function session(array|string $key, string $default = ''){
+        if( !session_id() ){
+            session_start();
+        }
+
+        if( is_array($key) ){
+            foreach( $key as $k => $v ){
+                $_SESSION[$k] = $v;
+            }
+
+            return;
+        }
+
+
+        return  !empty($_SESSION[$key])? $_SESSION[$key] : $default;
+    }
+}
+
+if( !function_exists('current_url') ){
+    function current_url($include_query = false){
+        return 'http://' . $_SERVER['HTTP_HOST'] . rtrim($_SERVER['REQUEST_URI'], '/');
+    }
+}
+
+if( !function_exists('is_url_same') ){
+    function is_url_same($url){
+        return current_url() == $url;
     }
 }

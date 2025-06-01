@@ -206,6 +206,7 @@ if (!function_exists('fetch_user_information')) {
         $user['department'] = get_department($user['departement_id']);
         $user['superior'] = empty($user['superior_id']) ? null :  get_user($user['superior_id']);
         $user['address'] = !empty($user['address_id']) ? get_address($user['user_id']) : [];
+        $user['substitute'] = !empty($user['substitute_id']) ? get_user($user['substitute_id']) : null;
 
         return $user;
     }

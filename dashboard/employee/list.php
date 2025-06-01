@@ -17,13 +17,9 @@ $users = get_all_users();
 
 
 
-$notifications = get_notifications($_SESSION['user_id']);
 
 $user_requests = fetch_creation_demands();
 
-$redPin = count(array_filter($notifications, function ($v, $i) {
-    return $v['read_state'] == 0;
-}, ARRAY_FILTER_USE_BOTH)) > 0;
 
 $user = fetch_user_information($_SESSION['user_id']);
 $_SESSION['user'] = get_user($_SESSION['user_id']);
@@ -37,33 +33,8 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DjazairRH - Profil <?= $user['role']['nom'] ?></title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script>
-        function setNotificationToRead(el) {
-            if (el.dataset.read != 1) {
-                let data = new FormData
-                data.append('action', 'set_read')
-                data.append('id', el.dataset.id)
-                fetch("<?= url('actions/notifications.php') ?>", {
-                        method: "POST",
-                        body: data
-                    }).then(res => res.json())
-                    .then(js => {
-                        el.dataset.read = 1
-                    })
-                return true
-            } else {
-                return false
-            }
-        }
-    </script>
+    <?php component('partials/include'); ?>
+    
 
     <style>
         :root {

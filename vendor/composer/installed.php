@@ -3,7 +3,7 @@
         'name' => 'rayan/dzgrh',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '73b27349bbc6780bce96bf213fce122d67b74814',
+        'reference' => '2335e2d3818ccc7187fb2d18984fe6fb92a1a465',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -51,7 +51,7 @@
         'phpmailer/phpmailer' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'bf74d75a1fde6beaa34a0ddae2ec5fce0f72a144',
+            'reference' => '912f278a482f50b9e1b76ddfd2e00413cefb6747',
             'type' => 'library',
             'install_path' => __DIR__ . '/../phpmailer/phpmailer',
             'aliases' => array(
@@ -115,7 +115,7 @@
         'rayan/dzgrh' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '73b27349bbc6780bce96bf213fce122d67b74814',
+            'reference' => '2335e2d3818ccc7187fb2d18984fe6fb92a1a465',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
