@@ -335,6 +335,23 @@ if( !function_exists('get_user_with') ){
     }
 }
 
+if( !function_exists('fetch_month_absences') ){
+    function fetch_month_absences($user_id, $month, $year){
+        $db = load_db();
+
+        $user = get_user($user_id);
+
+        $matricule = $user['matricule'];
+
+        $sql = "SELECT * FROM `appointments` WHERE employee_matricule=? AND month(date)=? AND year(date)=?";
+
+        $stmt = $db->prepare($sql);
+
+        $stmt->execute([$matricule, $month, $year]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
 
 if( !function_exists('fetch_absenses') ){
     function fetch_absenses($user_id, $grouped=false) : array|null {
@@ -344,7 +361,7 @@ if( !function_exists('fetch_absenses') ){
 
         $matricule = $user['matricule'];
 
-        $sql = "SELECT * FROM `absenses` WHERE employee_matricule=?";
+        $sql = "SELECT * FROM `appointments` WHERE employee_matricule=?";
 
         $stmt = $pdo->prepare($sql);
 
@@ -364,5 +381,75 @@ if( !function_exists('get_all_conges') ){
         $stmt->execute([$type, $status, $user_id]);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
+
+if( !function_exists('claculate_pay_with_absences') ){
+    function claculate_pay_with_absences($user_id, $month, $year){
+        $absences = fetch_absenses($user_id, $month, $year);
+
+        $total_absences = count($absences);
+
+        // the user pay calculated by the formula : pay = basepay - (150 * absent hours)
+        $user = get_user($user_id);
+
+        $basepay = $user['basepay'];
+
+        $pay = $basepay - ($total_absences * 150);
+
+        return $pay;
+    }
+}
+
+if( !function_exists('fetch_all_absences') ){
+    function fetch_all_absences($matricule): array
+    {
+        $db = load_db();
+
+        $sql = "SELECT * FROM `appointments` WHERE employee_matricule=?";
+
+        $stmt = $db->prepare($sql);
+
+        $stmt->execute([$matricule]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
+
+if( !function_exists('fetch_monthly_absences') )        {
+    function fetch_monthly_absences($matricule, $month, $year){
+        $db = load_db();
+        $sql = "SELECT * FROM `appointments` WHERE employee_matricule=? AND month(date)=? AND year(date)=?";
+        $stmt = $db->prepare($sql);
+        $stmt->execute([$matricule, $month, $year]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
+
+if( !function_exists('get_monthly_abcenses_for_all') ){
+    function get_monthly_abcenses_for_all($month, $year){
+        $db = load_db();
+        $sql = "SELECT * FROM `appointments` WHERE month(date)=? AND year(date)=?";
+        $stmt = $db->prepare($sql);
+        $stmt->execute([$month, $year]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
+
+// function to fetch the abcences grouped by months
+if( !function_exists('get_monthly_absences_grouped') ){
+    function get_monthly_absences_grouped($year, $matricule=null){
+        $db = load_db();
+        $sql = "SELECT month(date) as month, count(*) as total_absences FROM `appointments` WHERE year(date)=? " . ($matricule ? "AND employee_matricule=?" : "") ." GROUP BY month(date)";
+        $stmt = $db->prepare($sql);
+        $stmt->execute(array_merge([$year], $matricule ? [$matricule] : []));
+
+        //fill the unfound month with empty array
+        $months = array_fill(1, 12, 0);
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $months[$row['month']] = $row['total_absences'];
+        }
+        return $months;
     }
 }

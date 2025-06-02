@@ -25,7 +25,8 @@ foreach($absenses as $absense){
     if( !array_key_exists($date, $grouped) ){
         $grouped[$date] = [];
     }
-    $grouped[$date][$absense['day_part']] = $absense['justify'];
+    
+    $grouped[$date][$absense['day_part']] = $absense['justification'] ?? 'no';
 }
 
 $count = count($grouped);

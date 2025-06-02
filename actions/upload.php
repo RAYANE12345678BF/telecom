@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
                             $times = (int) ($lateDuration / $lateThreshold);
                         }
 
-                        $row['late_hours'] = $isLate ? $times : 0.0;
+                        $row['late_hours'] = $isLate ? $times : 0;
 
                     } else {
                         $justification = isAbsentJustified($user, $formattedDate, is_array($user));

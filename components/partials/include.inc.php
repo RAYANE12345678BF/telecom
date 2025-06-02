@@ -12,6 +12,8 @@ if( !session_id() ){
     session_start();
 }
 
+//dd(count(fetch_month_absences(1, 2, 2025)));
+
 $notifications = get_notifications($_SESSION['user_id']);
 
 $redPin = count(array_filter($notifications, function ($v, $i) {

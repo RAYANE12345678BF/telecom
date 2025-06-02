@@ -33,7 +33,7 @@ switch($action){
 
     $errors = validate($_POST, [
         'phone' => ['required', 'phone'],
-        'birth_day' => ['required'],
+        'birth_day' => ['required', 'date'],
         'birth_place' => ['required', 'alpha'],
         'etat_cevil' => ['required'],
         'nom' => ['required', 'alpha'],
@@ -83,11 +83,11 @@ switch($action){
         }
 
         $errors = validate($_POST, [
-            'matricule' => ['required'],
+            'matricule' => ['required', 'numeric'],
             'department_id' => ['required'],
             'service_id' => ['required'],
             'superior_id' => ['required'],
-            'start_date' => ['required'],
+            'start_date' => ['required', 'date'],
         ]);
 
         $user_id = $_SESSION['user_id'];

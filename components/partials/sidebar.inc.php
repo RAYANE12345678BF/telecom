@@ -12,6 +12,19 @@
                 <i class="fas fa-home"></i>
                 <span class="menu-text">Accueil</span>
             </a>
+
+            <a href="<?= dashboard_url('planning') ?>" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span class="menu-text">plan</span>
+            </a>
+
+            <?php if(if_user_is(['Chef de Service'], null)): ?>
+                <a href="<?= dashboard_url('planning/service.php') ?>" class="menu-item">
+                    <i class="fas fa-home"></i>
+                    <span class="menu-text">plan service</span>
+                </a>
+            <?php endif ?>
+
             <a href="<?= url('dashboard') ?>" class="menu-item active">
                 <i class="fas fa-user-circle"></i>
                 <span class="menu-text">Mon Profil</span>
@@ -24,7 +37,7 @@
 
             <a href="<?= url('dashboard/droits') ?>" class="menu-item">
                 <i class="fas fa-list"></i>
-                <span class="menu-text">my droits</span>
+                <span class="menu-text">mes droits</span>
             </a>
 
             <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
