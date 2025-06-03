@@ -18,7 +18,7 @@ if (empty($userInformation['matricule'])) {
     }
 }
 
-if (empty($userInformation['superior_id']) && $userInformation['role'] != 'Directeur') {
+if (empty($userInformation['superior_id']) && $userInformation['role']['nom'] != 'Directeur') {
     session([
         'status' => 'selecter votre superieur pour utiliser les services',
         'status_icon' => 'warning',
