@@ -485,7 +485,7 @@ if (!function_exists('set_decision')) {
 
                 if( is_in_conge($superior_id) ){
                     $superior = get_substitue($superior_id);
-                    if( $superior ){
+                    if( $superior )
                         $superior_id = $superior['id'];
                 }
 
