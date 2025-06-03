@@ -109,6 +109,7 @@ switch ($demand_type) {
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'la demande a été envoyée avec succès';
         break;
+
     case 'mission':
         $mission_data = [
             'destination' => $_POST['destination'] ?? null,
@@ -129,6 +130,7 @@ switch ($demand_type) {
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'la demande a été envoyée avec succès';
         break;
+
     case 'deplacement':
         $mission_data = [
             'leave date' => $_POST['leave_date'] ?? null,

@@ -990,11 +990,6 @@ $month_statistics = get_monthly_absences_grouped(2025);
         <div class="attendance-report">
             <h2>Attendance Report</h2>
             <div class="report-filters">
-                <select class="filter-select" id="reportType">
-                    <option value="monthly">Monthly Report</option>
-                    <option value="quarterly">Quarterly Report</option>
-                    <option value="yearly">Yearly Report</option>
-                </select>
                 <button class="btn btn-primary">Generate Report</button>
             </div>
             <div class="report-table">
@@ -1010,8 +1005,11 @@ $month_statistics = get_monthly_absences_grouped(2025);
                     </tr>
                     </thead>
                     <tbody>
+                    <template>
+
+                    </template>
                     <tr>
-                        <td>March 1, 2024</td>
+                        <td></td>
                         <td>09:15 AM</td>
                         <td>06:00 PM</td>
                         <td>8.5</td>
