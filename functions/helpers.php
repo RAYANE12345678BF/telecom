@@ -436,7 +436,7 @@ function is_in_conge($user_id){
 function get_substitue($user_id){
     $db = load_db();
 
-    $sql = "SELECT * FROM `users` WHERE `id`=?";
+    $sql = "SELECT * FROM `employees` WHERE `id`=?";
 
     $stmt = $db->prepare($sql);
 
