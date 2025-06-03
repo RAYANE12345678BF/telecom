@@ -859,6 +859,7 @@ $user_demands = array_filter($user_demands, function ($demand) use ($user) {
             <thead>
                 <tr>
                     <th>#</th>
+                    <th>L'employee</th>
                     <th>Type de Demande</th>
                     <th>Date de Demande</th>
                     <th>Statut</th>
@@ -873,6 +874,9 @@ $user_demands = array_filter($user_demands, function ($demand) use ($user) {
                 <?php foreach ($user_demands as $demand): ?>
                     <tr>
                         <td>#<?= $demand['id'] ?></td>
+                        <td>
+                            <?= get_user($demand['employee_id'])['nom'] . ' ' . get_user($demand['employee_id'])['prenom'] ?>
+                        </td>
                         <td><?= $demand['type'] ?? 'congé annual' ?></td>
                         <td><?= $demand['date_depose'] ?></td>
                         <td><?= $demand['status'] ?></td>

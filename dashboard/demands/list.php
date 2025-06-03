@@ -534,7 +534,6 @@ $user_demands = get_user_demands($_SESSION['user_id']);
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>L'Employee</th>
                     <th>Type de demande</th>
                     <th>Date de demande</th>
                     <th>Statut</th>
@@ -556,9 +555,6 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                     <tr>
                         <td>
                             #<?= $demand['id'] ?>
-                        </td>
-                        <td>
-                            <?= get_user($demand['employee_id'])['nom'] . ' ' . get_user($demand['employee_id'])['prenom'] ?>
                         </td>
                         <td>
                             <?= $demand['type'] ?>
