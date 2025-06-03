@@ -941,7 +941,7 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
         }
 
         <?php if (($l = isProfileComplete($user)) !== true): ?>
-            warnInfo()
+            warnInfo("il y a des information manque dans votre profile")
         <?php endif; ?>
     </script>
 
