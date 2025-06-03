@@ -18,7 +18,7 @@
                 <span class="menu-text">plan</span>
             </a>
 
-            <?php if(if_user_is(['Chef de Service'], null)): ?>
+            <?php if(if_user_is(['Chef de Service', 'Directeur'], null)): ?>
                 <a href="<?= dashboard_url('planning/service.php') ?>" class="menu-item">
                     <i class="fas fa-home"></i>
                     <span class="menu-text">plan service</span>
