@@ -35,11 +35,6 @@ function pollNotifications($data) {
             }
             console.log(data)
             $data.notifications = data
-
-
-
-
-
         });
 }
 var m;
@@ -56,7 +51,6 @@ document.addEventListener('alpine:init', () => {
                         if (v.id == el.dataset.id) {
                             v.read_state = 1
                         }
-
                         return v
                     })
                 }

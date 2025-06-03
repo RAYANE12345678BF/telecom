@@ -97,8 +97,11 @@ if( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
 
         $_SESSION['status'] = 'success';
 
-        push_notification([
-            'title' =>
+        push_notifiation([
+            'user_id' => get_user_with_role('Chef de Service')['id'],
+            'title' => 'une nouvelle planification crée',
+            'body' => "l'employee " . $_SESSION['user']['nom'] . "crée une planification",
+            'url' => dashboard_url('/planning')
         ]);
 
         echo json_encode([

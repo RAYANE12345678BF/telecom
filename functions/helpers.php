@@ -886,6 +886,45 @@ if (!function_exists('insertMultipleRows')) {
     }
 }
 
+if( !function_exists('get_user_with_role') ){
+    function get_user_with_role($role){
+        $db = load_db();
+
+        $sql = "SELECT * FROM `roles` WHERE nom=?";
+
+        $stmt = $db->prepare($sql);
+
+        $stmt->execute([$role]);
+
+        $sql = "SELECT * FROM `employees` WHERE `role_id`=?";
+
+        $etmt = $db->prepare($sql);
+
+        $etmt->execute([$stmt->fetch(PDO::FETCH_ASSOC)['id']]);
+
+        $users = $etmt->fetch(PDO::FETCH_ASSOC);
+
+        return $users;
+    }
+}
+
+if( !function_exists('push_notifiation') ){
+    function push_notifiation(array $data){
+        $db = load_db();
+
+        $sql = "INSERT INTO `notifications` (`employee_id`, `title`, `description`,`url` ) VALUES (?, ?, ?, ?)";
+
+        $stmt = $db->prepare($sql);
+
+        try {
+            $stmt->execute([$data['user_id'], $data['title'], $data['body'],$data['url']]);
+        } catch (PDOException $e) {
+            throw new Exception($e->getMessage());
+        }
+
+    }
+}
+
 if( !function_exists('push_demand_creation_notification') ){
     function push_demand_creation_notification($demand_id){
         $db = load_db();
@@ -899,13 +938,18 @@ if( !function_exists('push_demand_creation_notification') ){
             return $value['decision'] == 'waiting';
         });
 
-        $key = array_keys($current_life)[0] ?? null;
-        if(!$key){
+
+        $keys = array_keys($current_life);
+
+        if(count($keys) === 0){
             return null;
         }
-        $current_life = $current_life[$key];
 
+        $key = $keys[0];
+
+        $current_life = $current_life[$key];
         $target_user_id = $current_life['superior_id'];
+
 
         $title = 'creation demand from ' . $employee['nom'] . ' ' . $employee['prenom'];
         $description = 'il y a une nouvelle demande de creation de conge';
