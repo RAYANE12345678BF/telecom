@@ -87,6 +87,10 @@ function validate($data, $rules) {
                 case 'time_range':
                     $error = validate_time_range($value, $field, $parameters);
                     break;
+                    
+                case 'mimetype':
+                    $error = validate_mimetype($value, $field, $parameters);
+                    break;
             }
 
             if ($error) {
@@ -100,6 +104,36 @@ function validate($data, $rules) {
         return true;
     }
     return $errors;
+}
+
+
+/**
+ * Mime type validation
+ *
+ * @param mixed $value The file or file metadata to validate
+ * @param string $field The name of the field being validated
+ * @param array $allowedMimeTypes Array of allowed mime types
+ * @return string|null Error message if validation fails, or null if it passes
+ */
+function validate_mimetype($value, $field, $allowedMimeTypes): true|string|null
+{
+    if ($value === null || $value === '') {
+        return null;
+    }
+
+    // Assume $value has 'tmp_name' and 'type' for file metadata
+    if (is_array($value) && isset($value['tmp_name']) && isset($value['type'])) {
+        $fileMimeType = mime_content_type($value['tmp_name']);
+
+        if (!in_array($fileMimeType, $allowedMimeTypes)) {
+            return "Le champ " . format_field_name($field) .
+                " doit être un fichier de type valide (" . implode(', ', $allowedMimeTypes) . ").";
+        }
+
+        return true;
+    } else {
+        return "Le champ " . format_field_name($field) . " est invalide ou ne contient pas de fichier.";
+    }
 }
 
 /**

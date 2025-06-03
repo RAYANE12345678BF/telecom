@@ -1,17 +1,17 @@
 <?php
 if(! session_id()){
-    session_start();
+    session_start(); // initialisation ta3 session bah ncontroliw les donnes entre diff page
 }
 
 
 const STORE_ALL = true;
 
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php'; // autoload for autoload function from helper files
 
 
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Exception;
+use PhpOffice\PhpSpreadsheet\Exception; // EXCEL Package, through composer autoloading
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
 
@@ -40,11 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
             $sheet = $spreadsheet->getActiveSheet();
 
 
-            // Let's assume the header is in the first row
+            // Let's assume the header is in the second row
             $header = $sheet->getRowIterator(2)->current()->getCellIterator();
             $headerValues = [];
             foreach ($header as $h_cell) {
-                $headerValues[] = $h_cell->getValue();
+                $headerValues[] = $h_cell->getValue(); // nhoto les valeur tal header fi tableau
             }
 
 
@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
             $offDutyColIndex = array_search('Off duty', $headerValues) + 1;
 
             $clockInColIndex = array_search('Clock In', $headerValues) + 1;
-            $clockOffColIndex = array_search('Clock Off', $headerValues) + 1;
+            $clockOffColIndex = array_search('Clock Out', $headerValues) + 1;
 
             $lateThreshold = 59;
 
@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
                     $isAbsent = $isAbsentCell->current()->getValue() == "True";
                     $onDuty = $onDutyCell->current()->getValue();
                     $offDuty = $offDutyCell->current()->getValue();
-                    $clockIn = $clockInCell->current()->getValue() ?? $offDuty;
+                    $clockIn = $clockInCell->current()->getValue();
                     $clockOff = $clockOffCell->current()->getValue();
                     $isLate = false;
                     $row = [
@@ -113,26 +113,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
                         'date' => $formattedDate,
                         'day_part' => $dayPartValue == 'matiniée' ? 'morning' : 'evening',
                         'is_absent' => $isAbsent ? '1' : '0',
+                        'on_duty' => $onDuty,
+                        'off_duty' => $offDuty,
+                        'clock_in' => empty($clockIn) ? null : $clockIn,
+                        'clock_out' => empty($clockOff) ? null : $clockOff,
                         'justification' => null,
                         'late_hours' => null,
                     ];
 
                     if( !$isAbsent ){
-                        $lateDuration = time_diff($clockIn, $onDuty);
-                        $times = -1;
+                        // he is not absence, but can be late !
 
-                        if( $lateDuration > $lateThreshold ){
-                            $isLate = true;
-                            $times = (int) ($lateDuration / $lateThreshold);
+                        $on_late = time_diff($clockIn, $onDuty); // retard ta3 da5la
+                        $off_late = time_diff($offDuty, $clockOff ?? $offDuty); // retard ta3 5arja
+
+                        $hours_sum = 0;
+
+                        $lates = [$on_late, $off_late];
+
+                        foreach( $lates as $l ){
+                            $times = -1;
+                            if( $l > $lateThreshold ){
+                                $isLate = true;
+                                $times = (int) ($l / $lateThreshold);
+                            }
+
+                            $hours_sum += max($times, 0);
                         }
 
-                        $row['late_hours'] = $isLate ? $times : 0;
+                        $row['late_hours'] = $hours_sum;
 
+                        $cell->current()->setValue('');
                     } else {
                         $justification = isAbsentJustified($user, $formattedDate, is_array($user));
 
                         if( $justification === false ){
                             continue;
+                        }
+
+                        if( !$justification ){
+                            // l'employee mapointach w ma3andoch justification, donc ndiroh ghab swaue3 kol
+
+                            $hours = time_diff($offDuty, $onDuty);
+
+                            $row['late_hours'] = max((int)($hours / $lateThreshold), 0);
                         }
 
                         $row['justification'] = $justification;

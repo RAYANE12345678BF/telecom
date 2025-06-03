@@ -1,12 +1,44 @@
-                       <!DOCTYPE html>
+<?php
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+if( !session_id() ){
+    session_start();
+}
+
+$user = fetch_user_information($_SESSION['user_id']);
+
+if( if_user_is(['Chef de Service']) ){
+    $all_planifications = get_all_planifications();
+}elseif(if_user_is(['Directeur'])){
+    $all_planifications = get_all_planifications(false);
+}else{
+    session([
+            'status' => 'vous pouvez pas voir ca'
+    ]);
+    redirect(dashboard_url('/'));
+}
+
+usort($all_planifications, function ($a, $b) {
+    // Check if score is null
+    if (is_null($a['accepted_from_employee']) && !is_null($b['accepted_from_employee'])) {
+        return -1; // $a comes before $b
+    } elseif (!is_null($a['accepted_from_employee']) && is_null($b['accepted_from_employee'])) {
+        return 1; // $b comes before $a
+    } else {
+        // Both null or both not null — sort by score ascending
+        return ($a['accepted_from_employee'] ?? 0) <=> ($b['accepted_from_employee'] ?? 0);
+    }
+});
+
+?>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DjazairRH - Planning de Congé 2025</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <?php component('partials/include'); ?>
     <style>
         :root {
             --primary-color: #003366;
@@ -28,6 +60,70 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #ff3366;
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            box-shadow: var(--shadow-sm);
+            animation: pulse 2s infinite;
+        }
+
+        .notification-dropdown {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 1000;
+            padding: 10px;
+        }
+
+        .notification-dropdown.show {
+            display: block;
+        }
+
+        .notification-item {
+            padding: 10px;
+            border-bottom: 1px solid var(--hover-color);
+            transition: var(--transition);
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item:hover {
+            background-color: var(--hover-color);
+        }
+
+        .no-notifications {
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            padding: 20px;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            padding: 90px 30px 30px;
         }
 
         body {
@@ -314,6 +410,11 @@
 
         .info-card p {
             margin: 5px 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
         }
 
         .table-container {
@@ -662,265 +763,182 @@ input[type="date"] {
     </style>
 </head>
 <body>
-    <!-- Navigation Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <div class="logo">
-                <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
-                <span class="logo-text">DjazairRH</span>
-            </div>
-        </div>
-        <div class="sidebar-content">
-            <div class="menu-items">
-                <div class="nav-title">Principal</div>
-                <a href="accueil.html" class="menu-item">
-                    <i class="fas fa-home"></i>
-                    <span class="menu-text">Accueil</span>
-                </a>
-                <a href="profile_drh.html" class="menu-item">
-                    <i class="fas fa-user-circle"></i>
-                    <span class="menu-text">Mon Profil</span>
-                </a>
-                <div class="nav-title">Demandes</div>
-                <div class="request-section">
-                    <a href="#" class="menu-item" id="faireDemandeBtn">
-                        <i class="fas fa-file-alt"></i>
-                        <span class="menu-text">Faire une demande</span>
-                    </a>
-                    <div class="submenu" id="demandeSubmenu" style="display: none;">
-                        <div>
-                            <a href="#" class="menu-item" id="congeBtn">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span class="menu-text">Demande Congé</span>
-                            </a>
-                            <div class="submenu" id="congeSubmenu" style="display: none;">
-                                <a href="annuel_drh.html" class="menu-item">
-                                    <i class="fas fa-sun"></i>
-                                    <span class="menu-text">Congé Annuel</span>
-                                </a>
-                                <a href="maladie_drh.html" class="menu-item">
-                                    <i class="fas fa-hospital"></i>
-                                    <span class="menu-text">Congé Maladie</span>
-                                </a>
-                                <a href="maternite_drh.html" class="menu-item">
-                                    <i class="fas fa-baby"></i>
-                                    <span class="menu-text">Congé Maternité</span>
-                                </a>
-                                <a href="rc_drh.html" class="menu-item">
-                                    <i class="fas fa-clock"></i>
-                                    <span class="menu-text">Congé RC</span>
-                                </a>
-                            </div>
-                        </div>
-                        <a href="formation_drh.html" class="menu-item">
-                            <i class="fas fa-graduation-cap"></i>
-                            <span class="menu-text">Demande Formation</span>
-                        </a>
-                        <a href="mission_drh.html" class="menu-item">
-                            <i class="fas fa-plane"></i>
-                            <span class="menu-text">Demande Ordre Mission</span>
-                        </a>
-                        <a href="Déplacement_drh.html" class="menu-item">
-                            <i class="fas fa-car"></i>
-                            <span class="menu-text">Demande Déplacement</span>
-                        </a>
-                        <a href="sortie_drh.html" class="menu-item">
-                            <i class="fas fa-door-open"></i>
-                            <span class="menu-text">Demande Sortie</span>
-                        </a>
-                    </div>
-                    <a href="etat_demande_drh.html" class="menu-item">
-                        <i class="fas fa-tasks"></i>
-                        <span class="menu-text">État de demande</span>
-                    </a>
-                    <a href="consulter_demande_drh.html" class="menu-item">
-                        <i class="fas fa-eye"></i>
-                        <span class="menu-text">Consulter Demande</span>
-                    </a>
-                    <a href="voir_pointage_drh.html" class="menu-item">
-                        <i class="fas fa-clock"></i>
-                        <span class="menu-text">Voir Pointage</span>
-                    </a>
-                </div>
-                
-                <div class="nav-title">Autres</div>
-                <a href="support_drh.html" class="menu-item">
-                    <i class="fas fa-question-circle"></i>
-                    <span class="menu-text">Support</span>
-                </a>
-                <a href="calendrier_drh.html" class="menu-item active">
-                    <i class="fas fa-calendar"></i>
-                    <span class="menu-text">Calendrier RC d'Employé</span>
-                </a>
-            </div>
-        </div>
-        <div class="user-section" id="logoutButton">
-            <div class="user-avatar">
-                <i class="fas fa-sign-in-alt"></i>
-            </div>
-            <span>Se déconnecter</span>
-        </div>
-    </div>
+<?php component('partials/sidebar') ?>
 
-    <!-- Top Navbar -->
-    <nav class="navbar">
-        <div class="nav-icons">
-            <div class="icon-wrapper" onclick="toggleNotifications()">
-                <i class="fa-solid fa-bell"></i>
-                <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
-            </div>
-            <div class="icon-wrapper" onclick="toggleMessenger()">
-                <i class="fa-brands fa-facebook-messenger"></i>
-            </div>
-        </div>
-    </nav>
+<!-- Top Navbar -->
+<?php component('partials/navbar') ?>
+
+<!-- Menu déroulant des notifications -->
+<?php component('partials/notifications') ?>
     
     <!-- Main Content -->
-    <div class="content">
-        <div class="header">
-            <h1><i class="fas fa-calendar-alt"></i> Planning de Congé 2025</h1>
-        </div>
-        
-        <div class="company-info">
-            <div class="info-card">
-                <h3>Société</h3>
-                <p><strong>Centre:</strong> CEPI</p>
-                <p><strong>Tél:</strong> 0</p>
-                <p><strong>Fax:</strong> 0</p>
-            </div>
-            
-            <div class="info-card">
-                <h3>Département</h3>
-                <p><strong>Service:</strong> Générale</p>
-                <p><strong>Régime:</strong> 0</p>
-                <p><strong>Fax:</strong> 0</p>
-            </div>
-            
-            <div class="info-card">
-                <h3>Période</h3>
-                <p><strong>Du:</strong> 14/01/2025</p>
-                <p><strong>Au:</strong> 31/12/2025</p>
-            </div>
-        </div>
-        
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>N°</th>
-                        <th>Nom et Prénom</th>
-                        <th>Grade</th>
-                        <th>Date de Congé</th>
-                        <th>Durée (jours)</th>
-                        <th>Type de Congé</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>AABLI Bussi</td>
-                        <td>Chef de Centre</td>
-                        <td><input type="date" class="form-control"></td>
-                        <td><input type="number" class="form-control" min="1"></td>
-                        <td>
-                            <select class="form-control">
-                                <option>Annuel</option>
-                                
-                            </select>
-                        </td>
-                        <td>
-                            <button class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Enregistrer</button>
-                            <button class="btn btn-secondary btn-sm"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>BOURBET Weld</td>
-                        <td>Supervision</td>
-                        <td><input type="date" class="form-control"></td>
-                        <td><input type="number" class="form-control" min="1"></td>
-                        <td>
-                            <select class="form-control">
-                                <option>Annuel</option>
-                               
-                            </select>
-                        </td>
-                        <td>
-                            <button class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Enregistrer</button>
-                            <button class="btn btn-secondary btn-sm"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>SECANNIA Hueven</td>
-                        <td>Supervision</td>
-                        <td><input type="date" class="form-control"></td>
-                        <td><input type="number" class="form-control" min="1"></td>
-                        <td>
-                            <select class="form-control">
-                                <option>Annuel</option>
-                               
-                            </select>
-                        </td>
-                        <td>
-                            <button class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Enregistrer</button>
-                            <button class="btn btn-secondary btn-sm"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td>Abbass Ayres</td>
-                        <td>Apprenti</td>
-                        <td><input type="date" class="form-control"></td>
-                        <td><input type="number" class="form-control" min="1"></td>
-                        <td>
-                            <select class="form-control">
-                                <option>Annuel</option>
-                                
-                            </select>
-                        </td>
-                        <td>
-                            <button class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Enregistrer</button>
-                            <button class="btn btn-secondary btn-sm"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td>Vocal Oble</td>
-                        <td>Apprenti</td>
-                        <td><input type="date" class="form-control"></td>
-                        <td><input type="number" class="form-control" min="1"></td>
-                        <td>
-                            <select class="form-control">
-                                <option>Annuel</option>
-                                
-                            </select>
-                        </td>
-                        <td>
-                            <button class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Enregistrer</button>
-                            <button class="btn btn-secondary btn-sm"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <div class="action-buttons">
-                <button class="btn btn-secondary"><i class="fas fa-print"></i> Imprimer</button>
-              
-<button class="btn btn-secondary"><i class="fas fa-paper-plane"></i> Soumettre</button>
+    <div class="main-content" id="print">
+        <div class="container">
+            <div class="content">
+                <div class="header">
+                    <h1><i class="fas fa-calendar-alt"></i> Planning de Congé 2025</h1>
+                </div>
 
-                <button class="btn btn-primary" id="addEmployeeBtn"><i class="fas fa-plus"></i> Ajouter Employé</button>
+                <div class="company-info">
+                    <div class="info-card">
+                        <h3>Société</h3>
+                        <p><strong>Centre:</strong> CEPI</p>
+                        <p><strong>Tél:</strong> 0</p>
+                        <p><strong>Fax:</strong> 0</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>Département</h3>
+                        <p><strong>Service:</strong> Générale</p>
+                        <p><strong>Régime:</strong> 0</p>
+                        <p><strong>Fax:</strong> 0</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>Période</h3>
+                        <p><strong>Du:</strong> 14/01/2025</p>
+                        <p><strong>Au:</strong> 31/12/2025</p>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>N°</th>
+                            <th>Nom et Prénom</th>
+                            <th>Grade</th>
+                            <th>Date de Congé</th>
+                            <th>Durée (jours)</th>
+                            <th>Type de Congé</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach($all_planifications as $plan): ?>
+                            <tr>
+                                <td>
+                                    <?= $plan['id'] ?>
+                                </td>
+                                <td>
+                                    <?= $plan['employee']['nom'] . ' ' . $plan['employee']['prenom'] ?>
+                                </td>
+                                <td>
+                                    <?= $plan['employee']['role']['nom'] ?>
+                                </td>
+                                <td><input type="date" readonly value="<?= $plan['start_date'] ?>" class="form-control"></td>
+                                <td><input readonly value="<?= daysBetweenDates($plan['start_date'], $plan['end_date']) ?>" type="number" class="form-control" min="1"></td>
+                                <td>
+                                    <select class="form-control">
+                                        <option>Annuel</option>
+
+                                    </select>
+                                </td>
+                                <td>
+                                    <button class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Enregistrer</button>
+                                    <button class="btn btn-secondary btn-sm" onclick="deletePlan(<?= $plan['id'] ?>)"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+
+                    <div class="action-buttons">
+                        <button id="printBtn" onclick="handlePrintButton()" class="btn btn-secondary"><i class="fas fa-print"></i> Imprimer</button>
+                        <?php if(if_user_is(['Chef de Service'])): ?>
+                        <button class="btn btn-secondary" onclick="confirm()"><i class="fas fa-paper-plane"></i> Soumettre</button>
+                        <?php endif ?>
+                        <button disabled class="btn btn-primary" id="addEmployeeBtn"><i class="fas fa-plus"></i> Ajouter Employé</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    
-    <!-- Notification dropdown -->
-    <div class="notification-dropdown" id="notificationDropdown">
-        <div class="no-notifications">
-            Aucune notification pour le moment.
-        </div>
-    </div>
+
+
+    <script>
+        function deletePlan(id){
+            Swal.fire({
+                title: "Voulez vous rejeter/supprimer cette planification ?",
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: "Save",
+                denyButtonText: `Don't save`
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    let data = new FormData
+                    data.append('plan_id', id)
+                    data.append('action', 'delete')
+                    fetch("<?= url('actions/planify.php') ?>", {
+                        method: 'POST',
+                        body: data
+                    }).then(res => res.json())
+                        .then(json =>{
+                            if( json.success ){
+                                Swal.fire("Rejeter!", "le planification a ete rejeter", "success");
+                            }else{
+                                Swal.fire("Erreur!", json.message, "error");
+                            }
+                        })
+                } else if (result.isDenied) {
+                    Swal.fire("le planification ne hange pas", "", "info");
+                }
+            });
+        }
+
+        function confirm() {
+            Swal.fire({
+                title: "Voulez vous soumettre cette planification ?",
+                showDenyButton: true,
+                confirmButtonText: "soumettre",
+                denyButtonText: `annuler`
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let data = new FormData
+                    data.append('action', 'confirm')
+                    fetch('<?= url('actions/planify.php') ?>', {
+                        method: 'POST',
+                        body: data
+                    }).then(res => res.json()).then(json => {
+                        if (json['success']) {
+                            Swal.fire("soumetté!", "le planification a ete soumettre vers le directeur", "success");
+                        } else {
+                            Swal.fire("Erreur!", json.message, "error");
+                        }
+                    }).catch(err => alert(err))
+                }
+            })
+        }
+    </script>
+
+<script>
+    function handlePrintButton(e) {
+        let styles = document.getElementsByTagName('style')[0].innerText
+        let divToPrint = document.getElementById('print')
+        divToPrint.style.width = '100%'
+
+        let button = divToPrint.getElementsByTagName('button')[0]
+        let btnHtml = button.parentElement.innerHTML
+        let printWindow = window.open('', '', 'height=500, width=500');
+        printWindow.document.open();
+        printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Print Div Content</title>
+                    <style>
+                        ${styles}
+                    </style>
+                </head>
+                <body>
+                    ${divToPrint.parentElement.innerHTML}
+                </body>
+                </html>
+            `);
+        printWindow.document.close();
+        printWindow.print();
+    }
+</script>
     
     <!-- Messenger dropdown -->
     <div class="messenger-dropdown" id="messengerDropdown">

@@ -9,7 +9,6 @@ $all_absences = fetch_all_absences($user['matricule']);
 
 
 $month_statistics = get_monthly_absences_grouped(2025);
-
 ?>
 
 <!DOCTYPE html>
@@ -866,19 +865,30 @@ $month_statistics = get_monthly_absences_grouped(2025);
     <?php component('partials/navbar') ?>
     <?php component('partials/sidebar') ?>
     <?php component('partials/notifications') ?>
-    <div class="main-content" x-data="page">
+    <div class="main-content" x-data="page" x-init="$watch('year', v => updateData());$watch('month', v => updateData())">
         <div class="appointments-container">
             <div class="appointments-header">
                 <h1>Work Attendance & Absence Management</h1>
                 <div class="header-actions">
-                    <select @change="year = $el.value ?? 2025" class="filter-select" id="yearFilter">
+                    <select x-init="$el.value = year" @change="year = +$el.value;console.log(year, month)" class="filter-select" id="yearFilter">
                         <option value="2024">2024</option>
-                        <option value="2023">2023</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
                     </select>
-                    <select @change="month = $el.value ?? 2025" class="filter-select" id="monthFilter">
-                        <option value="3">March</option>
-                        <option value="2">February</option>
-                        <option value="1">January</option>
+                    <select x-init="$el.value = month" @change="month = +$el.value ?? 1" class="filter-select" id="monthFilter">
+                        <option value="1">Janvier</option>
+                        <option value="2">Février</option>
+                        <option value="3">Mars</option>
+                        <option value="4">Avril</option>
+                        <option value="5">Mai</option>
+                        <option value="6">Juin</option>
+                        <option value="7">Juillet</option>
+                        <option value="8">Auot</option>
+                        <option value="9">Septembre</option>
+                        <option value="10">Octobre</option>
+                        <option value="11">Novembre</option>
+                        <option value="12">Decembre</option>
                     </select>
                 </div>
             </div>
@@ -898,11 +908,11 @@ $month_statistics = get_monthly_absences_grouped(2025);
                     <div class="employee-stats">
                         <div class="stat-item">
                             <span class="stat-label">Base Salary</span>
-                            <span class="stat-value">$<?= $user['base_salary'] ?? 500000 ?></span>
+                            <span class="stat-value" x-text="`${base_payment}da`"></span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">Current Month</span>
-                            <span class="stat-value">$<?= $user['base_salary'] ?? 500000 ?></span>
+                            <span class="stat-value" x-text="`${calcNewPayment}da`">$<?= $user['base_salary'] ?? 500000 ?></span>
                         </div>
                     </div>
                 </div>
@@ -918,16 +928,16 @@ $month_statistics = get_monthly_absences_grouped(2025);
                     </div>
                     <div class="absence-stats">
                         <div class="stat-box">
-                            <div class="label">This Month</div>
-                            <div class="value">160h</div>
+                            <div class="label">abcenses mensual (heur)</div>
+                            <div class="value" x-text="`${hoursAbsent}h`"></div>
                         </div>
                         <div class="stat-box">
                             <div class="label">Required</div>
-                            <div class="value">176h</div>
+                            <div class="value" x-text="`${requiredHours}h`">176h</div>
                         </div>
                         <div class="stat-box">
                             <div class="label">Difference</div>
-                            <div class="value">-16h</div>
+                            <div class="value" x-text="requiredHours - hoursAbsent"></div>
                         </div>
                     </div>
                 </div>
@@ -961,17 +971,17 @@ $month_statistics = get_monthly_absences_grouped(2025);
                 <div class="summary-grid">
                     <div class="summary-card">
                         <h3>Total Work Hours</h3>
-                        <div class="summary-value">160h</div>
-                        <div class="summary-trend negative">-16h from required</div>
+                        <div class="summary-value" x-text="`${requiredHours - hoursAbsent}h`">160h</div>
+                        <div class="summary-trend negative" x-text="`${(requiredHours - hoursAbsent) - requiredHours}h from required`">-16h from required</div>
                     </div>
                     <div class="summary-card">
                         <h3>Pay Impact</h3>
-                        <div class="summary-value">$200</div>
-                        <div class="summary-trend negative">-$200 from base</div>
+                        <div class="summary-value" x-text="`${base_payment - (penalty * hoursAbsent)}da`">$200</div>
+                        <div class="summary-trend negative" x-text="`${penalty * hoursAbsent}da`">-$200 from base</div>
                     </div>
                     <div class="summary-card">
                         <h3>Attendance Rate</h3>
-                        <div class="summary-value">91%</div>
+                        <div class="summary-value" x-text="`${(((requiredHours - hoursAbsent) / requiredHours) * 100).toFixed(2)}%`">91%</div>
                         <div class="summary-trend">Current month</div>
                     </div>
                 </div>
@@ -1273,25 +1283,133 @@ $month_statistics = get_monthly_absences_grouped(2025);
                 return {
                     absences: JSON.parse('<?= json_encode($all_absences) ?>'),
                     absences_to_show : [],
-                    year: 2025,
-                    month: 6,
+                    year: (new Date()).getFullYear(),
+                    month: (new Date()).getMonth() + 1,
+                    donutChart : null,
+                    barsChart: null,
+                    requiredHours : 0,
+                    hoursAbsent : 0,
+                    base_payment : <?= $user['base_salary'] ?? 50000 ?>,
+                    penalty : <?= 150 ?>,
+
+                    get calcNewPayment(){
+                        return this.base_payment - (this.penalty * this.hoursAbsent);
+                    },
                     init(){
                         this.absences_to_show = this.absences.filter(absence => {
                             return (new Date(absence.date)).getFullYear() === this.year && (new Date(absence.date)).getMonth() === this.month - 1;
                         })
 
-                        this.initCharts()
+                        this.requiredWorks()
+                        this.monthlyAbsenses()
+
+                        if( this.donutChart === null || this.barsChart === null ){
+                            this.initCharts()
+                        }else{
+                            this.updateCharts()
+                        }
                     },
+
+                    updateData(){
+                        this.init()
+                    },
+
+                    monthlyAbsenses(){
+                        console.log(this.absences_to_show.reduce((e, f) => e['late_hours'] + f['late_hours'], 0))
+                         this.hoursAbsent = this.absences_to_show.reduce( function(sum, abs){
+                            console.log(sum, abs)
+                            return sum + (abs['late_hours'] ?? 0)
+                        }, 0)
+                    },
+
+                    requiredWorks(){
+                        this.requiredHours =  this.absences_to_show.reduce( function(sum, abs){
+                            return sum + (timeDiffInHours(abs['on_duty'], abs['off_duty']))
+                        }, 0)
+                    },
+
+                    updateCharts(){
+
+                        this.barsChart.date = {
+                            labels: ['Sam','Dim', 'Lun', 'Mar', 'Mer', 'Jeu'],
+                            datasets: [{
+                                label: 'heur absents',
+                                data: [...this.groupByDay()],
+                                backgroundColor: 'rgba(0, 102, 204, 0.2)',
+                                borderColor: 'rgba(0, 102, 204, 1)',
+                                borderWidth: 1
+                            }]
+                        }
+                        this.barsChart.update()
+
+                        this.donutChart.data = {
+                            labels: ['Late Arrivals', 'Early Leaves', 'Full Day'],
+                            datasets: [{
+                                data: [this.lateArrivals().length, this.earlyLeaves().length, this.fullDay().length],
+                                backgroundColor: [
+                                    'rgba(245, 158, 11, 0.2)',
+                                    'rgba(239, 68, 68, 0.2)',
+                                    'rgba(16, 185, 129, 0.2)'
+                                ],
+                                borderColor: [
+                                    'rgba(245, 158, 11, 1)',
+                                    'rgba(239, 68, 68, 1)',
+                                    'rgba(16, 185, 129, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        }
+                        this.donutChart.update()
+
+                    },
+
+                    lateArrivals(){
+                        return this.absences_to_show.filter((late) => {
+                            if( late['is_absent'] == 0 && late['late_hours'] > 0 && late['on_duty'] < late['clock_in'] ){
+
+                                return true;
+                            }
+                        })
+                    },
+
+                    earlyLeaves(){
+                        return  this.absences_to_show.filter((late) => {
+                            if( late['is_absent'] == 0 && late['late_hours'] > 0 && late['clock_out'] < late['off_duty'] ){
+                                return true;
+                            }
+                        })
+                    },
+
+                    fullDay(){
+                        return this.absences_to_show.filter((late) => {
+                            if( late['is_absent'] && !late['justification'] && late['late_hours'] > 0){
+                                return true;
+                            }
+                        })
+                    },
+
+                    groupByDay(){
+                        let d = (new Array(6)).fill(0)
+                        this.absences_to_show.forEach(absence => {
+                            let date = new Date(absence.date)
+                            let day = date.getDay()
+                            d[day] += absence['late_hours']
+                        })
+                        console.log(d)
+
+                        return d
+                    },
+
 
                     initCharts(){
                         const hoursCtx = document.getElementById('workHoursChart').getContext('2d');
-                        new Chart(hoursCtx, {
+                        let c1 = new Chart(hoursCtx, {
                             type: 'bar',
                             data: {
-                                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                                labels: ['Sam','Dim', 'Lun', 'Mar', 'Mer', 'Jeu'],
                                 datasets: [{
-                                    label: 'Work Hours',
-                                    data: [170, 165, 160, 175, 168, 172],
+                                    label: 'heur absents',
+                                    data: [...this.groupByDay()],
                                     backgroundColor: 'rgba(0, 102, 204, 0.2)',
                                     borderColor: 'rgba(0, 102, 204, 1)',
                                     borderWidth: 1
@@ -1305,7 +1423,7 @@ $month_statistics = get_monthly_absences_grouped(2025);
                                         beginAtZero: true,
                                         title: {
                                             display: true,
-                                            text: 'Hours'
+                                            text: 'Jours'
                                         }
                                     }
                                 },
@@ -1318,12 +1436,12 @@ $month_statistics = get_monthly_absences_grouped(2025);
                         });
 
                         const distributionCtx = document.getElementById('absenceDistributionChart').getContext('2d');
-                        new Chart(distributionCtx, {
+                        let c2 = new Chart(distributionCtx, {
                             type: 'doughnut',
                             data: {
                                 labels: ['Late Arrivals', 'Early Leaves', 'Full Day'],
                                 datasets: [{
-                                    data: [60, 30, 10],
+                                    data: [this.lateArrivals().length, this.earlyLeaves().length, this.fullDay().length],
                                     backgroundColor: [
                                         'rgba(245, 158, 11, 0.2)',
                                         'rgba(239, 68, 68, 0.2)',
@@ -1347,6 +1465,11 @@ $month_statistics = get_monthly_absences_grouped(2025);
                                 }
                             }
                         });
+
+                        Object.seal(c2)
+                        Object.seal(c1)
+                        this.barsChart = c1
+                        this.donutChart = c2
                     }
                 }
             })

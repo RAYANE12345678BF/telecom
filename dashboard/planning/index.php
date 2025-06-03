@@ -35,6 +35,77 @@ require_once __DIR__ . '/../../vendor/autoload.php';
             --leave-box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
+        .notification-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #ff3366;
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            box-shadow: var(--shadow-sm);
+            animation: pulse 2s infinite;
+        }
+
+        .notification-dropdown {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 1000;
+            padding: 10px;
+        }
+
+        .notification-dropdown.show {
+            display: block;
+        }
+
+        .notification-item {
+            padding: 10px;
+            border-bottom: 1px solid var(--hover-color);
+            transition: var(--transition);
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item:hover {
+            background-color: var(--hover-color);
+        }
+
+        .no-notifications {
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 90px 30px 30px;
+            width: calc(100% - 280px);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -298,7 +369,6 @@ require_once __DIR__ . '/../../vendor/autoload.php';
         /* Content area */
         .content {
             margin-top: var(--nav-height);
-            margin-left: 280px;
             padding: 30px;
             flex-grow: 1;
             background: var(--bg-color);
@@ -343,8 +413,14 @@ require_once __DIR__ . '/../../vendor/autoload.php';
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .form-group {
@@ -565,10 +641,6 @@ require_once __DIR__ . '/../../vendor/autoload.php';
                 left: 80px;
                 width: calc(100% - 80px);
             }
-
-            .content {
-                margin-left: 80px;
-            }
         }
 
         @media (max-width: 768px) {
@@ -592,267 +664,317 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 <!-- Menu déroulant des notifications -->
 <?php component('partials/notifications') ?>
-    
-    <!-- Content Area -->
-    <div class="content">
-        <div class="leave-container">
-            <div class="leave-header">
-                <h2><i class="fas fa-calendar-alt btn-icon"></i> Planing des Congés Annuels</h2>
-                <p>Remplissez le formulaire pour soumettre votre demande de Planing des Congés </p>
-            </div>
 
-            <div class="step-indicator">
-                <div class="step active">1</div>
-                <div class="step-line"></div>
-                <div class="step">2</div>
-                <div class="step-line"></div>
-                <div class="step">3</div>
-            </div>
-
-            <!-- Étape 1: Dates du congé -->
-            <div id="step1" class="form-step active">
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle alert-icon"></i>
-                    <div>Votre solde actuel de congés est de <strong>22 jours</strong>.</div>
+<!-- Content Area -->
+<div class="main-content">
+    <div class="container">
+        <div class="content">
+            <div class="leave-container">
+                <div class="leave-header">
+                    <h2><i class="fas fa-calendar-alt btn-icon"></i> Planing des Congés Annuels</h2>
+                    <p>Remplissez le formulaire pour soumettre votre demande de Planing des Congés </p>
                 </div>
 
-                <div class="form-group">
-                    <label>Type de congé</label>
-                    <div class="input-icon">
-                        <i class="fas fa-tag"></i>
+                <div class="step-indicator">
+                    <div class="step active">1</div>
+                    <div class="step-line"></div>
+                    <div class="step">2</div>
+                    <div class="step-line"></div>
+                    <div class="step">3</div>
+                </div>
+
+                <!-- Étape 1: Dates du congé -->
+                <div id="step1" class="form-step active">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle alert-icon"></i>
+                        <div>Votre solde actuel de congés est de <strong>22 jours</strong>.</div>
                     </div>
-                    <input type="text" class="form-control" value="Congé annuel" readonly>
-                    <input type="hidden" id="leave-type" value="annual">
-                </div>
 
-                <div class="date-inputs">
                     <div class="form-group">
-                        <label for="start-date">Date de début</label>
+                        <label>Type de congé</label>
                         <div class="input-icon">
-                            <i class="fas fa-calendar-day"></i>
+                            <i class="fas fa-tag"></i>
                         </div>
-                        <input type="date" id="start-date" class="form-control" required>
+                        <input type="text" class="form-control" value="Congé annuel" readonly>
+                        <input type="hidden" id="leave-type" value="annual">
+                    </div>
+
+                    <div class="date-inputs">
+                        <div class="form-group">
+                            <label for="start-date">Date de début</label>
+                            <div class="input-icon">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <input type="date" id="start-date" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="end-date">Date de fin</label>
+                            <div class="input-icon">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <input type="date" id="end-date" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="destination">Destination <small>(facultatif)</small></label>
+                        <div class="input-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <input type="text" id="destination" class="form-control" placeholder="Ex: Béjaïa, Alger, etc.">
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary btn-full" onclick="nextStep(1, 2)">
+                            Suivant <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Étape 2: Détails supplémentaires -->
+                <div id="step2" class="form-step">
+                    <div class="form-group">
+                        <label for="note">Motif / Remarques</label>
+                        <textarea id="note" class="form-control"
+                                  placeholder="Décrivez la raison de votre congé..."></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="end-date">Date de fin</label>
+                        <label for="contact">Contact pendant le congé</label>
                         <div class="input-icon">
-                            <i class="fas fa-calendar-day"></i>
+                            <i class="fas fa-phone"></i>
                         </div>
-                        <input type="date" id="end-date" class="form-control" required>
+                        <input type="tel" id="contact" class="form-control" placeholder="Numéro de téléphone">
+                    </div>
+                    <div class="form-group">
+                        <label for="file">Joindre un document <small>(facultatif)</small></label>
+                        <input type="file" id="file" class="form-control" style="padding: 0.5rem;">
+                        <small class="text-muted">Format acceptés: PDF, JPG, PNG (max 5MB)</small>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-secondary" onclick="prevStep(2, 1)">
+                            <i class="fas fa-arrow-left"></i> Retour
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="nextStep(2, 3)">
+                            Suivant <i class="fas fa-arrow-right"></i>
+                        </button>
                     </div>
                 </div>
+                <!-- Étape 3: Récapitulatif -->
+                <div id="step3" class="form-step">
+                    <h3 style="margin-bottom: 1.5rem; text-align: center;">Récapitulatif de votre demande</h3>
 
-                <div class="form-group">
-                    <label for="destination">Destination <small>(facultatif)</small></label>
-                    <div class="input-icon">
-                        <i class="fas fa-map-marker-alt"></i>
+                    <div class="summary-item">
+                        <div><strong>Type de congé:</strong> <span id="summary-type">-</span></div>
                     </div>
-                    <input type="text" id="destination" class="form-control" placeholder="Ex: Béjaïa, Alger, etc.">
-                </div>
-
-                <div class="btn-group">
-                    <button type="button" class="btn btn-primary btn-full" onclick="nextStep(1, 2)">
-                        Suivant <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Étape 2: Détails supplémentaires -->
-            <div id="step2" class="form-step">
-                <div class="form-group">
-                    <label for="note">Motif / Remarques</label>
-                    <textarea id="note" class="form-control" placeholder="Décrivez la raison de votre congé..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="contact">Contact pendant le congé</label>
-                    <div class="input-icon">
-                        <i class="fas fa-phone"></i>
+                    <div class="summary-item">
+                        <div><strong>Période:</strong> <span id="summary-dates">-</span></div>
                     </div>
-                    <input type="tel" id="contact" class="form-control" placeholder="Numéro de téléphone">
-                </div>
-                <div class="form-group">
-                    <label for="file">Joindre un document <small>(facultatif)</small></label>
-                    <input type="file" id="file" class="form-control" style="padding: 0.5rem;">
-                    <small class="text-muted">Format acceptés: PDF, JPG, PNG (max 5MB)</small>
-                </div>
-                <div class="btn-group">
-                    <button type="button" class="btn btn-secondary" onclick="prevStep(2, 1)">
-                        <i class="fas fa-arrow-left"></i> Retour
-                    </button>
-                    <button type="button" class="btn btn-primary" onclick="nextStep(2, 3)">
-                        Suivant <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
-<!-- Étape 3: Récapitulatif -->
-<div id="step3" class="form-step">
-    <h3 style="margin-bottom: 1.5rem; text-align: center;">Récapitulatif de votre demande</h3>
-    
-    <div class="summary-item">
-        <div><strong>Type de congé:</strong> <span id="summary-type">-</span></div>
-    </div>
-    <div class="summary-item">
-        <div><strong>Période:</strong> <span id="summary-dates">-</span></div>
-    </div>
-    <div class="summary-item">
-        <div><strong>Durée:</strong> <span id="summary-duration">-</span></div>
-    </div>
-    <div class="summary-item">
-        <div><strong>Destination:</strong> <span id="summary-destination">-</span></div>
-    </div>
-    <div class="summary-item">
-        <div><strong>Motif:</strong> <span id="summary-note">-</span></div>
-    </div>
-    
-    <div class="alert alert-info" style="margin-top: 1.5rem;">
-        <i class="fas fa-info-circle alert-icon"></i>
-        <div>Votre demande sera soumise pour approbation à votre responsable.</div>
-    </div>
-                <div class="btn-group">
-                    <button type="button" class="btn btn-secondary" onclick="prevStep(3, 2)">
-                        <i class="fas fa-arrow-left"></i> Retour
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-paper-plane"></i> Soumettre
-                    </button>
+                    <div class="summary-item">
+                        <div><strong>Durée:</strong> <span id="summary-duration">-</span></div>
+                    </div>
+                    <div class="summary-item">
+                        <div><strong>Destination:</strong> <span id="summary-destination">-</span></div>
+                    </div>
+                    <div class="summary-item">
+                        <div><strong>Motif:</strong> <span id="summary-note">-</span></div>
+                    </div>
+
+                    <div class="alert alert-info" style="margin-top: 1.5rem;">
+                        <i class="fas fa-info-circle alert-icon"></i>
+                        <div>Votre demande sera soumise pour approbation à votre responsable.</div>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-secondary" onclick="prevStep(3, 2)">
+                            <i class="fas fa-arrow-left"></i> Retour
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="soumettre">
+                            <i class="fas fa-paper-plane" ></i> Soumettre
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        // Navigation menu toggle functions
-        document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            const submenu = document.getElementById('demandeSubmenu');
-            submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
-        });
+<script>
+    // Navigation menu toggle functions
+    document.getElementById('faireDemandeBtn').addEventListener('click', function (e) {
+        e.preventDefault();
+        const submenu = document.getElementById('demandeSubmenu');
+        submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+    });
 
-        document.getElementById('congeBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            const submenu = document.getElementById('congeSubmenu');
-            submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
-        });
+    document.getElementById('congeBtn').addEventListener('click', function (e) {
+        e.preventDefault();
+        const submenu = document.getElementById('congeSubmenu');
+        submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+    });
 
-        // Logout function
-        document.getElementById('logoutButton').addEventListener('click', function() {
-            window.location.href = 'loginAT1.html';
-        });
+    // Logout function
+    document.getElementById('logoutButton').addEventListener('click', function () {
+        window.location.href = 'loginAT1.html';
+    });
 
-        // Bloquer les dates avant demain
-        const today = new Date();
-        const tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
+    // Bloquer les dates avant demain
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
 
-        document.getElementById("start-date").min = tomorrow.toISOString().split('T')[0];
+    document.getElementById("start-date").min = tomorrow.toISOString().split('T')[0];
 
-        function nextStep(current, next) {
-            if (current === 1) {
-                const leaveType = document.getElementById('leave-type').value;
-                const startDate = document.getElementById('start-date').value;
-                const endDate = document.getElementById('end-date').value;
+    function nextStep(current, next) {
+        let leaveType, startDate, endDate, start, end, diffTime, diffDays, destination, note, contact, file;
+        if (current === 1) {
+            leaveType = document.getElementById('leave-type').value;
+            startDate = document.getElementById('start-date').value;
+            endDate = document.getElementById('end-date').value;
 
-                if (!startDate || !endDate) {
-                    alert('Veuillez choisir une date de début et une date de fin.');
-                    return;
-                }
-
-                const start = new Date(startDate);
-                const end = new Date(endDate);
-                const diffTime = Math.abs(end - start);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-
-                if (diffDays > 22) {
-                    alert("Vous ne pouvez pas demander plus de 22 jours de congé.");
-                    return;
-                }
-
-                document.getElementById('summary-type').textContent = "Congé annuel";
-                document.getElementById('summary-dates').textContent = `${formatDate(startDate)} au ${formatDate(endDate)}`;
-                document.getElementById('summary-duration').textContent = `${diffDays} jour(s)`;
-                document.getElementById('summary-destination').textContent = document.getElementById('destination').value || 'Non spécifié';
-            }
-
-            if (current === 2) {
-                document.getElementById('summary-note').textContent = document.getElementById('note').value || 'Non spécifié';
-            }
-
-            document.getElementById(`step${current}`).classList.remove('active');
-            document.getElementById(`step${next}`).classList.add('active');
-            updateStepIndicator(current, next);
-        }
-
-        function prevStep(current, prev) {
-            document.getElementById(`step${current}`).classList.remove('active');
-            document.getElementById(`step${prev}`).classList.add('active');
-            updateStepIndicator(current, prev, false);
-        }
-
-        function updateStepIndicator(from, to, forward = true) {
-            const steps = document.querySelectorAll('.step');
-            const lines = document.querySelectorAll('.step-line');
-            if (forward) {
-                steps[from-1].classList.remove('active');
-                steps[from-1].classList.add('completed');
-                steps[to-1].classList.add('active');
-                if (from > 1) {
-                    lines[from-2].classList.add('completed');
-                }
-            } else {
-                steps[from-1].classList.remove('active');
-                steps[to-1].classList.add('active');
-                steps[to-1].classList.remove('completed');
-                if (to < from) {
-                    lines[to-1].classList.remove('completed');
-                }
-            }
-        }
-
-        function formatDate(dateString) {
-            const options = { day: 'numeric', month: 'long', year: 'numeric' };
-            return new Date(dateString).toLocaleDateString('fr-FR', options);
-        }
-
-        function calculateDuration() {
-            const startDate = document.getElementById('start-date').value;
-            const endDate = document.getElementById('end-date').value;
-
-            if (!startDate || !endDate) return;
-
-            const start = new Date(startDate);
-            const end = new Date(endDate);
-
-            if (start > end) {
-                alert("La date de fin doit être après la date de début");
-                document.getElementById('end-date').value = '';
+            if (!startDate || !endDate) {
+                alert('Veuillez choisir une date de début et une date de fin.');
                 return;
             }
 
-            const diffTime = Math.abs(end - start);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            start = new Date(startDate);
+            end = new Date(endDate);
+            diffTime = Math.abs(end - start);
+            diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
             if (diffDays > 22) {
                 alert("Vous ne pouvez pas demander plus de 22 jours de congé.");
-                document.getElementById('end-date').value = '';
+                return;
+            }
+
+            document.getElementById('summary-type').textContent = "Congé annuel";
+            document.getElementById('summary-dates').textContent = `${formatDate(startDate)} au ${formatDate(endDate)}`;
+            document.getElementById('summary-duration').textContent = `${diffDays} jour(s)`;
+            document.getElementById('summary-destination').textContent = document.getElementById('destination').value || 'Non spécifié';
+
+
+        }
+
+        if (current === 2) {
+            note = document.getElementById('summary-note').textContent = document.getElementById('note').value || 'Non spécifié';
+            var btn = document.getElementById('soumettre');
+
+            console.log(btn)
+            btn.onclick = function () {
+                leaveType = document.getElementById('leave-type').value;
+                startDate = document.getElementById('start-date').value;
+                endDate = document.getElementById('end-date').value;
+
+                let data = new FormData();
+                data.append('leaveType', leaveType);
+                data.append('startDate', startDate);
+                data.append('endDate', endDate);
+                data.append('destination', document.getElementById('destination').value || 'Non spécifié');
+                data.append('motif', document.getElementById('note').value);
+                data.append('contact', document.getElementById('contact').value);
+                data.append('file', document.getElementById('file').files[0]);
+                data.append('note', note);
+
+                btn.disabled = true;
+
+                fetch('http://localhost:8000/actions/planify.php', {
+                    body: data,
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                }).then(res => res.json())
+                    .then(json => {
+                        if (json.success) {
+                            window.location.href = json.redirection_url;
+                        } else {
+                            Swal.fire({
+                                icon: 'erreur',
+                                text: json.message,
+                                title: 'erreur'
+                            })
+                        }
+                    }).catch(err => alert(err))
+
+                btn.disabled = false
             }
         }
 
-        document.getElementById('start-date').addEventListener('change', calculateDuration);
-        document.getElementById('end-date').addEventListener('change', calculateDuration);
 
-        // Fonction pour afficher/masquer les notifications
-        function toggleNotifications() {
-            const dropdown = document.getElementById('notificationDropdown');
-            dropdown.classList.toggle('show');
+        document.getElementById(`step${current}`).classList.remove('active');
+        document.getElementById(`step${next}`).classList.add('active');
+        updateStepIndicator(current, next);
+    }
+
+    function prevStep(current, prev) {
+        document.getElementById(`step${current}`).classList.remove('active');
+        document.getElementById(`step${prev}`).classList.add('active');
+        updateStepIndicator(current, prev, false);
+    }
+
+    function updateStepIndicator(from, to, forward = true) {
+        const steps = document.querySelectorAll('.step');
+        const lines = document.querySelectorAll('.step-line');
+        if (forward) {
+            steps[from - 1].classList.remove('active');
+            steps[from - 1].classList.add('completed');
+            steps[to - 1].classList.add('active');
+            if (from > 1) {
+                lines[from - 2].classList.add('completed');
+            }
+        } else {
+            steps[from - 1].classList.remove('active');
+            steps[to - 1].classList.add('active');
+            steps[to - 1].classList.remove('completed');
+            if (to < from) {
+                lines[to - 1].classList.remove('completed');
+            }
+        }
+    }
+
+    function formatDate(dateString) {
+        const options = {day: 'numeric', month: 'long', year: 'numeric'};
+        return new Date(dateString).toLocaleDateString('fr-FR', options);
+    }
+
+    function calculateDuration() {
+        const startDate = document.getElementById('start-date').value;
+        const endDate = document.getElementById('end-date').value;
+
+        if (!startDate || !endDate) return;
+
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        if (start > end) {
+            alert("La date de fin doit être après la date de début");
+            document.getElementById('end-date').value = '';
+            return;
         }
 
-        // Fonction pour afficher/masquer la messagerie
-        function toggleMessenger() {
-            const dropdown = document.getElementById('messengerDropdown');
-            dropdown.classList.toggle('show');
-        }
-    </script>
+        const diffTime = Math.abs(end - start);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
-    <?php component('utils/status'); ?>
+        if (diffDays > 22) {
+            alert("Vous ne pouvez pas demander plus de 22 jours de congé.");
+            document.getElementById('end-date').value = '';
+        }
+    }
+
+    document.getElementById('start-date').addEventListener('change', calculateDuration);
+    document.getElementById('end-date').addEventListener('change', calculateDuration);
+
+    // Fonction pour afficher/masquer les notifications
+    function toggleNotifications() {
+        const dropdown = document.getElementById('notificationDropdown');
+        dropdown.classList.toggle('show');
+    }
+
+    // Fonction pour afficher/masquer la messagerie
+    function toggleMessenger() {
+        const dropdown = document.getElementById('messengerDropdown');
+        dropdown.classList.toggle('show');
+    }
+</script>
+
+<?php component('utils/status'); ?>
 </body>
 </html>

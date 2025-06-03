@@ -5,7 +5,7 @@ require_once __DIR__ . "/../vendor/autoload.php";
 if( !function_exists('time_diff') ){
     function time_diff($in, $mustIn): float|int
     {
-        if( !$in ){
+        if( !$in || !$mustIn ){
             return 0;
         }
         $in = strtotime($in);

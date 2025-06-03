@@ -8,6 +8,7 @@
 
 <?php
 
+
 if( !session_id() ){
     session_start();
 }
@@ -26,4 +27,23 @@ component('middlewares/auth', false);
 component('middlewares/role', false);
 component('middlewares/information_complete', false);
 ?>
+
+<script>
+    function timeDiffInHours(start, end) {
+        const [startHour, startMinute] = start.split(':').map(Number);
+        const [endHour, endMinute] = end.split(':').map(Number);
+
+        let startTotal = startHour + startMinute / 60;
+        let endTotal = endHour + endMinute / 60;
+
+        let diff = endTotal - startTotal;
+
+        // If end is before start, assume next day
+        if (diff < 0) {
+            diff += 24;
+        }
+
+        return Math.floor(diff);
+    }
+</script>
 

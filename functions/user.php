@@ -384,8 +384,8 @@ if( !function_exists('get_all_conges') ){
     }
 }
 
-if( !function_exists('claculate_pay_with_absences') ){
-    function claculate_pay_with_absences($user_id, $month, $year){
+if( !function_exists('calculate_pay_with_absences') ){
+    function calculate_pay_with_absences($user_id, $month, $year){
         $absences = fetch_absenses($user_id, $month, $year);
 
         $total_absences = count($absences);

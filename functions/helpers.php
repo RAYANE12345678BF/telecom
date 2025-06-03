@@ -750,7 +750,7 @@ if (!function_exists('dashboard_url')) {
 }
 
 if (!function_exists('if_user_is')) {
-    function if_user_is(string|array $role, ?callable $callback)
+    function if_user_is(string|array $role, ?callable $callback = null)
     {
         if (!session_id()) {
             session_start();
@@ -838,10 +838,6 @@ if (!function_exists('getUserWithDemands')) {
 
         $stmt->execute([$user_id, $status]);
 
-        if ($stmt->rowCount() < 1) {
-            return null;
-        }
-
         $user = [
             'user_id' => $user_id,
             'demands' => $stmt->fetchAll(PDO::FETCH_ASSOC)
@@ -857,7 +853,7 @@ if (!function_exists('storage_path')) {
     {
         if (!$path)
             throw new \Exception('error in path to storage');
-        return $url ? url('storage/' . $path) : __DIR__ . '/../storage/' . $path;
+        return $url ? url('storage/' . $path) : __DIR__ . '/../storage/' . rtrim($path, "/");
     }
 }
 
@@ -1026,5 +1022,90 @@ if( !function_exists('current_url') ){
 if( !function_exists('is_url_same') ){
     function is_url_same($url){
         return current_url() == $url;
+    }
+}
+
+if( !function_exists('saveFile') ){
+    /**
+     * @throws Exception
+     */
+    function saveFile($key, $path){
+        if (isset($_FILES[$key]) && $_FILES[$key]['error'] == 0) {
+            $file = $_FILES[$key];
+
+            $uploadDir = 'planning'; // Make sure this directory exists and is writable
+            $uploadDir = storage_path($uploadDir);
+            $uploadFile = $uploadDir . '/' .  basename($file['name']);
+
+            // Optional: check file type or size here
+
+            if (move_uploaded_file($file['tmp_name'], $uploadFile)) {
+                echo "File uploaded successfully to: " . $uploadFile;
+            } else {
+                echo "Error saving the file.";
+            }
+        } else {
+            echo "No file uploaded or there was an error.";
+        }
+    }
+}
+
+if( !function_exists('daysBetweenDates') ){
+    function daysBetweenDates($startDate, $endDate) {
+        // Convert to DateTime objects
+        $start = new DateTime($startDate);
+        $end = new DateTime($endDate);
+
+        // Calculate the difference
+        $diff = $start->diff($end);
+
+        // Return the difference in days (always positive)
+        return $diff->days;
+    }
+
+}
+
+if( !function_exists('get_all_planifications') ){
+    function get_all_planifications($include_null = true){
+        $db = load_db();
+        $sql = "SELECT * FROM `planifications` " . (!$include_null ? " WHERE `accepted_from_employee` IS NOT NULL" : "");
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+
+        $planifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($planifications as &$plan){
+            $plan['employee'] = fetch_user_information($plan['employee_id']);
+        }
+        return $planifications;
+    }
+}
+
+if( !function_exists('delete_planification') ){
+    function delete_planification($id): array
+    {
+        $pdo = load_db();
+
+        $sql = "DELETE FROM `planifications` WHERE `id` = ?";
+
+        $stmt = $pdo->prepare($sql);
+
+        $stmt->execute([$id]);
+
+        return ['success' => true];
+    }
+}
+
+if( !function_exists('confirm_planifications') ){
+    function confirm_planifications(){
+        $pdo = load_db();
+
+        $sql = "UPDATE `planifications` SET `accepted_from_employee` = ? WHERE `accepted_from_employee` IS NULL";
+
+        $stmt = $pdo->prepare($sql);
+
+        $stmt->execute([session('user_id')]);
+
+        return ['success' => true];
     }
 }
