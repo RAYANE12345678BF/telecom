@@ -7,7 +7,7 @@ function setNotificationToRead(el) {
             let data = new FormData
             data.append('action', 'set_read')
             data.append('id', id)
-            fetch("<?= url('actions/notifications.php') ?>", {
+            fetch("http://localhost:8000/actions/notifications.php", {
                     method: "POST",
                     body: data
                 }).then(res => res.json())
