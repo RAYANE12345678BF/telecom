@@ -97,6 +97,10 @@ if( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
 
         $_SESSION['status'] = 'success';
 
+        push_notification([
+            'title' =>
+        ]);
+
         echo json_encode([
             'success' => true,
             'message' => 'Data inserted successfully.',

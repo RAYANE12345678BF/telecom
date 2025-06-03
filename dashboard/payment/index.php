@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 
 $user = fetch_user_information($_GET['id']?:$_SESSION['user_id']);
