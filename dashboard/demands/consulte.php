@@ -884,7 +884,7 @@ $user_demands = array_filter($user_demands, function ($demand) use ($user) {
                             <ul>
                                 <?php foreach ($demand['lifecycle'] as $step): $superior = fetch_user_information($step['superior_id']); ?>
                                     <li>
-                                        <?= sprintf("%s (%s) :", $superior['nom'], $superior['role']['nom']) ?> <?= $step['decision'] ?>
+                                        <?= sprintf("%s (%s) :", $superior['nom'], $superior['role']['nom']) ?> <?= frensh($step['decision']) ?>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>

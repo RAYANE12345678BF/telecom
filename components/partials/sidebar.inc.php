@@ -40,7 +40,7 @@
                 <span class="menu-text">mes droits</span>
             </a>
 
-            <?php if (if_user_is(['Directeur', 'GRH'], null)): ?>
+            <?php if (if_user_is(['GRH'], null)): ?>
                 <a href="<?= url('dashboard/employee/list.php') ?>" class="menu-item">
                     <i class="fas fa-list"></i>
                     <span class="menu-text">list d'employees</span>
