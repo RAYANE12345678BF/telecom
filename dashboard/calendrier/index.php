@@ -495,6 +495,8 @@ $work_days = fetch_work_days($_SESSION['user_id']);
 
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/fr.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+
 
     <script>
         async function insertDateToDatabse(dateStr) {
