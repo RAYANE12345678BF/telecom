@@ -20,7 +20,7 @@ if (empty($userInformation['matricule'])) {
 
 if (empty($userInformation['superior_id'])) {
     session([
-        'status' => 'entre le matricule pour utiliser les services',
+        'status' => 'selecter votre superieur pour utiliser les services',
         'status_icon' => 'warning',
     ]);
 
