@@ -693,7 +693,6 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
                 data.append('file', file)
                 document.getElementsByClassName('fa-spinner')[0].classList.remove('hidden')
                 document.getElementsByClassName('fa-upload')[0].classList.add('hidden')
-
                 fetch("<?= url('actions/upload.php') ?>", {
                         body: data,
                         method: 'POST'
