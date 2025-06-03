@@ -33,9 +33,9 @@ $requests = fetch_creation_demands();
             Swal.fire({
                 title: `vous etes sure de ${type} ce compte?`,
                 showDenyButton: true,
-                showCancelButton: true,
+                showCancelButton: false,
                 confirmButtonText: "confirm",
-                denyButtonText: `cancel`
+                denyButtonText: `annuler`
             }).then((result) => {
                 /* Read more about isConfirmed, isDenied below */
                 if (result.isConfirmed) {
