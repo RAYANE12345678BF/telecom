@@ -417,6 +417,41 @@ if( !function_exists('push_demand_status') ){
     }
 }
 
+function is_in_conge($user_id){
+    $db = load_db();
+
+    $sql = "SELECT * FROM `demands` WHERE `employee_id`=? AND `status`=? AND ? BETWEEN start_date AND end_date;";
+
+
+    $stmt = $db->prepare($sql);
+
+    $stmt->execute([$user_id, 'accepted', date('Y-m-d')]);
+
+    if( $stmt->rowCount() < 1 ){
+        return false;
+    }
+
+    return true;
+}
+
+function get_substitue($user_id){
+    $db = load_db();
+
+    $sql = "SELECT * FROM `users` WHERE `id`=?";
+
+    $stmt = $db->prepare($sql);
+
+    $stmt->execute([$user_id]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $substitue_id = $user['substitute_id'] ?? null;
+
+    if( ! $substitue_id ){
+        return false;
+    }
+
+    return get_user($substitue_id);
+}
+
 if (!function_exists('set_decision')) {
     function set_decision($demand_id, $superior_id, $decision)
     {
@@ -450,7 +485,8 @@ if (!function_exists('set_decision')) {
 
                 if( is_in_conge($superior_id) ){
                     $superior = get_substitue($superior_id);
-                    $superior_id = $superior['id'];
+                    if( $superior ){
+                        $superior_id = $superior['id'];
                 }
 
                 add_lifecycle_entry($demand_id, $superior_id);

@@ -1005,17 +1005,16 @@ $month_statistics = get_monthly_absences_grouped(2025);
                     </tr>
                     </thead>
                     <tbody>
-                    <template>
-
+                    <template x-for="ab in absences_to_show">
+                        <tr>
+                            <td x-text="`${(new Date(ab.date)).getDate()}/${(new Date(ab.date)).getMonth() + 1}/${(new Date(ab.date)).getFullYear()}`"></td>
+                            <td x-text="ab.clock_in">09:15 AM</td>
+                            <td x-text="ab.clock_out">06:00 PM</td>
+                            <td x-text="timeDiffInHours(ab.clock_in, ab.clock_out)">8.5</td
+                            <td>-$25</td>
+                        </tr>
                     </template>
-                    <tr>
-                        <td></td>
-                        <td>09:15 AM</td>
-                        <td>06:00 PM</td>
-                        <td>8.5</td>
-                        <td><span class="status late">Late</span></td>
-                        <td>-$25</td>
-                    </tr>
+
                     <tr>
                         <td>March 2, 2024</td>
                         <td>08:45 AM</td>
