@@ -10,6 +10,7 @@ $action = $_POST['action'] ?? null;
 
 if ($action == 'change_status') {
     set_decision($_POST['demand_id'], $_SESSION['user_id'], $_POST['status']);
+
     send_json_response([
         'status' => 'ok',
         'message' => 'la modification a été effectuée avec succès'

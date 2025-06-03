@@ -963,7 +963,7 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
                                         <p class="text-sm" x-text="user.role.nom"></p>
                                     </td>
                                     <td class="p-4">
-                                        <?php if( if_user_is(['GRH', 'Directeur']) ): ?>
+                                        <?php if( if_user_is(['GRH']) ): ?>
                                             <a :href="'<?= dashboard_url('payment/index.php?id=') ?>' + user.id" class="text-sm font-semibold p-1 border rounded mx-1">
                                                 fiche payment
                                             </a>
@@ -972,7 +972,7 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
                                             details
                                         </a>
                                         <a :href="'<?= dashboard_url('statistics?id=') ?>' + user.id" class="text-sm font-semibold p-1 border rounded mx-1">
-                                            absenses
+                                            absences
                                         </a>
                                     </td>
                                 </tr>

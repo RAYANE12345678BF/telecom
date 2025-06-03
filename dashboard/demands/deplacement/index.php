@@ -848,14 +848,54 @@ $user = fetch_user_information($_SESSION['user_id']);
                     </div>
 
                     <div class="buttons-container" style="display: flex; justify-content: flex-end; gap: 10px;">
-                        <button type="button" id="printButton" class="button button-secondary">
-                            <i class="fas fa-print"></i> Imprimer
-                        </button>
+                        <?php if ($action == 'view'): ?>
+                            <button @click="handlePrintButton" type="button" id="printButton" class="button button-secondary">
+                                <i class="fas fa-print"></i> Imprimer
+                            </button>
+                        <?php endif ?>
 
-                        <button type="submit" id="submitButton" class="button button-primary">
-                            <span id="submitText">Soumettre</span>
-                        </button>
+                        <?php if ($action == 'create'): ?>
+                            <button type="submit" id="submitButton" class="button button-primary">
+                                <span id="submitText">Soumettre</span>
+                            </button>
+                        <?php endif ?>
                     </div>
+
+                    <script>
+                        function handlePrintButton(e) {
+                            let styles = document.getElementsByTagName('style')
+                            styles = styles[1].innerText
+                            console.log(styles)
+                            let divToPrint = document.getElementById('print')
+                            divToPrint.style.width = '100%'
+
+                            let button = divToPrint.getElementsByTagName('button')[0]
+                            let status = "<?= $action == 'view' ? $demand['status'] : '' ?>"
+                            let btnHtml = button.parentElement.innerHTML
+                            button.parentElement.innerHTML = `
+                                Status : ${status}
+                            `
+                            let printWindow = window.open('', '', 'height=500, width=500');
+                            printWindow.document.open();
+                            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Print Div Content</title>
+                    <style>
+                        ${styles}
+                    </style>
+                </head>
+                <body>
+                    ${divToPrint.parentElement.innerHTML}
+                </body>
+                </html>
+            `);
+                            printWindow.document.close();
+                            printWindow.print();
+
+                            button.parentElement.innerHTML = btnHtml
+                        }
+                    </script>
 
                     <script>
                         const start_date = document.querySelector("input[name=leave_date]")

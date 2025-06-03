@@ -17,7 +17,7 @@ $month_statistics = get_monthly_absences_grouped(2025);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Appointments & Absence Management</title>
+    <title>Gestion des rendez-vous et des absences</title>
     <?php component('partials/include') ?>
     <link rel="stylesheet" href="../styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -868,7 +868,7 @@ $month_statistics = get_monthly_absences_grouped(2025);
 <div class="main-content" x-data="page" x-init="$watch('year', v => updateData());$watch('month', v => updateData())">
     <div class="appointments-container">
         <div class="appointments-header">
-            <h1>Work Attendance & Absence Management</h1>
+            <h1>Gestion des absences et payment</h1>
             <div class="header-actions">
                 <select x-init="$el.value = year" @change="year = +$el.value;console.log(year, month)" class="filter-select" id="yearFilter">
                     <option value="2024">2024</option>
@@ -900,19 +900,19 @@ $month_statistics = get_monthly_absences_grouped(2025);
                 </div>
                 <div class="employee-details">
                     <h2><?= $user['nom'] . ' ' . $user['prenom'] ?></h2>
-                    <p>Employee Matricule: <?= $user['matricule'] ?></p>
-                    <p>Department: <?= $user['department']['nom'] ?></p>
+                    <p>Matricule employé: <?= $user['matricule'] ?></p>
+                    <p>Département: <?= $user['department']['nom'] ?></p>
                     <p>Service: <?= $user['service']['nom'] ?></p>
                     <p>Position: <?= $user['role']['nom'] ?></p>
                 </div>
                 <div class="employee-stats">
                     <div class="stat-item">
-                        <span class="stat-label">Base Salary</span>
+                        <span class="stat-label">Salaire de base</span>
                         <span class="stat-value" x-text="`${base_payment}da`"></span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-label">Current Month</span>
-                        <span class="stat-value" x-text="`${calcNewPayment}da`">$<?= $user['base_salary'] ?? 500000 ?></span>
+                        <span class="stat-label">Mois en cours</span>
+                        <span class="stat-value" x-text="`${calcNewPayment}da`">$<?= $user['base_salary'] ?? 50000 ?></span>
                     </div>
                 </div>
             </div>
@@ -967,22 +967,22 @@ $month_statistics = get_monthly_absences_grouped(2025);
         </div>
 
         <div class="attendance-summary">
-            <h2>Attendance Summary</h2>
+            <h2>Bilan de présence</h2>
             <div class="summary-grid">
                 <div class="summary-card">
-                    <h3>Total Work Hours</h3>
+                    <h3>Total d'heures de travail</h3>
                     <div class="summary-value" x-text="`${requiredHours - hoursAbsent}h`">160h</div>
                     <div class="summary-trend negative" x-text="`${(requiredHours - hoursAbsent) - requiredHours}h from required`">-16h from required</div>
                 </div>
                 <div class="summary-card">
-                    <h3>Pay Impact</h3>
+                    <h3>Impact salarial</h3>
                     <div class="summary-value" x-text="`${base_payment - (penalty * hoursAbsent)}da`">$200</div>
                     <div class="summary-trend negative" x-text="`${penalty * hoursAbsent}da`">-$200 from base</div>
                 </div>
                 <div class="summary-card">
-                    <h3>Attendance Rate</h3>
+                    <h3>Taux de présence</h3>
                     <div class="summary-value" x-text="`${(((requiredHours - hoursAbsent) / requiredHours) * 100).toFixed(2)}%`">91%</div>
-                    <div class="summary-trend">Current month</div>
+                    <div class="summary-trend">Mois en cours</div>
                 </div>
             </div>
         </div>
