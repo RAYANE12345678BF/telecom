@@ -987,54 +987,54 @@ $month_statistics = get_monthly_absences_grouped(2025);
             </div>
         </div>
 
-        <div class="attendance-report">
-            <h2>Attendance Report</h2>
-            <div class="report-filters">
-                <button class="btn btn-primary">Generate Report</button>
-            </div>
-            <div class="report-table">
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Check-in</th>
-                        <th>Check-out</th>
-                        <th>Hours Worked</th>
-                        <th>Status</th>
-                        <th>Pay Impact</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <template x-for="ab in absences_to_show">
-                        <tr>
-                            <td x-text="`${(new Date(ab.date)).getDate()}/${(new Date(ab.date)).getMonth() + 1}/${(new Date(ab.date)).getFullYear()}`"></td>
-                            <td x-text="ab.clock_in">09:15 AM</td>
-                            <td x-text="ab.clock_out">06:00 PM</td>
-                            <td x-text="timeDiffInHours(ab.clock_in, ab.clock_out)">8.5</td
-                            <td>-$25</td>
-                        </tr>
-                    </template>
-
-                    <tr>
-                        <td>March 2, 2024</td>
-                        <td>08:45 AM</td>
-                        <td>05:30 PM</td>
-                        <td>8.5</td>
-                        <td><span class="status early">Early Leave</span></td>
-                        <td>-$25</td>
-                    </tr>
-                    <tr>
-                        <td>March 3, 2024</td>
-                        <td>08:00 AM</td>
-                        <td>06:00 PM</td>
-                        <td>10.0</td>
-                        <td><span class="status approved">Complete</span></td>
-                        <td>$0</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<!--        <div class="attendance-report">-->
+<!--            <h2>Attendance Report</h2>-->
+<!--            <div class="report-filters">-->
+<!--                <button class="btn btn-primary">Generate Report</button>-->
+<!--            </div>-->
+<!--            <div class="report-table">-->
+<!--                <table>-->
+<!--                    <thead>-->
+<!--                    <tr>-->
+<!--                        <th>Date</th>-->
+<!--                        <th>Check-in</th>-->
+<!--                        <th>Check-out</th>-->
+<!--                        <th>Hours Worked</th>-->
+<!--                        <th>Status</th>-->
+<!--                        <th>Pay Impact</th>-->
+<!--                    </tr>-->
+<!--                    </thead>-->
+<!--                    <tbody>-->
+<!--                    <template x-for="ab in absences_to_show">-->
+<!--                        <tr>-->
+<!--                            <td x-text="`${(new Date(ab.date)).getDate()}/${(new Date(ab.date)).getMonth() + 1}/${(new Date(ab.date)).getFullYear()}`"></td>-->
+<!--                            <td x-text="ab.clock_in">09:15 AM</td>-->
+<!--                            <td x-text="ab.clock_out">06:00 PM</td>-->
+<!--                            <td x-text="timeDiffInHours(ab.clock_in, ab.clock_out)">8.5</td-->
+<!--                            <td>-$25</td>-->
+<!--                        </tr>-->
+<!--                    </template>-->
+<!---->
+<!--                    <tr>-->
+<!--                        <td>March 2, 2024</td>-->
+<!--                        <td>08:45 AM</td>-->
+<!--                        <td>05:30 PM</td>-->
+<!--                        <td>8.5</td>-->
+<!--                        <td><span class="status early">Early Leave</span></td>-->
+<!--                        <td>-$25</td>-->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                        <td>March 3, 2024</td>-->
+<!--                        <td>08:00 AM</td>-->
+<!--                        <td>06:00 PM</td>-->
+<!--                        <td>10.0</td>-->
+<!--                        <td><span class="status approved">Complete</span></td>-->
+<!--                        <td>$0</td>-->
+<!--                    </tr>-->
+<!--                    </tbody>-->
+<!--                </table>-->
+<!--            </div>-->
+<!--        </div>-->
     </div>
 </div>
 
