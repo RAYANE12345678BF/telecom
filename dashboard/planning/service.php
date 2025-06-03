@@ -2,19 +2,19 @@
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-if( !session_id() ){
+if (!session_id()) {
     session_start();
 }
 
 $user = fetch_user_information($_SESSION['user_id']);
 
-if( if_user_is(['Chef de Service']) ){
+if (if_user_is(['Chef de Service'])) {
     $all_planifications = get_all_planifications();
-}elseif(if_user_is(['Directeur'])){
+} elseif (if_user_is(['Directeur'])) {
     $all_planifications = get_all_planifications(false);
-}else{
+} else {
     session([
-            'status' => 'vous pouvez pas voir ca'
+        'status' => 'vous pouvez pas voir ca'
     ]);
     redirect(dashboard_url('/'));
 }
@@ -40,6 +40,21 @@ usort($all_planifications, function ($a, $b) {
     <title>DjazairRH - Planning de Congé 2025</title>
     <?php component('partials/include'); ?>
     <style>
+        :root {
+            --primary-color: #003366;
+            --secondary-color: #0066cc;
+            --accent-color: #66b3ff;
+            --text-color: #2c3e50;
+            --bg-color: #f8f9fa;
+            --hover-color: #f0f4f8;
+            --border-radius: 12px;
+            --nav-height: 70px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
         :root {
             --primary-color: #003366;
             --secondary-color: #0066cc;
@@ -411,6 +426,7 @@ usort($all_planifications, function ($a, $b) {
         .info-card p {
             margin: 5px 0;
         }
+
         .container {
             max-width: 1200px;
             margin: 40px auto;
@@ -451,13 +467,41 @@ usort($all_planifications, function ($a, $b) {
         }
 
         /* Column widths */
-        th:nth-child(1), td:nth-child(1) { width: 5%; }   /* N° */
-        th:nth-child(2), td:nth-child(2) { width: 20%; }  /* Nom */
-        th:nth-child(3), td:nth-child(3) { width: 15%; }  /* Grade */
-        th:nth-child(4), td:nth-child(4) { width: 15%; }  /* Date */
-        th:nth-child(5), td:nth-child(5) { width: 10%; }  /* Durée */
-        th:nth-child(6), td:nth-child(6) { width: 15%; }  /* Type */
-        th:nth-child(7), td:nth-child(7) { width: 20%; }  /* Actions */
+        th:nth-child(1), td:nth-child(1) {
+            width: 5%;
+        }
+
+        /* N° */
+        th:nth-child(2), td:nth-child(2) {
+            width: 20%;
+        }
+
+        /* Nom */
+        th:nth-child(3), td:nth-child(3) {
+            width: 15%;
+        }
+
+        /* Grade */
+        th:nth-child(4), td:nth-child(4) {
+            width: 15%;
+        }
+
+        /* Date */
+        th:nth-child(5), td:nth-child(5) {
+            width: 10%;
+        }
+
+        /* Durée */
+        th:nth-child(6), td:nth-child(6) {
+            width: 15%;
+        }
+
+        /* Type */
+        th:nth-child(7), td:nth-child(7) {
+            width: 20%;
+        }
+
+        /* Actions */
 
         .action-buttons {
             display: flex;
@@ -722,25 +766,25 @@ usort($all_planifications, function ($a, $b) {
             .company-info {
                 flex-direction: column;
             }
-            
+
             .info-card {
                 margin-right: 0;
                 margin-bottom: 10px;
             }
-            
+
             th, td {
                 padding: 8px 10px;
                 font-size: 14px;
             }
-            
+
             .table-container {
                 padding: 10px;
             }
-            
+
             .action-buttons {
                 flex-direction: column;
             }
-            
+
             .btn {
                 width: 100%;
                 justify-content: center;
@@ -755,9 +799,10 @@ usort($all_planifications, function ($a, $b) {
                 --hover-color: #2a2a2a;
             }
         }
-input[type="date"] {
-  width: 140px;
-}
+
+        input[type="date"] {
+            width: 140px;
+        }
 
 
     </style>
@@ -770,147 +815,156 @@ input[type="date"] {
 
 <!-- Menu déroulant des notifications -->
 <?php component('partials/notifications') ?>
-    
-    <!-- Main Content -->
-    <div class="main-content" id="print">
-        <div class="container">
-            <div class="content">
-                <div class="header">
-                    <h1><i class="fas fa-calendar-alt"></i> Planning de Congé 2025</h1>
+
+<!-- Main Content -->
+<div class="main-content" id="print">
+    <div class="container">
+        <div class="content">
+            <div class="header">
+                <h1><i class="fas fa-calendar-alt"></i> Planning de Congé 2025</h1>
+            </div>
+
+            <div class="company-info">
+                <div class="info-card">
+                    <h3>Société</h3>
+                    <p><strong>Centre:</strong> CEPI</p>
+                    <p><strong>Tél:</strong> 0</p>
+                    <p><strong>Fax:</strong> 0</p>
                 </div>
 
-                <div class="company-info">
-                    <div class="info-card">
-                        <h3>Société</h3>
-                        <p><strong>Centre:</strong> CEPI</p>
-                        <p><strong>Tél:</strong> 0</p>
-                        <p><strong>Fax:</strong> 0</p>
-                    </div>
-
-                    <div class="info-card">
-                        <h3>Département</h3>
-                        <p><strong>Service:</strong> Générale</p>
-                        <p><strong>Régime:</strong> 0</p>
-                        <p><strong>Fax:</strong> 0</p>
-                    </div>
-
-                    <div class="info-card">
-                        <h3>Période</h3>
-                        <p><strong>Du:</strong> 14/01/2025</p>
-                        <p><strong>Au:</strong> 31/12/2025</p>
-                    </div>
+                <div class="info-card">
+                    <h3>Département</h3>
+                    <p><strong>Service:</strong> Générale</p>
+                    <p><strong>Régime:</strong> 0</p>
+                    <p><strong>Fax:</strong> 0</p>
                 </div>
 
-                <div class="table-container">
-                    <table>
-                        <thead>
+                <div class="info-card">
+                    <h3>Période</h3>
+                    <p><strong>Du:</strong> 14/01/2025</p>
+                    <p><strong>Au:</strong> 31/12/2025</p>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>N°</th>
+                        <th>Nom et Prénom</th>
+                        <th>Grade</th>
+                        <th>Date de Congé</th>
+                        <th>Durée (jours)</th>
+                        <th>Type de Congé</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach ($all_planifications as $plan): ?>
                         <tr>
-                            <th>N°</th>
-                            <th>Nom et Prénom</th>
-                            <th>Grade</th>
-                            <th>Date de Congé</th>
-                            <th>Durée (jours)</th>
-                            <th>Type de Congé</th>
-                            <th>Actions</th>
+                            <td>
+                                <?= $plan['id'] ?>
+                            </td>
+                            <td>
+                                <?= $plan['employee']['nom'] . ' ' . $plan['employee']['prenom'] ?>
+                            </td>
+                            <td>
+                                <?= $plan['employee']['role']['nom'] ?>
+                            </td>
+                            <td><input type="date" readonly value="<?= $plan['start_date'] ?>" class="form-control">
+                            </td>
+                            <td><input readonly value="<?= daysBetweenDates($plan['start_date'], $plan['end_date']) ?>"
+                                       type="number" class="form-control" min="1"></td>
+                            <td>
+                                <select class="form-control">
+                                    <option>Annuel</option>
+
+                                </select>
+                            </td>
+                            <td>
+                                <button class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Enregistrer</button>
+                                <button class="btn btn-secondary btn-sm" onclick="deletePlan(<?= $plan['id'] ?>)"><i
+                                            class="fas fa-trash"></i></button>
+                            </td>
                         </tr>
-                        </thead>
-                        <tbody>
-                        <?php foreach($all_planifications as $plan): ?>
-                            <tr>
-                                <td>
-                                    <?= $plan['id'] ?>
-                                </td>
-                                <td>
-                                    <?= $plan['employee']['nom'] . ' ' . $plan['employee']['prenom'] ?>
-                                </td>
-                                <td>
-                                    <?= $plan['employee']['role']['nom'] ?>
-                                </td>
-                                <td><input type="date" readonly value="<?= $plan['start_date'] ?>" class="form-control"></td>
-                                <td><input readonly value="<?= daysBetweenDates($plan['start_date'], $plan['end_date']) ?>" type="number" class="form-control" min="1"></td>
-                                <td>
-                                    <select class="form-control">
-                                        <option>Annuel</option>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
 
-                                    </select>
-                                </td>
-                                <td>
-                                    <button class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Enregistrer</button>
-                                    <button class="btn btn-secondary btn-sm" onclick="deletePlan(<?= $plan['id'] ?>)"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                        </tbody>
-                    </table>
-
-                    <div class="action-buttons">
-                        <button id="printBtn" onclick="handlePrintButton()" class="btn btn-secondary"><i class="fas fa-print"></i> Imprimer</button>
-                        <?php if(if_user_is(['Chef de Service'])): ?>
-                        <button class="btn btn-secondary" onclick="confirm()"><i class="fas fa-paper-plane"></i> Soumettre</button>
-                        <?php endif ?>
-                        <button disabled class="btn btn-primary" id="addEmployeeBtn"><i class="fas fa-plus"></i> Ajouter Employé</button>
-                    </div>
+                <div class="action-buttons">
+                    <button id="printBtn" onclick="handlePrintButton()" class="btn btn-secondary"><i
+                                class="fas fa-print"></i> Imprimer
+                    </button>
+                    <?php if (if_user_is(['Chef de Service'])): ?>
+                        <button class="btn btn-secondary" onclick="confirm()"><i class="fas fa-paper-plane"></i>
+                            Soumettre
+                        </button>
+                    <?php endif ?>
+                    <button disabled class="btn btn-primary" id="addEmployeeBtn"><i class="fas fa-plus"></i> Ajouter
+                        Employé
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 
-    <script>
-        function deletePlan(id){
-            Swal.fire({
-                title: "Voulez vous rejeter/supprimer cette planification ?",
-                showDenyButton: true,
-                showCancelButton: true,
-                confirmButtonText: "Save",
-                denyButtonText: `Don't save`
-            }).then((result) => {
-                /* Read more about isConfirmed, isDenied below */
-                if (result.isConfirmed) {
-                    let data = new FormData
-                    data.append('plan_id', id)
-                    data.append('action', 'delete')
-                    fetch("<?= url('actions/planify.php') ?>", {
-                        method: 'POST',
-                        body: data
-                    }).then(res => res.json())
-                        .then(json =>{
-                            if( json.success ){
-                                Swal.fire("Rejeter!", "le planification a ete rejeter", "success");
-                            }else{
-                                Swal.fire("Erreur!", json.message, "error");
-                            }
-                        })
-                } else if (result.isDenied) {
-                    Swal.fire("le planification ne hange pas", "", "info");
-                }
-            });
-        }
-
-        function confirm() {
-            Swal.fire({
-                title: "Voulez vous soumettre cette planification ?",
-                showDenyButton: true,
-                confirmButtonText: "soumettre",
-                denyButtonText: `annuler`
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    let data = new FormData
-                    data.append('action', 'confirm')
-                    fetch('<?= url('actions/planify.php') ?>', {
-                        method: 'POST',
-                        body: data
-                    }).then(res => res.json()).then(json => {
-                        if (json['success']) {
-                            Swal.fire("soumetté!", "le planification a ete soumettre vers le directeur", "success");
+<script>
+    function deletePlan(id) {
+        Swal.fire({
+            title: "Voulez vous rejeter/supprimer cette planification ?",
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: "Save",
+            denyButtonText: `Don't save`
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                let data = new FormData
+                data.append('plan_id', id)
+                data.append('action', 'delete')
+                fetch("<?= url('actions/planify.php') ?>", {
+                    method: 'POST',
+                    body: data
+                }).then(res => res.json())
+                    .then(json => {
+                        if (json.success) {
+                            Swal.fire("Rejeter!", "le planification a ete rejeter", "success");
                         } else {
                             Swal.fire("Erreur!", json.message, "error");
                         }
-                    }).catch(err => alert(err))
-                }
-            })
-        }
-    </script>
+                    })
+            } else if (result.isDenied) {
+                Swal.fire("le planification ne hange pas", "", "info");
+            }
+        });
+    }
+
+    function confirm() {
+        Swal.fire({
+            title: "Voulez vous soumettre cette planification ?",
+            showDenyButton: true,
+            confirmButtonText: "soumettre",
+            denyButtonText: `annuler`
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let data = new FormData
+                data.append('action', 'confirm')
+                fetch('<?= url('actions/planify.php') ?>', {
+                    method: 'POST',
+                    body: data
+                }).then(res => res.json()).then(json => {
+                    if (json['success']) {
+                        Swal.fire("soumetté!", "le planification a ete soumettre vers le directeur", "success");
+                    } else {
+                        Swal.fire("Erreur!", json.message, "error");
+                    }
+                }).catch(err => alert(err))
+            }
+        })
+    }
+</script>
 
 <script>
     function handlePrintButton(e) {
@@ -939,55 +993,55 @@ input[type="date"] {
         printWindow.print();
     }
 </script>
-    
-    <!-- Messenger dropdown -->
-    <div class="messenger-dropdown" id="messengerDropdown">
-        <div class="messenger-header">
-            Messagerie
-        </div>
-        <div class="messenger-body">
-            <ul class="contact-list" id="contactList">
-                <!-- Aucun contact pour l'instant -->
-            </ul>
-            <div class="no-messages" id="noMessages">
-                <i class="fas fa-comment-slash"></i>
-                <p>Aucun message pour le moment.</p>
-            </div>
-        </div>
-        <div class="messenger-footer">
-            <input type="text" placeholder="Entrez un nom">
+
+<!-- Messenger dropdown -->
+<div class="messenger-dropdown" id="messengerDropdown">
+    <div class="messenger-header">
+        Messagerie
+    </div>
+    <div class="messenger-body">
+        <ul class="contact-list" id="contactList">
+            <!-- Aucun contact pour l'instant -->
+        </ul>
+        <div class="no-messages" id="noMessages">
+            <i class="fas fa-comment-slash"></i>
+            <p>Aucun message pour le moment.</p>
         </div>
     </div>
+    <div class="messenger-footer">
+        <input type="text" placeholder="Entrez un nom">
+    </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Navigation menu toggle functions
-        document.getElementById('faireDemandeBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            const submenu = document.getElementById('demandeSubmenu');
-            submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
-        });
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Navigation menu toggle functions
+    document.getElementById('faireDemandeBtn').addEventListener('click', function (e) {
+        e.preventDefault();
+        const submenu = document.getElementById('demandeSubmenu');
+        submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+    });
 
-        document.getElementById('congeBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            const submenu = document.getElementById('congeSubmenu');
-            submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
-        });
+    document.getElementById('congeBtn').addEventListener('click', function (e) {
+        e.preventDefault();
+        const submenu = document.getElementById('congeSubmenu');
+        submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
+    });
 
-        // Logout button
-        document.getElementById('logoutButton').addEventListener('click', function() {
-            window.location.href = 'loginAT1.html';
-        });
+    // Logout button
+    document.getElementById('logoutButton').addEventListener('click', function () {
+        window.location.href = 'loginAT1.html';
+    });
 
-        // Fonction pour ajouter un nouvel employé au tableau
-        document.getElementById('addEmployeeBtn').addEventListener('click', function() {
-            const table = document.querySelector('tbody');
-            const newRow = document.createElement('tr');
-            
-            // Comptez le nombre de lignes existantes pour déterminer le nouveau numéro
-            const rowCount = table.querySelectorAll('tr').length + 1;
-            
-            newRow.innerHTML = `
+    // Fonction pour ajouter un nouvel employé au tableau
+    document.getElementById('addEmployeeBtn').addEventListener('click', function () {
+        const table = document.querySelector('tbody');
+        const newRow = document.createElement('tr');
+
+        // Comptez le nombre de lignes existantes pour déterminer le nouveau numéro
+        const rowCount = table.querySelectorAll('tr').length + 1;
+
+        newRow.innerHTML = `
                 <td>${rowCount}</td>
                 <td><input type="text" class="form-control" placeholder="Nom et Prénom"></td>
                 <td><input type="text" class="form-control" placeholder="Grade"></td>
@@ -1004,92 +1058,92 @@ input[type="date"] {
                     <button class="btn btn-secondary btn-sm delete-btn"><i class="fas fa-trash"></i></button>
                 </td>
             `;
-            
-            table.appendChild(newRow);
-            
-            // Ajouter un gestionnaire d'événements pour le bouton de suppression
-            newRow.querySelector('.delete-btn').addEventListener('click', function() {
-                table.removeChild(newRow);
-                updateRowNumbers();
-            });
-            
-            // Ajouter un gestionnaire d'événements pour le bouton d'enregistrement
-            newRow.querySelector('.save-btn').addEventListener('click', function() {
-                const inputs = newRow.querySelectorAll('input');
-                let isValid = true;
-                
-                inputs.forEach(input => {
-                    if (!input.value) {
-                        input.style.borderColor = 'red';
-                        isValid = false;
-                    } else {
-                        input.style.borderColor = '#ddd';
-                    }
-                });
-                
-                if (isValid) {
-                    alert('Employé enregistré avec succès!');
+
+        table.appendChild(newRow);
+
+        // Ajouter un gestionnaire d'événements pour le bouton de suppression
+        newRow.querySelector('.delete-btn').addEventListener('click', function () {
+            table.removeChild(newRow);
+            updateRowNumbers();
+        });
+
+        // Ajouter un gestionnaire d'événements pour le bouton d'enregistrement
+        newRow.querySelector('.save-btn').addEventListener('click', function () {
+            const inputs = newRow.querySelectorAll('input');
+            let isValid = true;
+
+            inputs.forEach(input => {
+                if (!input.value) {
+                    input.style.borderColor = 'red';
+                    isValid = false;
                 } else {
-                    alert('Veuillez remplir tous les champs obligatoires');
+                    input.style.borderColor = '#ddd';
                 }
             });
+
+            if (isValid) {
+                alert('Employé enregistré avec succès!');
+            } else {
+                alert('Veuillez remplir tous les champs obligatoires');
+            }
         });
-        
-        // Fonction pour mettre à jour les numéros de ligne
-        function updateRowNumbers() {
-            const rows = document.querySelectorAll('tbody tr');
-            rows.forEach((row, index) => {
-                row.cells[0].textContent = index + 1;
+    });
+
+    // Fonction pour mettre à jour les numéros de ligne
+    function updateRowNumbers() {
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach((row, index) => {
+            row.cells[0].textContent = index + 1;
+        });
+    }
+
+    // Ajouter des gestionnaires d'événements pour les boutons de suppression existants
+    document.querySelectorAll('.btn-secondary').forEach(button => {
+        if (!button.id) { // Pour ne pas sélectionner le bouton "Ajouter Employé"
+            button.addEventListener('click', function () {
+                const row = this.closest('tr');
+                if (confirm('Voulez-vous vraiment supprimer cette ligne?')) {
+                    row.parentNode.removeChild(row);
+                    updateRowNumbers();
+                }
             });
         }
-        
-        // Ajouter des gestionnaires d'événements pour les boutons de suppression existants
-        document.querySelectorAll('.btn-secondary').forEach(button => {
-            if (!button.id) { // Pour ne pas sélectionner le bouton "Ajouter Employé"
-                button.addEventListener('click', function() {
-                    const row = this.closest('tr');
-                    if (confirm('Voulez-vous vraiment supprimer cette ligne?')) {
-                        row.parentNode.removeChild(row);
-                        updateRowNumbers();
-                    }
-                });
-            }
-        });
-        
-        // Validation des dates
-        document.addEventListener('change', function(e) {
-            if (e.target.type === 'date') {
-                const dateInput = e.target;
-                const selectedDate = new Date(dateInput.value);
-                const today = new Date();
-                
-                if (selectedDate < today) {
-                    alert('La date ne peut pas être dans le passé');
-                    dateInput.value = '';
-                }
-            }
-        });
+    });
 
-        // Fonction pour afficher/masquer les notifications
-        function toggleNotifications() {
-            const dropdown = document.getElementById('notificationDropdown');
-            dropdown.classList.toggle('show');
+    // Validation des dates
+    document.addEventListener('change', function (e) {
+        if (e.target.type === 'date') {
+            const dateInput = e.target;
+            const selectedDate = new Date(dateInput.value);
+            const today = new Date();
+
+            if (selectedDate < today) {
+                alert('La date ne peut pas être dans le passé');
+                dateInput.value = '';
+            }
         }
+    });
 
-            // Vérifier s'il y a des contacts
-            const contactList = document.getElementById('contactList');
-            const noMessages = document.getElementById('noMessages');
+    // Fonction pour afficher/masquer les notifications
+    function toggleNotifications() {
+        const dropdown = document.getElementById('notificationDropdown');
+        dropdown.classList.toggle('show');
+    }
 
-            if (contactList.children.length === 0) {
-                noMessages.style.display = 'flex'; // Afficher le message
+    // Vérifier s'il y a des contacts
+    const contactList = document.getElementById('contactList');
+    const noMessages = document.getElementById('noMessages');
+
+    if (contactList.children.length === 0) {
+        noMessages.style.display = 'flex'; // Afficher le message
         // Fonction pour ajouter un nouvel employé au tableau
-        document.getElementById('addEmployeeBtn').addEventListener('click', function() {
+        document.getElementById('addEmployeeBtn').addEventListener('click', function () {
             const table = document.querySelector('tbody');
             const newRow = document.createElement('tr');
-            
+
             // Comptez le nombre de lignes existantes pour déterminer le nouveau numéro
             const rowCount = table.querySelectorAll('tr').length + 1;
-            
+
             newRow.innerHTML = `
                 <td>${rowCount}</td>
                 <td><input type="text" class="form-control" placeholder="Nom et Prénom"></td>
@@ -1109,20 +1163,20 @@ input[type="date"] {
                     <button class="btn btn-secondary btn-sm delete-btn"><i class="fas fa-trash"></i></button>
                 </td>
             `;
-            
+
             table.appendChild(newRow);
-            
+
             // Ajouter un gestionnaire d'événements pour le bouton de suppression
-            newRow.querySelector('.delete-btn').addEventListener('click', function() {
+            newRow.querySelector('.delete-btn').addEventListener('click', function () {
                 table.removeChild(newRow);
                 updateRowNumbers();
             });
-            
+
             // Ajouter un gestionnaire d'événements pour le bouton d'enregistrement
-            newRow.querySelector('.save-btn').addEventListener('click', function() {
+            newRow.querySelector('.save-btn').addEventListener('click', function () {
                 const inputs = newRow.querySelectorAll('input');
                 let isValid = true;
-                
+
                 inputs.forEach(input => {
                     if (!input.value) {
                         input.style.borderColor = 'red';
@@ -1131,7 +1185,7 @@ input[type="date"] {
                         input.style.borderColor = '#ddd';
                     }
                 });
-                
+
                 if (isValid) {
                     alert('Employé enregistré avec succès!');
                 } else {
@@ -1139,7 +1193,7 @@ input[type="date"] {
                 }
             });
         });
-        
+
         // Fonction pour mettre à jour les numéros de ligne
         function updateRowNumbers() {
             const rows = document.querySelectorAll('tbody tr');
@@ -1147,11 +1201,11 @@ input[type="date"] {
                 row.cells[0].textContent = index + 1;
             });
         }
-        
+
         // Ajouter des gestionnaires d'événements pour les boutons de suppression existants
         document.querySelectorAll('.btn-secondary').forEach(button => {
             if (!button.id) { // Pour ne pas sélectionner le bouton "Ajouter Employé"
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     const row = this.closest('tr');
                     if (confirm('Voulez-vous vraiment supprimer cette ligne?')) {
                         row.parentNode.removeChild(row);
@@ -1160,20 +1214,21 @@ input[type="date"] {
                 });
             }
         });
-        
+
         // Validation des dates
-        document.addEventListener('change', function(e) {
+        document.addEventListener('change', function (e) {
             if (e.target.type === 'date') {
                 const dateInput = e.target;
                 const selectedDate = new Date(dateInput.value);
                 const today = new Date();
-                
+
                 if (selectedDate < today) {
                     alert('La date ne peut pas être dans le passé');
                     dateInput.value = '';
                 }
             }
         });
-    </script>
+    }
+</script>
 </body>
 </html>

@@ -17,3 +17,14 @@ if (empty($userInformation['matricule'])) {
         redirect(dashboard_url('/'));
     }
 }
+
+if (empty($userInformation['superior_id'])) {
+    session([
+        'status' => 'entre le matricule pour utiliser les services',
+        'status_icon' => 'warning',
+    ]);
+
+    if (!is_url_same(dashboard_url('/'))) {
+        redirect(dashboard_url('/'));
+    }
+}

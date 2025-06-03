@@ -25,6 +25,10 @@ if (!$demand_type) {
 }
 
 
+$user = fetch_user_information($_SESSION['user_id']);
+
+
+
 $duree = $_POST['duree'] ?? null;
 $start_date = $_POST['start_date'] ?? null;
 $end_date = $_POST['end_date'] ?? null;
@@ -33,6 +37,8 @@ $info = [
     'type' => in_array($demand_type, ['conge_maternity', 'conge_malady']) ? 'file' : 'text',
     'content' => null,
 ];
+
+
 
 
 switch ($demand_type) {
@@ -163,7 +169,6 @@ switch ($demand_type) {
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'la demande a été envoyée avec succès';
         break;
-
     case 'support':
         $message = $_POST['message'] ?? null;
         $type = $_POST['type'] ?? null;
@@ -172,7 +177,6 @@ switch ($demand_type) {
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'la demande a été envoyée avec succès';
         break;
-
     default:
         $_SESSION['error'] = "not a valid action";
         die("dsds");

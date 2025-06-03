@@ -792,7 +792,8 @@ $user_demands = array_filter($user_demands, function ($demand) use ($user) {
                 title: "vous etes sure?",
                 showDenyButton: true,
                 confirmButtonText: "oui",
-                denyButtonText: `annuler`
+                denyButtonText: `annuler`,
+                showCancelButton: false
             }).then((result) => {
                 /* Read more about isConfirmed, isDenied below */
                 if (result.isConfirmed) {
