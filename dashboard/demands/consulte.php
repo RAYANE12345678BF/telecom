@@ -879,7 +879,7 @@ $user_demands = array_filter($user_demands, function ($demand) use ($user) {
                         </td>
                         <td><?= $demand['type'] ?? 'congé annual' ?></td>
                         <td><?= $demand['date_depose'] ?></td>
-                        <td><?= $demand['status'] ?></td>
+                        <td><?= $demand['status'] == 'accepted' ? 'accepté' : 'en attente' ?></td>
                         <td>
                             <ul>
                                 <?php foreach ($demand['lifecycle'] as $step): $superior = fetch_user_information($step['superior_id']); ?>
@@ -894,7 +894,7 @@ $user_demands = array_filter($user_demands, function ($demand) use ($user) {
                                 accepter
                             </button>
                             <button onclick="reject('<?= $demand['id'] ?>')" style="border-radius:10px;padding : 5px 10px;border:1px solid white;background:red;color:white">
-                                rejecter
+                                refusé
                             </button>
                         </td>
                     </tr>

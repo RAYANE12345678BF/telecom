@@ -1219,3 +1219,15 @@ if( !function_exists('confirm_planifications') ){
         return ['success' => true];
     }
 }
+
+if( !function_exists('frensh') ){
+    function frensh($key)
+    {
+        $trans = [
+            'leave hour' => 'heur de sortie',
+            'come hour' => "heur d'entrer",
+        ];
+
+        return $trans[$key] ?? $key;
+    }
+}

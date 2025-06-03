@@ -605,7 +605,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                                 <ul>
                                     <?php foreach ($info['content'] as $key => $value): ?>
                                         <li>
-                                            <?= $key ?> : <?= $value ?>
+                                            <?= frensh($key) ?> : <?= $value ?>
                                         </li>
                                     <?php endforeach; ?>
                                 </ul>
