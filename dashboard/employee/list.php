@@ -963,6 +963,9 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
                                         <p class="text-sm" x-text="user.role.nom"></p>
                                     </td>
                                     <td class="p-4">
+                                        <a :href="'<?= dashboard_url('payment/index.php?id=') ?>' + user.id" class="text-sm font-semibold p-1 border rounded mx-1">
+                                            fiche payment
+                                        </a>
                                         <a :href="'<?= dashboard_url('employee/details.php?id=') ?>' + user.id" class="text-sm font-semibold p-1 border rounded mx-1">
                                             details
                                         </a>
