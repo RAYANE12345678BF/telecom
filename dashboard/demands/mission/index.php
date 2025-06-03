@@ -15,6 +15,8 @@ if (isset($_GET['demand_id'])) {
     $action = 'create';
 }
 
+
+
 if ($action == 'create' && !can_do_conge($_SESSION['user_id'], 'mission')) {
     $_SESSION['status_icon'] = 'info';
     $_SESSION['status'] = "vous ne pouvez pas faire cette action car vous avez conger deja";
@@ -31,9 +33,7 @@ $user = fetch_user_information($_SESSION['user_id']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DjazairRH - Navigation</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <?php component('partials/include') ?>
     <style>
         :root {
             --primary-color: #003366;
@@ -792,7 +792,7 @@ $user = fetch_user_information($_SESSION['user_id']);
 
     <div class="content">
         <div class="container">
-            <div class="form-card">
+            <div class="form-card" id="print">
                 <div class="header">
                     <h1 class="title">Demande d'ordre mission </h1>
                 </div>
@@ -827,37 +827,37 @@ $user = fetch_user_information($_SESSION['user_id']);
                         <div class="form-group-row">
                             <div class="form-group">
                                 <label class="form-label" for="date-Sortie">Date de sortie</label>
-                                <input :value="<?= $demand['info']['content']['leave date'] ?? '' ?>" name="leave_date" type="date" id="date-sortie" class="form-input" required>
+                                <input readonly value="<?= $demand['info']['content']['leave date'] ?? '' ?>" name="leave_date" type="date" id="date-sortie" class="form-input" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="date-entrée">date de entrée</label>
-                                <input :value="<?= $demand['info']['content']['come date'] ?? '' ?>" name="come_date" type="date" id="date-entrée" class="form-input" required>
+                                <input readonly value="<?= $demand['info']['content']['come date'] ?? '' ?>" name="come_date" type="date" id="date-entrée" class="form-input" required>
                             </div>
                         </div>
 
                         <div class="form-group-row">
                             <div class="form-group">
                                 <label class="form-label" for="heur-sortie">heur de sortie</label>
-                                <input :value="<?= $demand['info']['content']['leave hour'] ?? '' ?>" name="leave_hour" type="time" id="heur-sortie" class="form-input" required>
+                                <input readonly value="<?= $demand['info']['content']['leave hour'] ?? '' ?>" name="leave_hour" type="time" id="heur-sortie" class="form-input" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="heur-entrée">heur d'entrée</label>
-                                <input :value="<?= $demand['info']['content']['come hour'] ?? '' ?>" name="come_hour" type="time" id="heur-entrée" class="form-input" required>
+                                <input readonly value="<?= $demand['info']['content']['come hour'] ?? '' ?>" name="come_hour" type="time" id="heur-entrée" class="form-input" required>
                             </div>
                         </div>
 
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="Distination">Distination</label>
-                        <input :value="<?= $demand['info']['content']['destination'] ?? '' ?>" name="destination" type="text" id="Distination" class="form-input" required>
+                        <input readonly value="<?= $demand['info']['content']['destination'] ?? '' ?>" name="destination" type="text" id="Distination" class="form-input" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="Motif_mission">Motif de la mission </label>
-                        <input :value="<?= $demand['info']['content']['motif'] ?? '' ?>" name="motif" type="text" id="Motif_mission" class="form-input" required>
+                        <input readonly value="<?= $demand['info']['content']['motif'] ?? '' ?>" name="motif" type="text" id="Motif_mission" class="form-input" required>
                     </div>
 
                     <div class="buttons-container" style="display: flex; justify-content: flex-end; gap: 10px;">
-                        <button type="button" id="printButton" class="button button-secondary">
+                        <button @click="handlePrintButton" type="button" id="printButton" class="button button-secondary">
                             <i class="fas fa-print"></i> Imprimer
                         </button>
 
@@ -1111,6 +1111,38 @@ $user = fetch_user_information($_SESSION['user_id']);
                 date.setDate(date.getDate() + 1)
                 end_date.min = date.toISOString().split("T")[0]
             }
+        }
+
+        function handlePrintButton(e) {
+            let styles = document.getElementsByTagName('style')[1].innerText
+            let divToPrint = document.getElementById('print')
+            divToPrint.style.width = '100%'
+
+            let button = divToPrint.getElementsByTagName('button')[0]
+            let status = "<?= $action == 'view' ? $demand['status'] : '' ?>"
+            let btnHtml = button.parentElement.innerHTML
+            button.parentElement.innerHTML = `
+                                Status : ${status}
+                            `
+            let printWindow = window.open('', '', 'height=500, width=500');
+            printWindow.document.open();
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Print Div Content</title>
+                    <style>
+                        ${styles}
+                    </style>
+                </head>
+                <body>
+                    ${divToPrint.parentElement.innerHTML}
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+
+            button.parentElement.innerHTML = btnHtml
         }
     </script>
 

@@ -13,6 +13,18 @@ if (!can_do_conge($_SESSION['user_id'], 'leave')) {
     $_SESSION['status'] = "vous ne pouvez pas faire cette action car vous avez conger deja";
     redirect(url('dashboard'));
 }
+if (isset($_GET['demand_id'])) {
+    $action = 'view';
+    $demand = fetch_demand($_GET['demand_id']);
+} else {
+    $action = 'create';
+}
+
+if ($action == 'create' && !can_do_conge($_SESSION['user_id'], 'leave')) {
+    $_SESSION['status_icon'] = 'info';
+    $_SESSION['status'] = "vous ne pouvez pas faire cette action car vous avez conger deja";
+    redirect(url('dashboard'));
+}
 
 $user = fetch_user_information($_SESSION['user_id']);
 

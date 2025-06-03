@@ -383,7 +383,7 @@ $roles = array_filter(get_roles(), function($role) {
         <div class="right-side">
             <div class="form-container">
                 <div class="form-header" style="display: flex; justify-content: center; align-items: center;">
-                    <img src="logo_djazairRH.jpg" alt="Logo" class="logo" style="width: 100px; height: auto; margin-bottom: 20px;">
+                    <img src="<?= asset('logo.jpg') ?>" alt="Logo" class="logo" style="width: 100px; height: auto; margin-bottom: 20px;">
                 </div>
                 <form onsubmit="return validateForm()" action="<?php echo url('actions/auth.php') ?>" method="post">
                     <input type="hidden" value="register" name="action">

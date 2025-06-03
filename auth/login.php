@@ -375,7 +375,7 @@ redirect_if_auth();
         <div class="right-side">
             <div class="form-container">
                 <div class="form-header" style="display: flex; justify-content: center; align-items: center;">
-                    <img src="logo_djazairRH.jpg" alt="Logo" class="logo" style="width: 100px; height: auto; margin-bottom: 20px;">
+                    <img src="<?= asset('logo.jpg') ?>" alt="Logo" class="logo" style="width: 100px; height: auto; margin-bottom: 20px;">
                 </div>
                 <form onsubmit="return validateForm()" method="POST" action="<?php echo url('actions/auth.php'); ?>">
                     <input type="hidden" name="action" value="login">

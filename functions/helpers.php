@@ -775,6 +775,37 @@ if (!function_exists('if_user_is')) {
 }
 
 if (!function_exists('can_do_conge')) {
+    function can_do_conge_annual($user_id, $duree)
+    {
+        $pdo = load_db();
+
+        $sql = "SELECT * FROM `demands` WHERE `employee_id`=? AND `type`=? AND status=?";
+
+        $stmt = $pdo->prepare($sql);
+
+        $stmt->execute([$user_id, 'conge_annual', 'accepted']);
+
+        if( $stmt->rowCount() < 1 ){
+            return true;
+        }
+
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $this_year_conges = array_filter($results, function($result){
+            return date('Y', strtotime($result['date_debut'])) == date('Y');
+        });
+
+        $sum = 0;
+
+        foreach ($this_year_conges as $conge){
+            $sum += $diff = daysBetweenDates($conge['date_debut'], $conge['date_fin']);
+        }
+
+        return (30 - $sum) >= $duree;
+    }
+}
+
+if (!function_exists('can_do_conge')) {
     function can_do_conge($user_id, string $conge_type)
     {
         $pdo = load_db();

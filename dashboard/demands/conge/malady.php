@@ -783,7 +783,7 @@ $user = fetch_user_information($_SESSION['user_id']);
 
     <div class="content">
         <div class="container">
-            <div class="form-card">
+            <div class="form-card" id="print">
                 <div class="header">
                     <h1 class="title"> Demande congé maladie </h1>
                 </div>

@@ -913,7 +913,9 @@ $user_demands = get_user_demands($_SESSION['user_id']);
 
                     <script>
                         function handlePrintButton(e) {
-                            let styles = document.getElementsByTagName('style')[0].innerText
+                            let styles = document.getElementsByTagName('style')
+                            styles = styles[1].innerText
+                            console.log(styles)
                             let divToPrint = document.getElementById('print')
                             divToPrint.style.width = '100%'
 

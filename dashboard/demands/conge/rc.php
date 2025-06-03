@@ -14,6 +14,19 @@ if( !can_do_conge($_SESSION['user_id'], 'conge_rc') ){
     redirect(url('dashboard'));
 }
 
+if (isset($_GET['demand_id'])) {
+    $action = 'view';
+    $demand = fetch_demand($_GET['demand_id']);
+} else {
+    $action = 'create';
+}
+
+if ($action == 'create' && !can_do_conge($_SESSION['user_id'], 'rc')) {
+    $_SESSION['status_icon'] = 'info';
+    $_SESSION['status'] = "vous ne pouvez pas faire cette action car vous avez conger deja";
+    redirect(url('dashboard'));
+}
+
 
 $user = fetch_user_information($_SESSION['user_id']);
 
@@ -802,7 +815,7 @@ $rc_days = calculate_rc_days($user['id']);
 
     <div class="content">
         <div class="container">
-            <div class="form-card">
+            <div class="form-card" id="print">
                 <div class="header">
                     <h1 class="title"> Demande congé RC </h1>
                 </div>

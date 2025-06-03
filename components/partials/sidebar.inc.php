@@ -1,7 +1,7 @@
 <div class="sidebar">
     <div class="sidebar-header">
         <div class="logo">
-            <img src="logo_djazairRH.jpg" alt="DjazairRH Logo">
+            <img src="<?= asset('logo.jpg') ?>" alt="DjazairRH Logo">
             <span class="logo-text">DjazairRH</span>
         </div>
     </div>

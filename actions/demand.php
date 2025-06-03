@@ -49,6 +49,14 @@ switch ($demand_type) {
         $end_date = $_POST['end_date'] ?? null;
         $info['content'] = $_POST['info'] ?? null;
 
+        if( !can_do_conge_annual($_SESSION['user_d'], $duree) ){
+            session([
+                'status' => 'vous ne pouvez pas faire un demand annual'
+            ]);
+            redirect_back();
+            exit();
+        }
+
         $demand_id = demand($_SESSION['user_id'], $duree, $description, $start_date, $end_date, json_encode($info), $demand_type);
         $_SESSION['status'] = 'la demande a été envoyée avec succès';
         
@@ -151,6 +159,7 @@ switch ($demand_type) {
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'la demande a été envoyée avec succès';
         break;
+
     case 'leave':
         $mission_data = [
             'leave date' => $_POST['leave_date'] ?? null,
@@ -171,6 +180,7 @@ switch ($demand_type) {
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'la demande a été envoyée avec succès';
         break;
+
     case 'support':
         $message = $_POST['message'] ?? null;
         $type = $_POST['type'] ?? null;
@@ -179,6 +189,7 @@ switch ($demand_type) {
         add_lifecycle_entry($demand_id, $_SESSION['user']['superior_id']);
         $_SESSION['status'] = 'la demande a été envoyée avec succès';
         break;
+
     default:
         $_SESSION['error'] = "not a valid action";
         die("dsds");
