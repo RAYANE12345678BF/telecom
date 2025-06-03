@@ -430,7 +430,6 @@ function is_in_conge($user_id){
     if( $stmt->rowCount() < 1 ){
         return false;
     }
-
     return true;
 }
 

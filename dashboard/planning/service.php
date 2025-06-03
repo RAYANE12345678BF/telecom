@@ -8,7 +8,7 @@ if (!session_id()) {
 
 $user = fetch_user_information($_SESSION['user_id']);
 
-if (if_user_is(['Chef de Service'])) {
+if (if_user_is(['Chef de Service', 'GRH'])) {
     $all_planifications = get_all_planifications();
 } elseif (if_user_is(['Directeur'])) {
     $all_planifications = get_all_planifications(false);
@@ -915,14 +915,14 @@ usort($all_planifications, function ($a, $b) {
         Swal.fire({
             title: "Voulez vous rejeter/supprimer cette planification ?",
             showDenyButton: true,
-            showCancelButton: true,
-            confirmButtonText: "Save",
-            denyButtonText: `Don't save`
+            showCancelButton: false,
+            confirmButtonText: "suprimer/rejecter",
+            denyButtonText: `annuler`
         }).then((result) => {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
                 let data = new FormData
-                data.append('plan_id', id)
+                data.append('id', id)
                 data.append('action', 'delete')
                 fetch("<?= url('actions/planify.php') ?>", {
                     method: 'POST',
