@@ -420,7 +420,7 @@ if( !function_exists('push_demand_status') ){
 function is_in_conge($user_id){
     $db = load_db();
 
-    $sql = "SELECT * FROM `demands` WHERE `employee_id`=? AND `status`=? AND ? BETWEEN start_date AND end_date;";
+    $sql = "SELECT * FROM `demands` WHERE `employee_id`=? AND `status`=? AND ? BETWEEN date_debut AND date_fin;";
 
 
     $stmt = $db->prepare($sql);
