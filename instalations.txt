@@ -1,3 +1,0 @@
-1 - laragon : https://github.com/leokhoa/laragon/releases/download/6.0.0/laragon-wamp.exe
-2 - composer : https://getcomposer.org/Composer-Setup.exe
-3 - git : https://github.com/git-for-windows/git/releases/download/v2.48.1.windows.1/Git-2.48.1-64-bit.exe
