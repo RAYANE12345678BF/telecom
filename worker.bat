@@ -1,1 +1,0 @@
-php ./actions/background/send_emails.php
