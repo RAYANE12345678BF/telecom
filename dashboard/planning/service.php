@@ -956,7 +956,7 @@ usort($all_planifications, function ($a, $b) {
                     body: data
                 }).then(res => res.json()).then(json => {
                     if (json['success']) {
-                        Swal.fire("soumetté!", "le planification a ete soumettre vers le directeur", "success");
+                        Swal.fire("soumetté!", "le planification a ete soumettre vers le drh", "success");
                     } else {
                         Swal.fire("Erreur!", json.message, "error");
                     }

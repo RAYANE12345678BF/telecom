@@ -25,6 +25,16 @@ if( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
         $result = confirm_planifications();
 
         if( $result['success'] ){
+            try {
+                push_notifiation([
+                    'user_id' => get_user_with_role('GRH')['id'],
+                    'title' => 'nouvelle notifications',
+                    'body' => 'des nouvelle planification a été soummetre par le chef sercice',
+                    'url' => dashboard_url('/planning/service.php')
+                ]);
+            } catch (Exception $e) {
+                $error = $e->getMessage();
+            }
             send_json_response([
                 'success' => true,
                 'message' => 'success'
