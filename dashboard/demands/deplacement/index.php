@@ -756,7 +756,6 @@ $user = fetch_user_information($_SESSION['user_id']);
 </head>
 
 <body x-data="body">
-    
     <!-- Navigation Sidebar -->
     <?php component('partials/sidebar') ?>
 
