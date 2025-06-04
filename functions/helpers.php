@@ -1017,7 +1017,7 @@ if( !function_exists('push_demand_creation_notification') ){
         $target_user_id = $current_life['superior_id'];
 
 
-        $title = 'creation demand from ' . $employee['nom'] . ' ' . $employee['prenom'];
+        $title = 'creation demand par ' . $employee['nom'] . ' ' . $employee['prenom'];
         $description = 'il y a une nouvelle demande de creation de conge';
 
         $sql = "INSERT INTO `notifications` (`employee_id`, `title`, `description`,`url` ) VALUES (?, ?, ?, ?)";
