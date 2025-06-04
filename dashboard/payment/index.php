@@ -1279,7 +1279,7 @@ $month_statistics = get_monthly_absences_grouped(2025);
                     this.requiredWorks()
                     this.monthlyAbsenses()
 
-                    if( this.donutChart === null || this.barsChart === null ){
+                    if( this.donutChart === null ){
                         this.initCharts()
                     }else{
                         this.updateCharts()
