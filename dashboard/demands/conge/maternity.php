@@ -869,7 +869,7 @@ $user = fetch_user_information($_SESSION['user_id']);
                             divToPrint.style.width = '100%'
 
                             let button = divToPrint.getElementsByTagName('button')[0]
-                            let status = "<?= $action == 'view' ? $demand['status'] : '' ?>"
+                            let status = "<?= $action == 'view' ? french($demand['status']) : '' ?>"
                             let btnHtml = button.parentElement.innerHTML
                             button.parentElement.innerHTML = `
                                 Status : ${status}
