@@ -965,7 +965,7 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
                                     <td class="p-4">
                                         <?php if( if_user_is(['GRH']) ): ?>
                                             <a :href="'<?= dashboard_url('payment/index.php?id=') ?>' + user.id" class="text-sm font-semibold p-1 border rounded mx-1">
-                                                fiche de paiemen
+                                                fiche de paiement
                                             </a>
                                         <?php endif ?>
                                         <a :href="'<?= dashboard_url('employee/details.php?id=') ?>' + user.id" class="text-sm font-semibold p-1 border rounded mx-1">
