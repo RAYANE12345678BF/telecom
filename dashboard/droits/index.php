@@ -716,7 +716,7 @@ if($total_annual_days == 30){
                         <i class="fas fa-door-open"></i>
                         Demander une sortie
                     </h3>
-                    <p class="action-desc">Demander une sortie autorisée (2 jours maximum par mois)</p>
+                    <p class="action-desc">Demander une sortie autorisée (2 heurs maximum par mois)</p>
                     <button class="action-btn" onclick="window.location.href='<?= url('dashboard/demands/leave') ?>'">
                         Demander
                         <i class="fas fa-arrow-right"></i>
@@ -801,7 +801,7 @@ if($total_annual_days == 30){
             document.getElementById('conge-total').textContent = `/ ${droits.conge_total} jours`;
             
             document.getElementById('sortie-value').textContent = droits.sortie_restant;
-            document.getElementById('sortie-total').textContent = `/ ${droits.sortie_total} jours`;
+            document.getElementById('sortie-total').textContent = `/ ${droits.sortie_total} heurs`;
             
             document.getElementById('rc-value').textContent = droits.rc_restant;
         }
