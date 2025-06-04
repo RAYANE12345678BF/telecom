@@ -894,7 +894,7 @@ $user_demands = array_filter($user_demands, function ($demand) use ($user) {
                                 accepter
                             </button>
                             <button onclick="reject('<?= $demand['id'] ?>')" style="border-radius:10px;padding : 5px 10px;border:1px solid white;background:red;color:white">
-                                refusé
+                                refuser
                             </button>
                         </td>
                     </tr>

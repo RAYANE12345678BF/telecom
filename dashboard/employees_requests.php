@@ -596,7 +596,7 @@ $requests = fetch_creation_demands();
                                 accepter
                             </button>
                             <button onclick="handleAccount('reject', '<?= $demand['id'] ?>')" class="p-1 rounded text-white bg-red-400 hover:bg-red-500 duration-300 ease-in-out">
-                                rejeter
+                                refuser
                             </button>
                         </td>
                     </tr>

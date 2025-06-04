@@ -29,7 +29,7 @@ if( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
                 push_notifiation([
                     'user_id' => get_user_with_role('GRH')['id'],
                     'title' => 'nouvelle notifications',
-                    'body' => 'des nouvelle planification a été soummetre par le chef sercice',
+                    'body' => 'des nouvelle planification a été soummetre par le chef service',
                     'url' => dashboard_url('/planning/service.php')
                 ]);
             } catch (Exception $e) {

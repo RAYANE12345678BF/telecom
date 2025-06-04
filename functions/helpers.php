@@ -1224,9 +1224,9 @@ if( !function_exists('frensh') ){
     function frensh($key)
     {
         $trans = [
-            'accepted' => 'acceptée',
-            'rejected' => 'rejectée',
-            'waiting' => 'en atente',
+            'accepted' => 'accepter',
+            'rejected' => 'refuser',
+            'waiting' => 'en attente',
             'leave hour' => 'heur de sortie',
             'come hour' => "heur d'entrer",
         ];

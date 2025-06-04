@@ -2,8 +2,9 @@
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
+$id = $_GET['id'] ?? $_SESSION['user_id'];
 
-$user = fetch_user_information($_GET['id']?:$_SESSION['user_id']);
+$user = fetch_user_information($id);
 
 $all_absences = fetch_all_absences($user['matricule']);
 
@@ -17,7 +18,7 @@ $month_statistics = get_monthly_absences_grouped(2025);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion des rendez-vous et des absences</title>
+    <title>Gestion des paymants et des absences</title>
     <?php component('partials/include') ?>
     <link rel="stylesheet" href="../styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -868,7 +869,7 @@ $month_statistics = get_monthly_absences_grouped(2025);
 <div class="main-content" x-data="page" x-init="$watch('year', v => updateData());$watch('month', v => updateData())">
     <div class="appointments-container">
         <div class="appointments-header">
-            <h1>Gestion des absences et payment</h1>
+            <h1>Gestion des absences et paymant</h1>
             <div class="header-actions">
                 <select x-init="$el.value = year" @change="year = +$el.value;console.log(year, month)" class="filter-select" id="yearFilter">
                     <option value="2024">2024</option>
@@ -932,11 +933,11 @@ $month_statistics = get_monthly_absences_grouped(2025);
                         <div class="value" x-text="`${hoursAbsent}h`"></div>
                     </div>
                     <div class="stat-box">
-                        <div class="label">Required</div>
+                        <div class="label">Jours requis</div>
                         <div class="value" x-text="`${requiredHours}h`">176h</div>
                     </div>
                     <div class="stat-box">
-                        <div class="label">Difference</div>
+                        <div class="label">Différence</div>
                         <div class="value" x-text="requiredHours - hoursAbsent"></div>
                     </div>
                 </div>
@@ -944,22 +945,22 @@ $month_statistics = get_monthly_absences_grouped(2025);
 
             <div class="chart-card">
                 <div class="chart-header">
-                    <h3 class="chart-title">Absence Distribution</h3>
+                    <h3 class="chart-title">Répartition des absences</h3>
                 </div>
                 <div class="chart-container">
                     <canvas id="absenceDistributionChart"></canvas>
                 </div>
                 <div class="absence-stats">
                     <div class="stat-box">
-                        <div class="label">Late Arrivals</div>
+                        <div class="label">Arrivées en retard</div>
                         <div class="value">60%</div>
                     </div>
                     <div class="stat-box">
-                        <div class="label">Early Leaves</div>
+                        <div class="label">Départs anticipés</div>
                         <div class="value">30%</div>
                     </div>
                     <div class="stat-box">
-                        <div class="label">Full Day</div>
+                        <div class="label">Journée complète</div>
                         <div class="value">10%</div>
                     </div>
                 </div>
