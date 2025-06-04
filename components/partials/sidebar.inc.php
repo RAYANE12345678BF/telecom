@@ -20,7 +20,7 @@
 
             <a href="<?= url('dashboard/statistics') ?>" class="menu-item">
                 <i class="fas fa-chart-simple"></i>
-                <span class="menu-text">statistics</span>
+                <span class="menu-text">Statistiques</span>
             </a>
 
             <a href="<?= dashboard_url('planning') ?>" class="menu-item">
