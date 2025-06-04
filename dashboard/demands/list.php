@@ -563,13 +563,13 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                             <?= $demand['date_depose'] ?>
                         </td>
                         <td>
-                            <?= $demand['status'] == 'accepted' ? 'accepté' : ($demand['status'] == 'rejected' ? 'rejeté' : 'en attente'); ?>
+                            <?= frensh($demand['status']) ?>
                         </td>
                         <td>
                             <ul>
                                 <?php foreach ($demand['lifecycle'] as $step): $superior = fetch_user_information($step['superior_id']); ?>
                                     <li>
-                                        <?= sprintf("%s (%s) :", $superior['nom'], $superior['role']['nom']) ?> <?= $step['decision'] == 'accepted' ? 'accepté' : ($step['decision'] == 'waiting' ? 'en attent' : 'rejeté') ?>
+                                        <?= sprintf("%s (%s) :", $superior['nom'], $superior['role']['nom']) ?> <?= frensh($step['decision']) ?>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>
@@ -581,7 +581,7 @@ $user_demands = get_user_demands($_SESSION['user_id']);
                                         cree/modifié compte rendu
                                     </a>
                                 <?php else: ?>
-                                    en attent d'accepter
+                                    en attente d'accepter
                                 <?php endif; ?>
                             <?php else: ?>
                                 /

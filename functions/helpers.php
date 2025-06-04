@@ -1234,3 +1234,19 @@ if( !function_exists('frensh') ){
         return $trans[$key] ?? $key;
     }
 }
+
+if( !function_exists('diffInMinutes') ){
+    function diffInMinutes($time1, $time2) {
+        $datetime1 = new DateTime($time1);
+        $datetime2 = new DateTime($time2);
+        $interval = $datetime1->diff($datetime2);
+
+        // Total minutes
+        $minutes = ($interval->days * 24 * 60) +
+            ($interval->h * 60) +
+            $interval->i;
+
+        // Return positive or negative depending on order
+        return $datetime1 > $datetime2 ? $minutes : -$minutes;
+    }
+}

@@ -377,7 +377,7 @@ $roles = array_filter(get_roles(), function($role) {
                 <p style="font-size: 1.1em; color: var(--text-primary); line-height: 1.5; text-align: left;">
                     Créez votre compte pour accéder à toutes les fonctionnalités de notre application. Remplissez le formulaire à droite pour commencer.
                 </p>
-                <img src="algtl.png" alt="Description of image" style="width: 100%; height: auto; margin-top: 20px;">
+                <img src="<?= asset('header2.png') ?>" alt="Description of image" style="width: 100%; height: auto; margin-top: 20px;">
             </div>
         </div>
         <div class="right-side">

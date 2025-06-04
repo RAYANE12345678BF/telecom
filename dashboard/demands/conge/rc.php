@@ -848,7 +848,7 @@ $rc_days = calculate_rc_days($user['id']);
                     <div class="section">
                         <h3 class="section-title">Détails de congé</h3>
                         <div class="my-2 py-2 px-2 bg-green-400/50 text-green-800 w-fit font-semibold text-sm border-l-4 border-l border-green-700">
-                            you can benefit maximum of : <?= $rc_days['rc_days'] ?> day
+                            Vous pouvez bénéficier d’un maximum de : <?= $rc_days['rc_days'] ?> jours
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="durée">durée</label>

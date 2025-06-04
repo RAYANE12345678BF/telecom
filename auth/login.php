@@ -369,7 +369,7 @@ redirect_if_auth();
                 <h2 style="color: var(--primary-color); font-weight: 700; text-align: left;">Bienvenue!</h2>
                 <p style="font-size: 1.1em; color: var(--text-primary); line-height: 1.5; text-align: left;">
                     Connectez-vous avec votre adresse e-mail et votre mot de passe pour accéder à votre compte et profiter de toutes nos fonctionnalités </p>
-                <img src="algtl.png" alt="Description of image" style="width: 100%; height: auto; margin-top: 20px;">
+                <img src="<?= asset('header2.png') ?>" alt="Description of image" style="width: 100%; height: auto; margin-top: 20px;">
             </div>
         </div>
         <div class="right-side">

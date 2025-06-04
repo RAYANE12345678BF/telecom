@@ -866,7 +866,7 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
 
                             <?php if (true): ?>
                                 <div class="info-field">
-                                    <div class="field-label">remplacante en cas d'absence</div>
+                                    <div class="field-label">remplacant(e) en cas d'absence</div>
                                     <div class="field-value">
                                         <select name="substitute_id">
                                             <option value="" disabled selected>Sélectionner</option>

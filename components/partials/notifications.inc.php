@@ -27,7 +27,7 @@
         </template>
         <template x-if="notifications.length == 0">
             <div class="w-full text-center py-4 text-slate-800 font-semibold uppercase">
-                no notifications right now
+                Aucune notification pour le moment
             </div>
         </template>
         <!-- end a notification with two actions (accept/reject) -->

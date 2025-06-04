@@ -682,7 +682,7 @@ $_SESSION['user'] = get_user($_SESSION['user_id']);
                 icon: 'question',
                 showDenyButton: true,
                 showCancelButton: true,
-                confirmButtonText: "continué",
+                confirmButtonText: "continuer",
                 denyButtonText: `annuler`,
                 showCancelButton: false
             }).then(function(result) {

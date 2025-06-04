@@ -13,18 +13,6 @@
                 <span class="menu-text">Accueil</span>
             </a>
 
-            <a href="<?= dashboard_url('planning') ?>" class="menu-item">
-                <i class="fas fa-home"></i>
-                <span class="menu-text">plan</span>
-            </a>
-
-            <?php if(if_user_is(['Chef de Service', 'GRH'], null)): ?>
-                <a href="<?= dashboard_url('planning/service.php') ?>" class="menu-item">
-                    <i class="fas fa-home"></i>
-                    <span class="menu-text">plan service</span>
-                </a>
-            <?php endif ?>
-
             <a href="<?= url('dashboard') ?>" class="menu-item active">
                 <i class="fas fa-user-circle"></i>
                 <span class="menu-text">Mon Profil</span>
@@ -35,6 +23,18 @@
                 <span class="menu-text">statistics</span>
             </a>
 
+            <a href="<?= dashboard_url('planning') ?>" class="menu-item">
+                <i class="fas fa-clock"></i>
+                <span class="menu-text">plan</span>
+            </a>
+
+            <?php if(if_user_is(['Chef de Service', 'GRH'], null)): ?>
+                <a href="<?= dashboard_url('planning/service.php') ?>" class="menu-item">
+                    <i class="fas fa-clock"></i>
+                    <span class="menu-text">plan service</span>
+                </a>
+            <?php endif ?>
+
             <a href="<?= url('dashboard/droits') ?>" class="menu-item">
                 <i class="fas fa-list"></i>
                 <span class="menu-text">mes droits</span>
@@ -43,7 +43,7 @@
             <?php if (if_user_is(['GRH'], null)): ?>
                 <a href="<?= url('dashboard/employee/list.php') ?>" class="menu-item">
                     <i class="fas fa-list"></i>
-                    <span class="menu-text">list d'employees</span>
+                    <span class="menu-text">liste des employés</span>
                 </a>
             <?php endif ?>
 

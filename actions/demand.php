@@ -70,7 +70,10 @@ switch ($demand_type) {
         $info['content'] = uploadPdf('info', '/employees/conge');
 
         if( $info['content'] == false ){
-            $_SESSION['error'] = 'le fichier n\'a pas pu être enregistré';
+            session([
+                'status' => 'le fichier n\'a pas pu être enregistré',
+                'status_icon' => 'warning'
+            ]);
             redirect_back();
         }
 
@@ -169,6 +172,36 @@ switch ($demand_type) {
             'come hour' => $_POST['come_hour'] ?? null,
             'motif' => $_POST['motif'] ?? null,
         ];
+
+        $errors = validate($mission_data, [
+            'leave date' => 'required',
+            'leave hour' => 'required',
+            'come date' => 'required',
+            'come hour' => 'required',
+        ]);
+
+        if( count($errors) > 0 ){
+            session([
+                'status' => 'veuillez remplir tous les champs',
+                'status_icon' => 'warning'
+            ]);
+            redirect_back();
+            exit();
+        }
+
+        $leav_date = sprintf("%s %s", $mission_data['leave date'], $mission_data['leave hour']);
+        $come_date = sprintf("%s %s", $mission_data['come date'], $mission_data['come hour']);
+        //calculate diff between two dates
+        $diff = diffInMinutes($leav_date, $come_date);
+
+        if( ($diff / 60) > 2 ){
+            session([
+                'status' => 'Vous ne pouvez pas avoir un sortie avec Durée > 2heurs',
+                'status_icon' => 'warning'
+            ]);
+            redirect_back();
+            exit();
+        }
 
         $start_date = $mission_data['leave date'];
         $end_date = $mission_data['come date'];

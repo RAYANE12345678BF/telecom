@@ -101,7 +101,7 @@ if( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
             'user_id' => get_user_with_role('Chef de Service')['id'],
             'title' => 'une nouvelle planification crée',
             'body' => "l'employee " . $_SESSION['user']['nom'] . "crée une planification",
-            'url' => dashboard_url('/planning')
+            'url' => dashboard_url('/planning/service.php')
         ]);
 
         echo json_encode([

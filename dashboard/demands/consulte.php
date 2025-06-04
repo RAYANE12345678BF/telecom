@@ -879,7 +879,7 @@ $user_demands = array_filter($user_demands, function ($demand) use ($user) {
                         </td>
                         <td><?= $demand['type'] ?? 'congé annual' ?></td>
                         <td><?= $demand['date_depose'] ?></td>
-                        <td><?= $demand['status'] == 'accepted' ? 'accepté' : 'en attente' ?></td>
+                        <td><?=  frensh($demand['status']) ?></td>
                         <td>
                             <ul>
                                 <?php foreach ($demand['lifecycle'] as $step): $superior = fetch_user_information($step['superior_id']); ?>

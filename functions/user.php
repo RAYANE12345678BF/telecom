@@ -81,7 +81,7 @@ if (! function_exists(('get_notifications'))) {
     {
         $db = load_db();
 
-        $sql = "SELECT * FROM `notifications` WHERE `employee_id` = ?";
+        $sql = "SELECT * FROM `notifications` WHERE `employee_id` = ? ORDER BY `id` DESC";
 
         $stmt = $db->prepare($sql);
 
