@@ -1,5 +1,12 @@
 <?php
 require_once __DIR__ . '/../../vendor/autoload.php';
+
+
+$pageData = [
+        'data' =>
+];
+
+
 ?>
 
 <!DOCTYPE html>
@@ -687,7 +694,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
                 <div id="step1" class="form-step active">
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle alert-icon"></i>
-                        <div>Votre solde actuel de congés est de <strong>22 jours</strong>.</div>
+                        <div>Votre solde actuel de congés est de <strong><? $pageData['reste'] ?? 22 ?> jours</strong>.</div>
                     </div>
 
                     <div class="form-group">
