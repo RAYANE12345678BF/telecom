@@ -920,28 +920,6 @@ $month_statistics = get_monthly_absences_grouped(2025);
         </div>
 
         <div class="charts-container">
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">Monthly Work Hours</h3>
-                </div>
-                <div class="chart-container">
-                    <canvas id="workHoursChart"></canvas>
-                </div>
-                <div class="absence-stats">
-                    <div class="stat-box">
-                        <div class="label">abcenses mensual (heur)</div>
-                        <div class="value" x-text="`${hoursAbsent}h`"></div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="label">Jours requis</div>
-                        <div class="value" x-text="`${requiredHours}h`">176h</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="label">Différence</div>
-                        <div class="value" x-text="requiredHours - hoursAbsent"></div>
-                    </div>
-                </div>
-            </div>
 
             <div class="chart-card">
                 <div class="chart-header">
@@ -1328,20 +1306,9 @@ $month_statistics = get_monthly_absences_grouped(2025);
 
                 updateCharts(){
 
-                    this.barsChart.date = {
-                        labels: ['Sam','Dim', 'Lun', 'Mar', 'Mer', 'Jeu'],
-                        datasets: [{
-                            label: 'heur absents',
-                            data: [...this.groupByDay()],
-                            backgroundColor: 'rgba(0, 102, 204, 0.2)',
-                            borderColor: 'rgba(0, 102, 204, 1)',
-                            borderWidth: 1
-                        }]
-                    }
-                    this.barsChart.update()
 
                     this.donutChart.data = {
-                        labels: ['Late Arrivals', 'Early Leaves', 'Full Day'],
+                        labels: ['Arrivées en retard', 'Départs en avance', 'Journée complète'],
                         datasets: [{
                             data: [this.lateArrivals().length, this.earlyLeaves().length, this.fullDay().length],
                             backgroundColor: [
@@ -1400,44 +1367,12 @@ $month_statistics = get_monthly_absences_grouped(2025);
 
 
                 initCharts(){
-                    const hoursCtx = document.getElementById('workHoursChart').getContext('2d');
-                    let c1 = new Chart(hoursCtx, {
-                        type: 'bar',
-                        data: {
-                            labels: ['Sam','Dim', 'Lun', 'Mar', 'Mer', 'Jeu'],
-                            datasets: [{
-                                label: 'heur absents',
-                                data: [...this.groupByDay()],
-                                backgroundColor: 'rgba(0, 102, 204, 0.2)',
-                                borderColor: 'rgba(0, 102, 204, 1)',
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    title: {
-                                        display: true,
-                                        text: 'Jours'
-                                    }
-                                }
-                            },
-                            plugins: {
-                                legend: {
-                                    display: false
-                                }
-                            }
-                        }
-                    });
 
                     const distributionCtx = document.getElementById('absenceDistributionChart').getContext('2d');
                     let c2 = new Chart(distributionCtx, {
                         type: 'doughnut',
                         data: {
-                            labels: ['Late Arrivals', 'Early Leaves', 'Full Day'],
+                            labels: ['Arrivées en retard', 'Départs en avance', 'Journée complète'],
                             datasets: [{
                                 data: [this.lateArrivals().length, this.earlyLeaves().length, this.fullDay().length],
                                 backgroundColor: [
@@ -1465,8 +1400,6 @@ $month_statistics = get_monthly_absences_grouped(2025);
                     });
 
                     Object.seal(c2)
-                    Object.seal(c1)
-                    this.barsChart = c1
                     this.donutChart = c2
                 }
             }
